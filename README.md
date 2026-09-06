@@ -127,6 +127,6 @@ npm run bot
 
 Un progetto creato da **[scobru](https://github.com/scobru)**  
 Sito web: [https://scobrudot.dev](https://scobrudot.dev)  
-Repository: [https://github.com/scobru/one-pick](https://github.com/scobru/one-pick)
+Repository: [https://github.com/scobru/onepick](https://github.com/scobru/onepick)
 
 Rilasciato sotto licenza MIT.
