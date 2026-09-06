@@ -18,7 +18,7 @@ let activeStationPub = null;
 let currentTagFilter = 'all';
 let frictionUnlocked = false;
 let myNodsCount = 0;
-let isRadioOn = false;
+let isRadioOn = true;
 let audioCtx = null;
 let isCanvasMode = true;
 let mutedStations = new Set();
@@ -756,6 +756,12 @@ function setLanguage(lang) {
   if (metaDesc) metaDesc.setAttribute('content', t('meta_desc'));
 
   // Update power toggle button label
+  if (powerToggleBtn) {
+    powerToggleBtn.classList.toggle('active', isRadioOn);
+  }
+  if (powerIcon) {
+    powerIcon.textContent = isRadioOn ? '🔈' : '⏻';
+  }
   if (powerText) {
     powerText.textContent = isRadioOn ? t('power_btn_off') : t('power_btn_on');
   }
@@ -1774,6 +1780,24 @@ function togglePowerRadio() {
   }
 }
 
+function setupPowerRadio() {
+  powerToggleBtn?.addEventListener('click', togglePowerRadio);
+
+  if (isRadioOn) {
+    powerToggleBtn?.classList.add('active');
+    if (powerIcon) powerIcon.textContent = '🔈';
+    if (powerText) powerText.textContent = t('power_btn_off');
+
+    // Auto-unlock AudioContext on first user interaction for strict browser autoplay policies
+    const unlockAudio = () => {
+      if (isRadioOn) initAudioContext();
+    };
+    window.addEventListener('click', unlockAudio, { once: true, passive: true });
+    window.addEventListener('keydown', unlockAudio, { once: true, passive: true });
+    window.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+  }
+}
+
 function renderEmptyRadioState() {
   activeStationPub = null;
   if (freqMhzEl) freqMhzEl.textContent = 'FM 88.00';
@@ -2789,9 +2813,15 @@ function setupAuthUI() {
     currentPair = null;
     currentUsername = null;
     myNodsCount = 0;
-    sessionStorage.removeItem('onepick_user');
-    sessionStorage.removeItem('onepick_pass');
-    sessionStorage.removeItem('onepick_pair');
+    try {
+      localStorage.removeItem('onepick_user');
+      localStorage.removeItem('onepick_pair');
+      sessionStorage.removeItem('onepick_user');
+      sessionStorage.removeItem('onepick_pass');
+      sessionStorage.removeItem('onepick_pair');
+    } catch (e) {
+      console.warn('Errore pulizia sessione auth:', e);
+    }
 
     if (authorSigilDisplay) {
       authorSigilDisplay.innerHTML = '';
@@ -2863,9 +2893,17 @@ function setupAuthUI() {
   });
 }
 
-function loginWithPair(pair, username) {
+function loginWithPair(pair, username, isRestored = false) {
   currentPair = pair;
   currentUsername = username;
+
+  // Persist session to localStorage so refresh keeps the user logged in
+  try {
+    localStorage.setItem('onepick_user', username);
+    localStorage.setItem('onepick_pair', JSON.stringify(pair));
+  } catch (e) {
+    console.warn('[onepick] Impossibile salvare la sessione in localStorage:', e);
+  }
 
   // Update header auth badge & sigil
   if (authorSigilDisplay) {
@@ -2935,7 +2973,25 @@ function loginWithPair(pair, username) {
     }
   });
 
-  showToast(`${t('toast_node_ready_prefix')}${username}${t('toast_node_ready_suffix')}`);
+  if (!isRestored) {
+    showToast(`${t('toast_node_ready_prefix')}${username}${t('toast_node_ready_suffix')}`);
+  }
+}
+
+function restoreStoredAuth() {
+  try {
+    const savedUser = localStorage.getItem('onepick_user');
+    const savedPairRaw = localStorage.getItem('onepick_pair');
+    if (savedUser && savedPairRaw) {
+      const pair = JSON.parse(savedPairRaw);
+      if (pair && pair.pub && pair.priv) {
+        loginWithPair(pair, savedUser, true);
+        console.log(`[onepick] Sessione ripristinata con successo per nodo @${savedUser} (${truncateKey(pair.pub)})`);
+      }
+    }
+  } catch (err) {
+    console.warn('[onepick] Errore ripristino sessione autenticata da localStorage:', err);
+  }
 }
 
 // --- Zen Mesh P2P Engine & Peer Discovery ---
@@ -3377,10 +3433,11 @@ function initApp() {
   setupProfileAndReportUI();
   setupCassettoMutedTab();
   initZen();
+  restoreStoredAuth();
   initEtherVisualizer();
 
-  // Power radio toggle listener
-  powerToggleBtn?.addEventListener('click', togglePowerRadio);
+  // Power radio initialization & listener
+  setupPowerRadio();
 
   // Tune initial station after setup
   setTimeout(() => {
