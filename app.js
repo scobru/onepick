@@ -395,7 +395,8 @@ const TRANSLATIONS = {
 
     // Footer
     footer_by: 'un progetto di',
-    footer_website: 'sito'
+    footer_website: 'sito',
+    footer_tc_philosophy: 'stessa filosofia: musica decentralizzata, etere aperto e ascolto non algoritmico'
   },
   en: {
     // Meta
@@ -623,7 +624,8 @@ const TRANSLATIONS = {
 
     // Footer
     footer_by: 'a project by',
-    footer_website: 'website'
+    footer_website: 'website',
+    footer_tc_philosophy: 'shared philosophy: decentralized music, open ether & anti-algorithmic listening'
   }
 };
 
@@ -1562,6 +1564,21 @@ function renderStationMedia(station) {
   mediaPlayerContainer.classList.remove('hidden');
 
   if (media.type === 'tunecamp') {
+    // New embed endpoint: /embed/:type/:id provides a complete player.
+    // If the station URL matches this pattern, skip metadata resolution and render the iframe directly.
+    const embedMatch = new URL(station.url).pathname.startsWith('/embed/');
+    if (embedMatch) {
+      mediaPlayerContainer.innerHTML = `
+        <iframe
+          style="border: 0; width: 100%; height: 260px; border-radius: 4px;"
+          src="${station.url}"
+          title="TuneCamp stream"
+          allow="autoplay; encrypted-media"
+        ></iframe>
+      `;
+      return;
+    }
+
     mediaPlayerContainer.innerHTML = `
       <div class="tunecamp-player-card" id="tunecamp-card-loading">
         <div class="tunecamp-info" style="font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.85rem; color: var(--bio-color);">

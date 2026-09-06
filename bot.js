@@ -19,6 +19,7 @@ import {
   broadcastSeedSlot,
   deriveBotPair,
   getFrequencyForPub,
+  getTrackForBot,
   verifyMediaUrlAvailable
 } from './seeder.js';
 
@@ -35,7 +36,7 @@ const intervalMinutes = intervalArgIndex !== -1 && args[intervalArgIndex + 1]
 const INTERVAL_MS = Math.max(1, intervalMinutes) * 60 * 1000;
 
 console.log('='.repeat(64));
-console.log('  onepick / Zen P2P Autonomous Radio Seeder Bot');
+console.log('  onepick / Zen P2P Autonomous Radio Seeder Bot (6 Channels)');
 console.log('='.repeat(64));
 console.log(`[+] Relay:    ${RELAY_URL}`);
 console.log(`[+] Interval: ${intervalMinutes} minutes (${INTERVAL_MS / 1000}s)`);
@@ -51,7 +52,12 @@ const zen = new ZEN({
 let rotationIdx = 0;
 let usedTrackIndices = new Set();
 
-async function getNextTrack() {
+async function getNextTrack(bot) {
+  // If bot is dedicated to TuneCamp, query TuneCamp network exclusively
+  if (bot && bot.provider === 'tunecamp') {
+    return await getTrackForBot(bot);
+  }
+
   if (usedTrackIndices.size >= SEED_TRACKS.length) {
     usedTrackIndices.clear();
   }
@@ -74,7 +80,7 @@ async function getNextTrack() {
     }
   }
 
-  return SEED_TRACKS[0];
+  return await getTrackForBot(bot);
 }
 
 async function logBotIdentities() {
@@ -82,7 +88,8 @@ async function logBotIdentities() {
   for (const bot of SEED_BOTS) {
     const pair = await deriveBotPair(bot.username, bot.passphrase, ZEN);
     const freq = getFrequencyForPub(pair.pub);
-    console.log(`    📻 @${bot.username.padEnd(16)} -> FM ${freq.toFixed(2)} MHz  (pub: ${pair.pub.slice(0, 12)}...)`);
+    const badge = bot.provider === 'tunecamp' ? ' [TuneCamp Network]' : ` #${bot.tag}`;
+    console.log(`    📻 @${bot.username.padEnd(16)} -> FM ${freq.toFixed(2)} MHz${badge}  (pub: ${pair.pub.slice(0, 10)}...)`);
   }
   console.log('');
 }
@@ -90,7 +97,7 @@ async function logBotIdentities() {
 async function broadcastOne() {
   const bot = SEED_BOTS[rotationIdx % SEED_BOTS.length];
   rotationIdx++;
-  const track = await getNextTrack();
+  const track = await getNextTrack(bot);
   const timeStr = new Date().toLocaleTimeString();
 
   console.log(`[${timeStr}] [TRANSMITTING] @${bot.username} broadcasting...`);
@@ -112,10 +119,10 @@ async function broadcastOne() {
 }
 
 async function seedAllBots() {
-  console.log('[*] Seeding all 3 transmitter accounts immediately with verified tracks...');
+  console.log(`[*] Seeding all ${SEED_BOTS.length} transmitter accounts immediately with verified tracks...`);
   for (let i = 0; i < SEED_BOTS.length; i++) {
     const bot = SEED_BOTS[i];
-    const track = await getNextTrack();
+    const track = await getNextTrack(bot);
     const timeStr = new Date().toLocaleTimeString();
     console.log(`[${timeStr}] Seeding @${bot.username} -> ${track.title}`);
     try {
@@ -126,7 +133,7 @@ async function seedAllBots() {
       console.error(`    ✕ Error: ${e.message}`);
     }
   }
-  console.log('[*] All 3 stations are now on air on the Zen mesh!\n');
+  console.log(`[*] All ${SEED_BOTS.length} stations are now on air on the Zen mesh!\n`);
 }
 
 async function main() {

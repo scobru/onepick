@@ -27,6 +27,28 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-zero-2026-relay',
     tag: 'art',
     desc: 'Minimal signals, endless tape loops, and present stillness for overstimulated minds.'
+  },
+  {
+    id: 'tunecamp',
+    username: 'tunecamp-relay',
+    passphrase: 'onepick-seed-tunecamp-2026-federation',
+    tag: 'sound',
+    provider: 'tunecamp',
+    desc: 'Musica indipendente e cataloghi federati direttamente dal network TuneCamp / SudoRecords.'
+  },
+  {
+    id: 'cyber',
+    username: 'retro-cyber',
+    passphrase: 'onepick-seed-cyber-2026-matrix',
+    tag: 'code',
+    desc: 'Demoscene music, tracker modules, cyberpunk synthesis, and algorithmic soundscapes.'
+  },
+  {
+    id: 'echo',
+    username: 'tape-echo',
+    passphrase: 'onepick-seed-echo-2026-reverb',
+    tag: 'read',
+    desc: 'Spoken word archives, literary field trips, slow cinema, and tape echo chambers.'
   }
 ];
 
@@ -203,8 +225,168 @@ export const SEED_TRACKS = [
     title: 'Resident Advisor - RA.1026 Moodymann & Carl Craig',
     caption: 'Detroit techno legends: Carl Craig, Moodymann and Mike Banks live session on Mixcloud.',
     tag: 'sound'
+  },
+
+  // --- Demoscene & Cyberpunk Tracks (#code) ---
+  {
+    url: 'https://www.youtube.com/watch?v=yYyq0zN8VpE',
+    title: 'Farbrausch - fr-08: .the .product (64k PC Intro)',
+    caption: 'Iconica colonna sonora demoscene PC 64k di Farbrausch: pura sintesi algoritmica.',
+    tag: 'code'
+  },
+  {
+    url: 'https://www.youtube.com/watch?v=FjMMX28ZwhM',
+    title: 'Captain - Space Debris (Amiga MOD Tracker)',
+    caption: 'Classico immortale dell\'era Amiga MOD tracker: chip sound a 4 canali e vibrazioni spaziali.',
+    tag: 'code'
+  },
+  {
+    url: 'https://disasterpeace.bandcamp.com/album/fez-ost',
+    title: 'Disasterpeace - FEZ OST',
+    caption: 'Chiptune ambient ed esplorazioni polifoniche retro-futuristiche da Disasterpeace.',
+    tag: 'code'
+  },
+
+  // --- Spoken Archives & Literary Soundscapes (#read) ---
+  {
+    url: 'https://archive.org/details/italo-calvino-citta-invisibili',
+    title: 'Italo Calvino - Le Città Invisibili (Lettura Radiofonica)',
+    caption: 'Archivio Rai / Internet Archive: Marco Polo e Kublai Khan tra città immaginate e memoria.',
+    tag: 'read'
+  },
+  {
+    url: 'https://archive.org/details/william-burroughs-cutups',
+    title: 'William S. Burroughs - Break Through In Grey Room (Cut-Ups)',
+    caption: 'Sperimentazioni storiche su nastro magnetico, cut-up sonori e radio clandestina.',
+    tag: 'read'
+  },
+  {
+    url: 'https://archive.org/details/alan-watts-consciousness',
+    title: 'Alan Watts - The Nature of Consciousness',
+    caption: 'Riflessioni su mente, presenza e l\'illusione del sé preservate negli archivi audio aperti.',
+    tag: 'read'
   }
 ];
+
+// --- TuneCamp Federation Live Stream Catalog ---
+export const TUNECAMP_FALLBACK_TRACKS = [
+  {
+    url: 'https://sudorecords.scobrudot.dev/releases/120-punk',
+    title: 'Homologo - 120 PUNK',
+    caption: 'Bouncy Techno indipendente direttamente dalla federazione TuneCamp su SudoRecords.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://sudorecords.scobrudot.dev/releases/waterflow',
+    title: 'Homologo - Waterflow',
+    caption: 'Indie Dance e ritmi luminosi in streaming decentralizzato dal network TuneCamp.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://sudorecords.scobrudot.dev/releases/ragazzi-in-collera',
+    title: 'Homologo - Ragazzi in collera',
+    caption: 'Tessiture elettroniche e produzione indipendente dal catalogo aperto TuneCamp.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://sudorecords.scobrudot.dev/releases/la-prima-2',
+    title: 'Homologo - La Prima - live set',
+    caption: 'Minimal Techno live session e frequenze club registrate dal vivo su TuneCamp.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://sudorecords.scobrudot.dev/releases/compleanno-1',
+    title: 'Homologo - Compleanno',
+    caption: 'Electropop e sintetizzatori vibranti dal nodo federato SudoRecords / TuneCamp.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://sudorecords.scobrudot.dev/releases/fantasie-1',
+    title: 'Homologo - Fantasie',
+    caption: 'Elettronica calda e melodie sintetiche in ascolto P2P su TuneCamp.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://sudorecords.scobrudot.dev/releases/ordine-ovviamente-2',
+    title: 'Homologo - Ordine Ovviamente',
+    caption: 'Ritmiche elettroniche contemporanee distribuite attraverso il network federato.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://sudorecords.scobrudot.dev/releases/amorevole-crollo-1',
+    title: 'Homologo - Amorevole Crollo',
+    caption: 'Electropop e armonie intime rilasciate sulla rete federata TuneCamp.',
+    tag: 'sound'
+  }
+];
+
+let cachedTuneCampTracks = [...TUNECAMP_FALLBACK_TRACKS];
+let lastTuneCampFetch = 0;
+
+/**
+ * Searches and fetches live releases from the TuneCamp network (/api/releases)
+ * Automatically falls back to curated fallback tracks if network is slow or offline.
+ */
+export async function fetchLiveTuneCampTracks() {
+  const now = Date.now();
+  if (now - lastTuneCampFetch < 5 * 60 * 1000 && cachedTuneCampTracks.length > 0) {
+    return cachedTuneCampTracks;
+  }
+
+  try {
+    const res = await fetch('https://sudorecords.scobrudot.dev/api/releases', {
+      signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(4000) : undefined
+    });
+    if (res.ok) {
+      const releases = await res.json();
+      if (Array.isArray(releases) && releases.length > 0) {
+        const liveTracks = releases
+          .filter(r => r.slug && r.is_public !== false)
+          .map(r => ({
+            url: `https://sudorecords.scobrudot.dev/releases/${r.slug}`,
+            title: `${r.artist_name || r.artistName || 'TuneCamp'} - ${r.title}`,
+            caption: `${r.genre || 'Musica indipendente'} in streaming dal network federato TuneCamp.`,
+            tag: 'sound'
+          }));
+
+        if (liveTracks.length > 0) {
+          cachedTuneCampTracks = liveTracks;
+          lastTuneCampFetch = now;
+          return liveTracks;
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('[TuneCamp Bot] Impossibile contattare TuneCamp API, uso catalogo locale:', e.message);
+  }
+
+  return cachedTuneCampTracks.length > 0 ? cachedTuneCampTracks : TUNECAMP_FALLBACK_TRACKS;
+}
+
+/**
+ * Picks the next appropriate track for a specific bot identity:
+ * - If bot is TuneCamp-specific, queries TuneCamp network exclusively.
+ * - If bot has a specific tag (#code, #read, #art, #obscureweb), prioritizes that tag.
+ */
+export async function getTrackForBot(bot, currentUrl = null) {
+  if (bot && bot.provider === 'tunecamp') {
+    const tcTracks = await fetchLiveTuneCampTracks();
+    const candidates = tcTracks.filter(t => t.url !== currentUrl);
+    const pool = candidates.length > 0 ? candidates : tcTracks;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  let candidates = SEED_TRACKS.filter(t => t.url !== currentUrl);
+  if (bot && bot.tag) {
+    const tagMatches = candidates.filter(t => t.tag === bot.tag);
+    if (tagMatches.length > 0) {
+      candidates = tagMatches;
+    }
+  }
+
+  const pool = candidates.length > 0 ? candidates : SEED_TRACKS;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
 
 // Cache of derived bot pairs to avoid repeated PBKDF2 computations
 const botPairsCache = new Map();
@@ -361,8 +543,8 @@ export function startAutonomousSeeder(zen, ZEN, options = {}) {
     const bot = SEED_BOTS[rotationIndex % SEED_BOTS.length];
     rotationIndex++;
 
-    // Pick random track
-    const track = SEED_TRACKS[Math.floor(Math.random() * SEED_TRACKS.length)];
+    // Pick track for this bot
+    const track = await getTrackForBot(bot);
 
     try {
       const res = await broadcastSeedSlot(zen, bot, track, ZEN);
@@ -376,17 +558,10 @@ export function startAutonomousSeeder(zen, ZEN, options = {}) {
     }
   }
 
-  // Helper to pick a track, preferably different from currentUrl
-  function pickTrack(currentUrl) {
-    const candidates = SEED_TRACKS.filter(t => t.url !== currentUrl);
-    const pool = candidates.length > 0 ? candidates : SEED_TRACKS;
-    return pool[Math.floor(Math.random() * pool.length)];
-  }
-
   /**
    * Called on page load:
    * 1. Seeds any missing bot stations immediately.
-   * 2. If all 3 exist but the oldest is >= 15 minutes old, rotates it to a fresh track!
+   * 2. If all bots exist but the oldest is >= 15 minutes old, rotates it to a fresh track!
    */
   async function checkAndSeedOnPageEntry(stationsMap) {
     if (!zen) return;
@@ -409,7 +584,7 @@ export function startAutonomousSeeder(zen, ZEN, options = {}) {
       const bot = SEED_BOTS[i];
       if (!existingBots.has(bot.username)) {
         anyMissing = true;
-        const track = pickTrack();
+        const track = await getTrackForBot(bot);
         try {
           console.log(`[onepick auto-seeder] Populating missing station: @${bot.username} -> ${track.title}`);
           const res = await broadcastSeedSlot(zen, bot, track, ZEN);
@@ -428,7 +603,7 @@ export function startAutonomousSeeder(zen, ZEN, options = {}) {
       return;
     }
 
-    // 2. If all 3 exist, check if the oldest is >= 15 minutes old
+    // 2. If all exist, check if the oldest is >= 15 minutes old
     const botList = Array.from(existingBots.values());
     botList.sort((a, b) => a.ts - b.ts);
     const oldest = botList[0];
@@ -443,7 +618,7 @@ export function startAutonomousSeeder(zen, ZEN, options = {}) {
         localStorage.setItem('onepick_seeder_last_ts', now.toString());
       }
 
-      const newTrack = pickTrack(oldest.station?.url);
+      const newTrack = await getTrackForBot(oldest.bot, oldest.station?.url);
       console.log(`[onepick auto-seeder] Rotating 15-min stale station: @${oldest.bot.username} -> ${newTrack.title}`);
       try {
         const res = await broadcastSeedSlot(zen, oldest.bot, newTrack, ZEN);

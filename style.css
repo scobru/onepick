@@ -1131,6 +1131,38 @@ footer {
   color: var(--border-muted);
 }
 
+.footer-endorsement {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.tc-endorse-badge {
+  color: var(--success-color);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.footer-tc-link {
+  color: var(--success-color);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 700;
+}
+
+.footer-tc-link:hover {
+  opacity: 0.85;
+}
+
+.tc-philosophy {
+  color: var(--bio-color);
+  font-style: italic;
+}
+
 /* Empty state */
 .empty-state {
   text-align: center;
