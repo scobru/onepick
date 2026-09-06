@@ -857,6 +857,85 @@ textarea:focus {
   font-weight: 700;
 }
 
+/* Compatible Audio Providers Panel & Live Validation */
+.compatible-providers-panel {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px dashed var(--border-muted);
+  border-radius: 4px;
+  background-color: var(--card-bg);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  transition: all 0.2s ease;
+}
+
+.compatible-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.compatible-title {
+  color: var(--desc-color);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.url-validation-status {
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.url-validation-status.valid {
+  color: var(--success-color);
+}
+
+.url-validation-status.invalid {
+  color: var(--danger-color);
+}
+
+.url-validation-status.info {
+  color: var(--amber-color);
+}
+
+.provider-badges-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.provider-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border: 1px solid var(--border-muted);
+  border-radius: 3px;
+  background-color: var(--code-bg);
+  color: var(--bio-color);
+  font-size: 0.74rem;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.provider-badge.detected {
+  background-color: var(--success-bg);
+  border-color: var(--success-color);
+  color: var(--success-color);
+  font-weight: 700;
+  transform: translateY(-1px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.non-sound-hint {
+  margin-top: 4px;
+  color: var(--bio-color);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
 .radio-preset-tags {
   display: flex;
   gap: 6px;

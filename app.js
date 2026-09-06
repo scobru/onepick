@@ -106,6 +106,11 @@ const transmitBtn = document.getElementById('transmit-btn');
 const nodsReceivedBadge = document.getElementById('nods-received-badge');
 const pickPresetTagButtons = document.querySelectorAll('.radio-preset-tags .tag-chip');
 const selectedPickTagInput = document.getElementById('selected-pick-tag');
+const compatibleProvidersPanel = document.getElementById('compatible-providers-panel');
+const compatibleTitle = document.getElementById('compatible-title');
+const urlValidationStatus = document.getElementById('url-validation-status');
+const providerBadges = document.querySelectorAll('.provider-badge');
+const nonSoundHint = document.getElementById('non-sound-hint');
 
 // Auth
 const loginTriggerBtn = document.getElementById('login-trigger');
@@ -235,8 +240,14 @@ const TRANSLATIONS = {
     friction_free_text: '<strong>Rete libera:</strong> Nessun altro nodo è attualmente in onda sulla rete Zen. Sei la prima frequenza attiva! Lo slot è sbloccato per avviare la trasmissione.',
     friction_free_btn_title: 'Pubblica il primo pick sulla rete',
     transmitter_prompt: 'Autenticati con <strong>[ login ]</strong> per attivare la tua frequenza. Ogni trasmissione sovrascrive istantaneamente la precedente: chi visita il tuo nodo vede solo ciò che ti ossessiona ora.',
-    label_pick_url: 'Un Link (URL web o musica: TuneCamp, Spotify, Bandcamp, SoundCloud, YouTube, MP3):',
-    placeholder_pick_url: 'https://... (es. tunecamp, spotify, bandcamp, soundcloud, youtube o stream audio)',
+    label_pick_url: 'Un Link (URL web o musica: YouTube, SoundCloud, Bandcamp, TuneCamp, Archive.org, MP3):',
+    placeholder_pick_url: 'https://... (es. YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, MP3 o URL web)',
+    compatible_audio_title: '🎵 Provider audio per #sound:',
+    compatible_audio_title_all: '🌐 Destinazione URL:',
+    non_sound_hint: '✦ Per i tag non-audio (#read, #obscureweb, #thought, #art, #code) puoi inserire qualsiasi link web valido.',
+    status_detected_prefix: '✓ Rilevato: ',
+    status_sound_invalid: '⚠ Provider audio non supportato per #sound',
+    status_valid_web: '✓ Link web valido',
     label_pick_caption: 'Una Riga (Cosa ti sta ossessionando adesso?):',
     placeholder_pick_caption: 'Una sola riflessione, sensazione o motivazione (rigidamente max 140 caratteri)...',
     char_counter_hint: 'Nessun commento nidificato, nessun thread infinito.',
@@ -351,6 +362,7 @@ const TRANSLATIONS = {
     toast_login_required: 'Autenticati prima con [ login ] per trasmettere.',
     toast_friction_required: 'Attrito Positivo attivo: salva prima un pick o invia un cenno per sbloccare.',
     toast_invalid_url: 'Inserisci un URL valido.',
+    toast_sound_provider_required: 'Per il tag #sound devi inserire un link audio valido e riproducibile (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Audius, Mixcloud, Spotify o stream .mp3).',
     toast_char_limit: 'Il testo supera rigidamente i 140 caratteri!',
     toast_no_signal_band: 'Nessun segnale attivo su questa banda.',
     toast_no_signal_mesh: 'Nessun segnale attivo sulla rete.',
@@ -456,8 +468,14 @@ const TRANSLATIONS = {
     friction_free_text: '<strong>Open network:</strong> No other node is currently on air on the Zen mesh. You are the first active frequency! Your slot is unlocked to start broadcasting.',
     friction_free_btn_title: 'Publish the first pick to the network',
     transmitter_prompt: 'Authenticate via <strong>[ login ]</strong> to activate your frequency. Every transmission instantly overwrites the previous one: visitors see only what obsesses you now.',
-    label_pick_url: 'A Link (Web URL or music: TuneCamp, Spotify, Bandcamp, SoundCloud, YouTube, MP3):',
-    placeholder_pick_url: 'https://... (e.g. tunecamp, spotify, bandcamp, soundcloud, youtube or audio stream)',
+    label_pick_url: 'A Link (Web URL or music: YouTube, SoundCloud, Bandcamp, TuneCamp, Archive.org, MP3):',
+    placeholder_pick_url: 'https://... (e.g. YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, MP3 or web URL)',
+    compatible_audio_title: '🎵 Audio providers for #sound:',
+    compatible_audio_title_all: '🌐 URL Destination:',
+    non_sound_hint: '✦ For non-audio tags (#read, #obscureweb, #thought, #art, #code) you can enter any valid web link.',
+    status_detected_prefix: '✓ Detected: ',
+    status_sound_invalid: '⚠ Unsupported audio provider for #sound',
+    status_valid_web: '✓ Valid web link',
     label_pick_caption: 'One Line (What is obsessing you right now?):',
     placeholder_pick_caption: 'A single reflection, sensation or motivation (strictly max 140 characters)...',
     char_counter_hint: 'No nested comments, no endless threads.',
@@ -572,6 +590,7 @@ const TRANSLATIONS = {
     toast_login_required: 'Authenticate first via [ login ] to broadcast.',
     toast_friction_required: 'Positive Friction active: save a pick or send a nod to unlock first.',
     toast_invalid_url: 'Please enter a valid URL.',
+    toast_sound_provider_required: 'For the #sound tag, please provide a playable audio link from a supported provider (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Audius, Mixcloud, Spotify or .mp3 stream).',
     toast_char_limit: 'Text strictly exceeds 140 characters!',
     toast_no_signal_band: 'No active signal on this band.',
     toast_no_signal_mesh: 'No active signal on the network.',
@@ -629,13 +648,13 @@ const TUTORIAL_STEPS = [
     it: {
       badge: 'STEP 02 / 05',
       title: "La Radio & L'Audio Integrato",
-      desc: "Sintonizza le stazioni dei peer P2P ruotando la scala o con i tasti [ prec ], [ succ ] e [ a caso ]. Clicca su [ ACCENDI RADIO ] per sbloccare l'audio nel browser: la musica da TuneCamp, Spotify, Bandcamp, SoundCloud o YouTube partirà automaticamente in sottofondo con l'equalizzatore analogico.",
+      desc: "Sintonizza le stazioni dei peer P2P ruotando la scala o con i tasti [ prec ], [ succ ] e [ a caso ]. Clicca su [ ACCENDI RADIO ] per sbloccare l'audio nel browser: la musica da Internet Archive, TuneCamp, Spotify, Bandcamp, SoundCloud o YouTube partirà automaticamente in sottofondo con l'equalizzatore analogico.",
       callout: "// Sintonizzazione FM: 88.00 - 108.00 MHz · zero mock, solo peer P2P reali."
     },
     en: {
       badge: 'STEP 02 / 05',
       title: "The Radio & Integrated Audio",
-      desc: "Tune into P2P peer stations using the FM scale or the [ prev ], [ next ] and [ random ] buttons. Click [ TURN ON RADIO ] to unlock browser audio: music from TuneCamp, Spotify, Bandcamp, SoundCloud or YouTube plays automatically with an analog equalizer.",
+      desc: "Tune into P2P peer stations using the FM scale or the [ prev ], [ next ] and [ random ] buttons. Click [ TURN ON RADIO ] to unlock browser audio: music from Internet Archive, TuneCamp, Spotify, Bandcamp, SoundCloud or YouTube plays automatically with an analog equalizer.",
       callout: "// FM Tuning: 88.00 - 108.00 MHz · zero mocks, only live P2P peers."
     }
   },
@@ -659,13 +678,13 @@ const TUTORIAL_STEPS = [
     it: {
       badge: 'STEP 04 / 05',
       title: "Il Tuo Slot Unico (1 Link, 1 Riga)",
-      desc: "Accedi con [ login ] creando la tua identità crittografica locale. Hai a disposizione un solo slot: un link valido e una riflessione di massimo 140 caratteri. Ogni nuovo invio sovrascrive istantaneamente quello precedente per sempre.",
+      desc: "Accedi con [ login ] creando la tua identità locale. Hai un solo slot: un link e max 140 caratteri. Se scegli il tag #sound, inserisci esclusivamente tracce audio da provider supportati (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Spotify o stream .mp3). Con gli altri tag (#read, #obscureweb, #art, #code) puoi condividere qualsiasi URL web.",
       callout: "// Trasparenza crittografica: Chiavi derivate localmente nel tuo browser con PBKDF2."
     },
     en: {
       badge: 'STEP 04 / 05',
       title: "Your Single Slot (1 Link, 1 Line)",
-      desc: "Log in via [ login ] to generate your local cryptographic identity. You hold a single slot: a valid link and a single reflection capped at 140 characters. Every new transmission permanently overwrites the previous one forever.",
+      desc: "Log in via [ login ] to create your local identity. You hold one slot: a link and max 140 characters. For the #sound tag, only playable audio providers are accepted (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Spotify, or .mp3 stream). For other tags (#read, #obscureweb, #art, #code), any valid web URL is allowed.",
       callout: "// Cryptographic transparency: Deterministic local PBKDF2 key generation."
     }
   },
@@ -780,6 +799,9 @@ function setLanguage(lang) {
       slotStatusBadge.textContent = t('slot_inactive');
     }
   }
+
+  // Update transmitter URL validation panel
+  updateUrlValidationUI();
 
   // If station tuned, refresh dynamic station card UI
   if (activeStationPub && stationsMap.has(activeStationPub)) {
@@ -1355,6 +1377,52 @@ function detectMedia(rawUrl) {
     } catch (e) {}
   }
 
+  // Internet Archive (audio items, details, embed)
+  const iaMatch = url.match(/(?:https?:\/\/)?(?:www\.)?archive\.org\/(?:details|embed)\/([a-zA-Z0-9_\-\.]+)/i);
+  if (iaMatch && iaMatch[1]) {
+    const iaId = iaMatch[1];
+    return {
+      type: 'archiveorg',
+      id: iaId,
+      embedUrl: `https://archive.org/embed/${iaId}`,
+      rawUrl: url
+    };
+  }
+
+  // Audius (embed or track link)
+  const audiusEmbedMatch = url.match(/(?:https?:\/\/)?(?:www\.)?audius\.co\/embed\/track\/([a-zA-Z0-9]+)/i);
+  if (audiusEmbedMatch && audiusEmbedMatch[1]) {
+    return {
+      type: 'audius',
+      id: audiusEmbedMatch[1],
+      embedUrl: `https://audius.co/embed/track/${audiusEmbedMatch[1]}?flavor=compact`,
+      rawUrl: url
+    };
+  }
+  const audiusTrackMatch = url.match(/(?:https?:\/\/)?(?:www\.)?audius\.co\/(?!trending|search|feed|audio|settings|legal|signup|login)([a-zA-Z0-9_\.]+)\/([a-zA-Z0-9_\-]+)/i);
+  if (audiusTrackMatch && audiusTrackMatch[1] && audiusTrackMatch[2]) {
+    return {
+      type: 'audius',
+      handle: audiusTrackMatch[1],
+      slug: audiusTrackMatch[2],
+      rawUrl: url
+    };
+  }
+
+  // Mixcloud (user/show)
+  const mixcloudMatch = url.match(/(?:https?:\/\/)?(?:www\.)?mixcloud\.com\/(?!categories|tag|developers|about|competitions)([a-zA-Z0-9_\-]+)\/([a-zA-Z0-9_\-]+)/i);
+  if (mixcloudMatch && mixcloudMatch[1] && mixcloudMatch[2]) {
+    const mcUser = mixcloudMatch[1];
+    const mcSlug = mixcloudMatch[2];
+    return {
+      type: 'mixcloud',
+      user: mcUser,
+      slug: mcSlug,
+      embedUrl: `https://www.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2F${encodeURIComponent(mcUser)}%2F${encodeURIComponent(mcSlug)}%2F`,
+      rawUrl: url
+    };
+  }
+
   // Direct Audio files / streams
   if (/\.(mp3|ogg|wav|m4a|aac|flac)(\?.*)?$/i.test(url) || url.includes('/stream') || url.includes('/live')) {
     return {
@@ -1364,6 +1432,34 @@ function detectMedia(rawUrl) {
   }
 
   return { type: 'link', url: url };
+}
+
+function isPlayableAudioMedia(media) {
+  if (!media) return false;
+  return ['youtube', 'soundcloud', 'bandcamp', 'tunecamp', 'archiveorg', 'audius', 'mixcloud', 'spotify', 'audio'].includes(media.type);
+}
+
+// Audius Track Resolution Cache & Resolver
+const audiusTrackCache = new Map();
+
+async function resolveAudiusTrackId(media) {
+  if (!media) return null;
+  if (media.id) return media.id;
+  if (audiusTrackCache.has(media.rawUrl)) return audiusTrackCache.get(media.rawUrl);
+
+  try {
+    const res = await fetch(`https://discoveryprovider.audius.co/v1/resolve?url=${encodeURIComponent(media.rawUrl)}&app_name=onepick`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.data && data.data.id) {
+        audiusTrackCache.set(media.rawUrl, data.data.id);
+        return data.data.id;
+      }
+    }
+  } catch (e) {
+    console.warn('Audius resolve error:', e);
+  }
+  return null;
 }
 
 async function resolveTuneCampMetadata(media) {
@@ -1556,6 +1652,80 @@ function renderStationMedia(station) {
         src="${media.embedUrl}"
         seamless
         allow="autoplay"
+      ></iframe>
+    `;
+  } else if (media.type === 'archiveorg') {
+    const autoplayParam = isRadioOn ? '?autoplay=1' : '';
+    mediaPlayerContainer.innerHTML = `
+      <iframe
+        src="${media.embedUrl}${autoplayParam}"
+        width="100%"
+        height="160"
+        frameborder="0"
+        webkitallowfullscreen="true"
+        mozallowfullscreen="true"
+        allowfullscreen
+        title="onepick Internet Archive audio player"
+        style="border: 0; width: 100%; border-radius: 4px;"
+      ></iframe>
+    `;
+  } else if (media.type === 'audius') {
+    if (media.id) {
+      mediaPlayerContainer.innerHTML = `
+        <iframe
+          src="https://audius.co/embed/track/${media.id}?flavor=compact"
+          width="100%"
+          height="120"
+          frameborder="0"
+          scrolling="no"
+          allow="encrypted-media"
+          title="onepick Audius player"
+          style="border: 0; width: 100%; border-radius: 4px;"
+        ></iframe>
+      `;
+    } else {
+      mediaPlayerContainer.innerHTML = `
+        <div style="font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.82rem; color: var(--bio-color); padding: 8px;">
+          // Connessione nodo Audius Web3...
+        </div>
+      `;
+      resolveAudiusTrackId(media).then(trackId => {
+        if (activeStationPub !== station.pub) return;
+        if (trackId) {
+          media.id = trackId;
+          mediaPlayerContainer.innerHTML = `
+            <iframe
+              src="https://audius.co/embed/track/${trackId}?flavor=compact"
+              width="100%"
+              height="120"
+              frameborder="0"
+              scrolling="no"
+              allow="encrypted-media"
+              title="onepick Audius player"
+              style="border: 0; width: 100%; border-radius: 4px;"
+            ></iframe>
+          `;
+          if (isRadioOn) radioEq?.classList.remove('hidden');
+        } else {
+          mediaPlayerContainer.innerHTML = `
+            <div style="font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.82rem; color: var(--bio-color); padding: 8px;">
+              // Traccia Audius: <a href="${station.url}" target="_blank" rel="noopener noreferrer">${station.url}</a>
+            </div>
+          `;
+        }
+      });
+    }
+  } else if (media.type === 'mixcloud') {
+    const autoplayParam = isRadioOn ? '&autoplay=1' : '';
+    mediaPlayerContainer.innerHTML = `
+      <iframe
+        width="100%"
+        height="120"
+        src="${media.embedUrl}${autoplayParam}"
+        frameborder="0"
+        allow="autoplay"
+        title="onepick Mixcloud player"
+        style="border: 0; width: 100%; border-radius: 4px;"
       ></iframe>
     `;
   } else if (media.type === 'audio') {
@@ -2345,9 +2515,101 @@ function setupProfileAndReportUI() {
   });
 }
 
+// --- Live URL Validation & Provider Detection ---
+
+function updateUrlValidationUI() {
+  if (!pickUrlInput) return;
+  const rawInput = pickUrlInput.value.trim();
+  const cleanUrl = extractCleanMediaUrl(rawInput);
+  const currentTag = (selectedPickTagInput && selectedPickTagInput.value.trim()) || 'sound';
+  const isSound = currentTag === 'sound';
+
+  // Clear previous badge active states
+  providerBadges?.forEach(b => b.classList.remove('detected'));
+
+  if (nonSoundHint) {
+    nonSoundHint.classList.toggle('hidden', isSound);
+  }
+  if (compatibleTitle) {
+    compatibleTitle.textContent = isSound ? t('compatible_audio_title') : t('compatible_audio_title_all');
+  }
+
+  if (!cleanUrl) {
+    if (urlValidationStatus) {
+      urlValidationStatus.textContent = '';
+      urlValidationStatus.className = 'url-validation-status';
+    }
+    return;
+  }
+
+  const media = detectMedia(cleanUrl);
+  const isAudio = isPlayableAudioMedia(media);
+
+  // Highlight matching badge if audio media
+  if (isAudio) {
+    providerBadges?.forEach(b => {
+      if (b.getAttribute('data-provider') === media.type) {
+        b.classList.add('detected');
+      }
+    });
+  }
+
+  if (urlValidationStatus) {
+    const providerNames = {
+      youtube: 'YouTube',
+      soundcloud: 'SoundCloud',
+      bandcamp: 'Bandcamp',
+      tunecamp: 'TuneCamp',
+      archiveorg: 'Internet Archive',
+      audius: 'Audius',
+      mixcloud: 'Mixcloud',
+      spotify: 'Spotify',
+      audio: 'Stream Audio'
+    };
+
+    if (isSound) {
+      if (isAudio) {
+        const displayName = providerNames[media.type] || media.type.toUpperCase();
+        urlValidationStatus.textContent = `${t('status_detected_prefix')}${displayName}`;
+        urlValidationStatus.className = 'url-validation-status valid';
+      } else {
+        urlValidationStatus.textContent = t('status_sound_invalid');
+        urlValidationStatus.className = 'url-validation-status invalid';
+      }
+    } else {
+      let isValidUrl = false;
+      try {
+        const u = new URL(cleanUrl);
+        isValidUrl = u.protocol === 'http:' || u.protocol === 'https:';
+      } catch (e) {
+        isValidUrl = false;
+      }
+
+      if (isValidUrl) {
+        if (isAudio) {
+          const displayName = providerNames[media.type] || media.type.toUpperCase();
+          urlValidationStatus.textContent = `${t('status_detected_prefix')}${displayName}`;
+          urlValidationStatus.className = 'url-validation-status valid';
+        } else {
+          urlValidationStatus.textContent = t('status_valid_web');
+          urlValidationStatus.className = 'url-validation-status valid';
+        }
+      } else {
+        urlValidationStatus.textContent = t('toast_invalid_url');
+        urlValidationStatus.className = 'url-validation-status invalid';
+      }
+    }
+  }
+}
+
 // --- Transmitter: Lo Slot Unico (State over History) ---
 
 function initTransmitterForm() {
+  // Live URL validation & provider detection
+  pickUrlInput?.addEventListener('input', () => {
+    updateUrlValidationUI();
+  });
+
   // 140 character limit live countdown
   pickCaptionInput?.addEventListener('input', () => {
     const len = pickCaptionInput.value.length;
@@ -2369,6 +2631,7 @@ function initTransmitterForm() {
       btn.classList.add('active');
       const tag = btn.getAttribute('data-pick-tag') || 'sound';
       if (selectedPickTagInput) selectedPickTagInput.value = tag;
+      updateUrlValidationUI();
     });
   });
 
@@ -2393,7 +2656,33 @@ function initTransmitterForm() {
 
     if (!url) {
       showToast(t('toast_invalid_url'));
+      pickUrlInput?.focus();
       return;
+    }
+
+    let isValidUrl = false;
+    try {
+      const u = new URL(url);
+      isValidUrl = u.protocol === 'http:' || u.protocol === 'https:';
+    } catch (e) {
+      isValidUrl = false;
+    }
+
+    if (!isValidUrl) {
+      showToast(t('toast_invalid_url'));
+      pickUrlInput?.focus();
+      return;
+    }
+
+    // RESTRICTION LOGIC:
+    // If tag is 'sound', ONLY accept wrapped playable audio providers!
+    if (tag === 'sound') {
+      const media = detectMedia(url);
+      if (!isPlayableAudioMedia(media)) {
+        showToast(t('toast_sound_provider_required'));
+        pickUrlInput?.focus();
+        return;
+      }
     }
 
     if (caption.length > 140) {
@@ -2609,6 +2898,7 @@ function loginWithPair(pair, username) {
       // Ensure station is in map
       slot.freq = getFrequencyForPub(pair.pub);
       stationsMap.set(pair.pub, slot);
+      updateUrlValidationUI();
     }
   });
 
