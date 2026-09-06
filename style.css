@@ -570,6 +570,9 @@ h2 {
   border-radius: 4px;
   padding: 22px;
   transition: border-color 0.2s ease;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
 }
 
 .pick-meta-row {
@@ -638,12 +641,6 @@ h2 {
 }
 
 /* Media Player & TuneCamp Integration */
-.media-player-container {
-  margin: 14px 0 16px;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
 .tunecamp-player-card {
   display: flex;
   gap: 16px;
@@ -732,6 +729,7 @@ h2 {
   border-radius: 0 4px 4px 0;
   white-space: pre-wrap;
   word-break: break-word;
+  flex: 1;
 }
 
 .pick-caption.user-caption {
@@ -749,6 +747,7 @@ h2 {
   gap: 10px;
   border-top: 1px dashed var(--border-muted);
   padding-top: 16px;
+  margin-top: auto;
 }
 
 .pick-action-group {

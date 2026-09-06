@@ -1366,19 +1366,23 @@ function detectMedia(rawUrl) {
     };
   }
 
-  // TuneCamp (sudorecords.scobrudot.dev, tunecamp domains, or routes with /releases/, /albums/, /tracks/, /share/)
+  // TuneCamp (sudorecords.scobrudot.dev, tunecamp domains, or routes with /releases/, /albums/, /tracks/, /share/, /embed/)
   const isTuneCampDomain = url.includes('sudorecords') || url.includes('tunecamp') || url.includes('scobrudot.dev');
-  const tuneCampPathMatch = url.match(/(?:https?:\/\/[^\/]+)?\/(releases|albums|tracks|share)\/([^\/?#]+)/i);
+  const tuneCampPathMatch = url.match(/(?:https?:\/\/[^\/]+)?\/(?:embed\/(?:share\/)?)?(releases?|albums?|tracks?|share)\/([^\/?#]+)/i);
   if ((isTuneCampDomain || tuneCampPathMatch) && !url.includes('github.com') && !url.includes('gitlab.com')) {
     try {
       const parsedUrl = new URL(url);
-      const pathMatch = parsedUrl.pathname.match(/\/(releases|albums|tracks|share)\/([^\/?#]+)/i);
+      const pathMatch = parsedUrl.pathname.match(/\/(?:embed\/(?:share\/)?)?(releases?|albums?|tracks?|share)\/([^\/?#]+)/i);
       if (pathMatch) {
+        const rawKind = pathMatch[1].toLowerCase().replace(/s$/, '');
+        const slug = pathMatch[2];
+        const isTrack = rawKind === 'track';
         return {
           type: 'tunecamp',
           origin: parsedUrl.origin,
-          kind: pathMatch[1].toLowerCase(),
-          slug: pathMatch[2],
+          kind: rawKind,
+          slug: slug,
+          embedUrl: `${parsedUrl.origin}/embed/${isTrack ? 'track' : 'release'}/${slug}`,
           rawUrl: url
         };
       }
@@ -1474,36 +1478,42 @@ async function resolveAudiusTrackId(media) {
 async function resolveTuneCampMetadata(media) {
   const origin = media.origin;
   const slug = media.slug;
+  const cleanQuery = (slug || '').replace(/[-_]+/g, ' ').trim();
 
-  // 1. Try public federation search endpoint (/api/catalog/search?q=...)
-  try {
-    const searchRes = await fetch(`${origin}/api/catalog/search?q=${encodeURIComponent(slug)}`);
-    if (searchRes.ok) {
-      const data = await searchRes.json();
-      const track = data.tracks && (data.tracks.find(t => 
-        String(t.id) === slug || 
-        (t.file_path && t.file_path.includes(slug)) || 
-        (t.album_title && t.album_title.toLowerCase() === slug.toLowerCase())
-      ) || data.tracks[0]);
+  // 1. Try public federation search endpoint (/api/catalog/search?q=...) with cleaned search term
+  if (cleanQuery) {
+    try {
+      const searchRes = await fetch(`${origin}/api/catalog/search?q=${encodeURIComponent(cleanQuery)}`);
+      if (searchRes.ok) {
+        const data = await searchRes.json();
+        const lowerQuery = cleanQuery.toLowerCase();
+        const track = data.tracks && (data.tracks.find(t => 
+          String(t.id) === slug || 
+          (t.title && t.title.toLowerCase() === lowerQuery) ||
+          (t.file_path && t.file_path.includes(slug)) || 
+          (t.album_title && t.album_title.toLowerCase() === lowerQuery)
+        ) || data.tracks[0]);
 
-      const album = data.albums && (data.albums.find(a => 
-        String(a.id) === slug || (a.slug && a.slug.toLowerCase() === slug.toLowerCase())
-      ) || data.albums[0]);
+        const album = data.albums && (data.albums.find(a => 
+          String(a.id) === slug || (a.slug && a.slug.toLowerCase() === slug.toLowerCase()) ||
+          (a.title && a.title.toLowerCase() === lowerQuery)
+        ) || data.albums[0]);
 
-      if (track) {
-        const coverRel = track.coverUrl || (album ? `/api/releases/${album.id}/cover` : '');
-        return {
-          title: track.title || (album && album.title) || slug,
-          artist: track.artist_name || (album && album.artist_name) || 'TuneCamp',
-          streamUrl: `${origin}/api/tracks/${track.id}/stream`,
-          coverUrl: coverRel ? (coverRel.startsWith('http') ? coverRel : `${origin}${coverRel}`) : '',
-          rawUrl: media.rawUrl,
-          origin: origin
-        };
+        if (track) {
+          const coverRel = track.coverUrl || (album ? `/api/releases/${album.id}/cover` : (track.album_id ? `/api/albums/${track.album_id}/cover` : ''));
+          return {
+            title: track.title || (album && album.title) || cleanQuery,
+            artist: track.artist_name || (album && album.artist_name) || 'TuneCamp',
+            streamUrl: `${origin}/api/tracks/${track.id}/stream`,
+            coverUrl: coverRel ? (coverRel.startsWith('http') ? coverRel : `${origin}${coverRel}`) : '',
+            rawUrl: media.rawUrl,
+            origin: origin
+          };
+        }
       }
+    } catch (e) {
+      console.warn('TuneCamp search fetch error:', e);
     }
-  } catch (e) {
-    console.warn('TuneCamp search fetch error:', e);
   }
 
   // 2. Direct release endpoint (/api/releases/:slug)
@@ -1512,20 +1522,45 @@ async function resolveTuneCampMetadata(media) {
     if (relRes.ok) {
       const rel = await relRes.json();
       const firstTrack = rel.tracks && rel.tracks[0];
-      return {
-        title: rel.title || slug,
-        artist: (firstTrack && firstTrack.artist_name) || rel.artist_name || 'TuneCamp',
-        streamUrl: firstTrack ? `${origin}/api/tracks/${firstTrack.id}/stream` : null,
-        coverUrl: `${origin}/api/releases/${rel.id || slug}/cover`,
-        rawUrl: media.rawUrl,
-        origin: origin
-      };
+      if (firstTrack) {
+        const trackId = firstTrack.id || firstTrack.track_id;
+        return {
+          title: rel.title || firstTrack.title || slug,
+          artist: firstTrack.artist_name || rel.artist_name || 'TuneCamp',
+          streamUrl: `${origin}/api/tracks/${trackId}/stream`,
+          coverUrl: `${origin}/api/releases/${rel.id || slug}/cover`,
+          rawUrl: media.rawUrl,
+          origin: origin
+        };
+      }
     }
   } catch (e) {
     console.warn('TuneCamp direct release fetch error:', e);
   }
 
-  // 3. Fallback direct stream guess if track ID is numeric
+  // 3. Direct album endpoint (/api/albums/:slug)
+  try {
+    const albRes = await fetch(`${origin}/api/albums/${encodeURIComponent(slug)}`);
+    if (albRes.ok) {
+      const alb = await albRes.json();
+      const firstTrack = alb.tracks && alb.tracks[0];
+      if (firstTrack) {
+        const trackId = firstTrack.id || firstTrack.track_id;
+        return {
+          title: alb.title || firstTrack.title || slug,
+          artist: firstTrack.artist_name || alb.artist_name || 'TuneCamp',
+          streamUrl: `${origin}/api/tracks/${trackId}/stream`,
+          coverUrl: `${origin}/api/albums/${alb.id || slug}/cover`,
+          rawUrl: media.rawUrl,
+          origin: origin
+        };
+      }
+    }
+  } catch (e) {
+    console.warn('TuneCamp direct album fetch error:', e);
+  }
+
+  // 4. Fallback direct stream guess if track ID is numeric
   if (/^\d+$/.test(slug)) {
     return {
       title: 'TuneCamp Track #' + slug,
@@ -1564,13 +1599,12 @@ function renderStationMedia(station) {
   mediaPlayerContainer.classList.remove('hidden');
 
   if (media.type === 'tunecamp') {
-    // New embed endpoint: /embed/:type/:id provides a complete player.
-    // If the station URL matches this pattern, skip metadata resolution and render the iframe directly.
-    const embedMatch = new URL(station.url).pathname.startsWith('/embed/');
-    if (embedMatch) {
+    // If user passed a dedicated embed URL, render the clean iframe directly.
+    const isExplicitEmbed = new URL(station.url).pathname.startsWith('/embed/');
+    if (isExplicitEmbed) {
       mediaPlayerContainer.innerHTML = `
         <iframe
-          style="border: 0; width: 100%; height: 260px; border-radius: 4px;"
+          style="border: 0; width: 100%; height: 240px; border-radius: 8px;"
           src="${station.url}"
           title="TuneCamp stream"
           allow="autoplay; encrypted-media"
@@ -1591,10 +1625,11 @@ function renderStationMedia(station) {
       if (activeStationPub !== station.pub) return;
 
       if (!tcData || !tcData.streamUrl) {
+        const embedTarget = media.embedUrl || (media.origin && media.slug ? `${media.origin}/embed/release/${media.slug}` : station.url);
         mediaPlayerContainer.innerHTML = `
           <iframe
-            style="border: 0; width: 100%; height: 260px; border-radius: 4px;"
-            src="${station.url}"
+            style="border: 0; width: 100%; height: 240px; border-radius: 8px;"
+            src="${embedTarget}"
             title="TuneCamp stream"
             allow="autoplay; encrypted-media"
           ></iframe>
@@ -1624,6 +1659,15 @@ function renderStationMedia(station) {
       }
     }).catch(err => {
       console.error('TuneCamp render error:', err);
+      const fallbackTarget = media.embedUrl || (media.origin && media.slug ? `${media.origin}/embed/release/${media.slug}` : station.url);
+      mediaPlayerContainer.innerHTML = `
+        <iframe
+          style="border: 0; width: 100%; height: 240px; border-radius: 8px;"
+          src="${fallbackTarget}"
+          title="TuneCamp stream"
+          allow="autoplay; encrypted-media"
+        ></iframe>
+      `;
     });
   } else if (media.type === 'spotify') {
     const height = (media.itemType === 'track' || media.itemType === 'episode') ? 152 : 352;

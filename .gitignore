@@ -1,2 +1,6 @@
 .vercel
 node_modules/
+
+# Pix Agent
+.pi/
+.pi-lens/
