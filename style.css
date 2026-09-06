@@ -395,11 +395,16 @@ h2 {
 /* Radio Tuner Box */
 .radio-tuner {
   border: 1px solid var(--border-color);
-  background-color: var(--card-bg);
+  background-color: var(--bg-color);
   border-radius: 4px;
   padding: 20px;
   margin-bottom: 24px;
   position: relative;
+  z-index: 5;
+}
+
+[data-theme="dark"] .radio-tuner {
+  background-color: #121319;
 }
 
 .frequency-banner {
@@ -1533,6 +1538,8 @@ body.canvas-mode .container {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: relative;
+  z-index: 5;
 }
 
 body.canvas-mode #radio-section {
@@ -1541,11 +1548,15 @@ body.canvas-mode #radio-section {
 }
 
 body.canvas-mode .radio-tuner {
+  background-color: var(--bg-color);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.09);
+  position: relative;
+  z-index: 5;
 }
 
 [data-theme="dark"] body.canvas-mode .radio-tuner {
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+  background-color: #121319;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65);
 }
 
 /* Floating exit button in canvas mode */
@@ -1619,7 +1630,7 @@ body.canvas-mode .radio-tuner {
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
   opacity: 0.9;
   transition: opacity 0.3s ease;
 }

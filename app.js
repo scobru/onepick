@@ -3170,7 +3170,7 @@ function setupCanvasMode() {
   });
 }
 
-// --- Radio Ether Wave & FM Shockwave Background Visualizer ---
+// --- Ultra-Lightweight Radio Ether Wave & FM Shockwave Background Visualizer ---
 
 let etherCanvas = null;
 let etherCtx = null;
@@ -3179,42 +3179,27 @@ let etherCurrentFreq = 88.0;
 let etherTargetFreq = 88.0;
 let etherPhase = 0;
 let etherWarpEnergy = 0;
-const ETHER_WARP_DECAY = 0.95;
 const etherRings = [];
-const etherSparks = [];
-const TOTAL_SPARKS = 32;
 
 function initEtherVisualizer() {
   etherCanvas = document.getElementById('radio-ether-canvas');
   if (!etherCanvas) return;
-  etherCtx = etherCanvas.getContext('2d');
+  etherCtx = etherCanvas.getContext('2d', { alpha: true });
   if (!etherCtx) return;
 
   function resizeCanvas() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const w = window.innerWidth;
     const h = window.innerHeight;
-    etherCanvas.width = w * dpr;
-    etherCanvas.height = h * dpr;
+    // Cap dpr at 1.25 for buttery-smooth performance on any GPU
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+    etherCanvas.width = Math.floor(w * dpr);
+    etherCanvas.height = Math.floor(h * dpr);
     etherCtx.setTransform(1, 0, 0, 1, 0, 0);
     etherCtx.scale(dpr, dpr);
   }
 
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
-
-  // Initialize ambient ether sparks
-  for (let i = 0; i < TOTAL_SPARKS; i++) {
-    etherSparks.push({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      vx: (Math.random() - 0.5) * 0.45,
-      vy: (Math.random() - 0.5) * 0.35,
-      size: 1 + Math.random() * 1.8,
-      alpha: 0.12 + Math.random() * 0.45,
-      phase: Math.random() * Math.PI * 2
-    });
-  }
 
   function renderEtherFrame() {
     if (document.hidden) {
@@ -3233,13 +3218,11 @@ function initEtherVisualizer() {
     etherCurrentFreq += (etherTargetFreq - etherCurrentFreq) * 0.08;
     const normFreq = Math.max(0, Math.min(1, (etherCurrentFreq - FREQ_MIN) / (FREQ_MAX - FREQ_MIN)));
 
-    // Decay warp energy
-    etherWarpEnergy *= ETHER_WARP_DECAY;
+    // Smooth warp decay
+    etherWarpEnergy *= 0.93;
     if (etherWarpEnergy < 0.005) etherWarpEnergy = 0;
 
-    // Advance wave phase (faster during warp or when radio is on)
-    const phaseSpeed = 0.014 + (isRadioOn ? 0.014 : 0) + etherWarpEnergy * 0.055;
-    etherPhase += phaseSpeed;
+    etherPhase += 0.012 + (isRadioOn ? 0.012 : 0) + etherWarpEnergy * 0.035;
 
     // --- 1. Draw Expanding Electromagnetic Shockwave Rings ---
     for (let i = etherRings.length - 1; i >= 0; i--) {
@@ -3250,7 +3233,8 @@ function initEtherVisualizer() {
       }
 
       ring.r += ring.speed;
-      ring.alpha = Math.max(0, 0.88 * (1 - ring.r / ring.maxR));
+      const progress = ring.r / ring.maxR;
+      ring.alpha = Math.max(0, 0.75 * (1 - progress));
 
       if (ring.r >= ring.maxR || ring.alpha <= 0.01) {
         etherRings.splice(i, 1);
@@ -3263,123 +3247,73 @@ function initEtherVisualizer() {
 
       const strokeColor = isDark
         ? (ring.isRandom ? `rgba(245, 158, 11, ${ring.alpha})` : `rgba(16, 185, 129, ${ring.alpha})`)
-        : `rgba(15, 23, 42, ${ring.alpha * 0.45})`;
+        : `rgba(15, 23, 42, ${ring.alpha * 0.35})`;
 
       etherCtx.strokeStyle = strokeColor;
-      etherCtx.lineWidth = ring.isRandom ? 2.2 : 1.4;
-      if (ring.dash) {
-        etherCtx.setLineDash(ring.dash);
-      }
-      if (isDark) {
-        etherCtx.shadowBlur = ring.isRandom ? 14 : 7;
-        etherCtx.shadowColor = ring.isRandom ? 'rgba(245, 158, 11, 0.65)' : 'rgba(16, 185, 129, 0.45)';
-      }
+      etherCtx.lineWidth = ring.isRandom ? 2.0 : 1.4;
+      etherCtx.setLineDash(ring.dash);
       etherCtx.stroke();
 
       // Telemetry frequency text floating with leading ring
-      if (ring.showText && ring.alpha > 0.25 && ring.r > 80 && ring.r < ring.maxR * 0.75) {
-        etherCtx.font = '10px ui-monospace, SFMono-Regular, monospace';
+      if (ring.showText && ring.alpha > 0.25 && ring.r > 70 && ring.r < ring.maxR * 0.7) {
+        etherCtx.font = '10px ui-monospace, monospace';
         etherCtx.fillStyle = isDark
-          ? (ring.isRandom ? `rgba(245, 158, 11, ${ring.alpha * 0.95})` : `rgba(16, 185, 129, ${ring.alpha * 0.95})`)
-          : `rgba(15, 23, 42, ${ring.alpha * 0.65})`;
-        const textAngle = -Math.PI / 4; // top-right quadrant
-        const tx = ring.cx + Math.cos(textAngle) * (ring.r + 6);
-        const ty = ring.cy + Math.sin(textAngle) * (ring.r + 6);
+          ? (ring.isRandom ? `rgba(245, 158, 11, ${ring.alpha * 0.9})` : `rgba(16, 185, 129, ${ring.alpha * 0.9})`)
+          : `rgba(15, 23, 42, ${ring.alpha * 0.5})`;
+        const tx = ring.cx + ring.r * 0.707 + 6;
+        const ty = ring.cy - ring.r * 0.707 - 6;
         etherCtx.fillText(`${ring.freqText} · FM LOCK`, tx, ty);
       }
 
       etherCtx.restore();
     }
 
-    // --- 2. Draw Radio Carrier Waves (FM Oscilloscope) ---
-    // Wave 1: Primary FM Carrier Wave (Amber/Slate)
+    // --- 2. Draw Radio Carrier Waves (Zero ShadowBlur, Step 16, GPU Pure Stroke) ---
     const baseCenterY = h * 0.5;
-    const waveAmp1 = (26 + (isRadioOn ? 22 : 0) + etherWarpEnergy * 38);
-    const waveK1 = 0.0032 + normFreq * 0.006 + Math.sin(etherPhase * 0.4) * 0.0006;
-    const jitter = (Math.random() - 0.5) * etherWarpEnergy * 14;
+    const waveAmp1 = 22 + (isRadioOn ? 16 : 0) + etherWarpEnergy * 24;
+    const waveK1 = 0.003 + normFreq * 0.005;
 
+    // Wave 1: Primary FM Carrier Wave (Amber/Slate)
     etherCtx.save();
     etherCtx.beginPath();
-    for (let x = 0; x <= w; x += 4) {
-      const y = baseCenterY +
-        Math.sin(x * waveK1 + etherPhase) * waveAmp1 * Math.cos(x * 0.0008 + etherPhase * 0.3) +
-        Math.sin(x * 0.0015 - etherPhase * 0.7) * (waveAmp1 * 0.35) +
-        jitter;
+    for (let x = 0; x <= w + 16; x += 16) {
+      const y = baseCenterY + Math.sin(x * waveK1 + etherPhase) * waveAmp1;
       if (x === 0) etherCtx.moveTo(x, y);
       else etherCtx.lineTo(x, y);
     }
-    etherCtx.strokeStyle = isDark
-      ? `rgba(245, 158, 11, ${0.35 + (isRadioOn ? 0.22 : 0) + etherWarpEnergy * 0.32})`
-      : `rgba(15, 23, 42, ${0.12 + (isRadioOn ? 0.08 : 0)})`;
-    etherCtx.lineWidth = 1.8;
+    // High-performance double-stroke glow for dark mode
     if (isDark) {
-      etherCtx.shadowBlur = isRadioOn || etherWarpEnergy > 0.2 ? 12 : 5;
-      etherCtx.shadowColor = 'rgba(245, 158, 11, 0.55)';
+      etherCtx.strokeStyle = `rgba(245, 158, 11, ${0.1 + (isRadioOn ? 0.08 : 0)})`;
+      etherCtx.lineWidth = 4.5;
+      etherCtx.stroke();
     }
+    etherCtx.strokeStyle = isDark
+      ? `rgba(245, 158, 11, ${0.45 + (isRadioOn ? 0.25 : 0)})`
+      : `rgba(15, 23, 42, ${0.14 + (isRadioOn ? 0.08 : 0)})`;
+    etherCtx.lineWidth = 1.6;
     etherCtx.stroke();
     etherCtx.restore();
 
     // Wave 2: Harmonic Resonance Wave (Emerald/Teal)
-    const waveAmp2 = (18 + (isRadioOn ? 14 : 0) + etherWarpEnergy * 22);
-    const waveK2 = waveK1 * 1.618;
+    const waveAmp2 = 14 + (isRadioOn ? 10 : 0) + etherWarpEnergy * 14;
+    const waveK2 = waveK1 * 1.5;
     etherCtx.save();
     etherCtx.beginPath();
-    for (let x = 0; x <= w; x += 5) {
-      const y = (baseCenterY + 24) +
-        Math.sin(x * waveK2 - etherPhase * 1.2) * waveAmp2 * Math.cos(x * 0.0012) +
-        Math.cos(x * 0.002 + etherPhase * 0.5) * 8;
+    for (let x = 0; x <= w + 16; x += 18) {
+      const y = (baseCenterY + 28) + Math.sin(x * waveK2 - etherPhase * 1.3) * waveAmp2;
       if (x === 0) etherCtx.moveTo(x, y);
       else etherCtx.lineTo(x, y);
     }
-    etherCtx.strokeStyle = isDark
-      ? `rgba(16, 185, 129, ${0.28 + (isRadioOn ? 0.18 : 0) + etherWarpEnergy * 0.25})`
-      : `rgba(13, 148, 136, ${0.1 + (isRadioOn ? 0.06 : 0)})`;
-    etherCtx.lineWidth = 1.4;
     if (isDark) {
-      etherCtx.shadowBlur = 6;
-      etherCtx.shadowColor = 'rgba(16, 185, 129, 0.4)';
-    }
-    etherCtx.stroke();
-    etherCtx.restore();
-
-    // Wave 3: Sub-carrier Cyan/Violet Horizon Wave
-    const waveAmp3 = (12 + (isRadioOn ? 10 : 0));
-    const waveK3 = waveK1 * 0.5;
-    etherCtx.save();
-    etherCtx.beginPath();
-    for (let x = 0; x <= w; x += 6) {
-      const y = (baseCenterY - 26) +
-        Math.cos(x * waveK3 + etherPhase * 0.8) * waveAmp3 +
-        Math.sin(x * 0.0006 - etherPhase * 0.4) * 12;
-      if (x === 0) etherCtx.moveTo(x, y);
-      else etherCtx.lineTo(x, y);
+      etherCtx.strokeStyle = `rgba(16, 185, 129, ${0.08 + (isRadioOn ? 0.06 : 0)})`;
+      etherCtx.lineWidth = 3.5;
+      etherCtx.stroke();
     }
     etherCtx.strokeStyle = isDark
-      ? `rgba(56, 189, 248, ${0.18 + (isRadioOn ? 0.12 : 0)})`
-      : `rgba(99, 102, 241, 0.08)`;
-    etherCtx.lineWidth = 1.0;
+      ? `rgba(16, 185, 129, ${0.32 + (isRadioOn ? 0.18 : 0)})`
+      : `rgba(13, 148, 136, ${0.1 + (isRadioOn ? 0.06 : 0)})`;
+    etherCtx.lineWidth = 1.3;
     etherCtx.stroke();
-    etherCtx.restore();
-
-    // --- 3. Draw Ambient Phosphor Sparks ---
-    etherCtx.save();
-    for (let i = 0; i < etherSparks.length; i++) {
-      const sp = etherSparks[i];
-      sp.x += sp.vx + (etherWarpEnergy > 0.1 ? (Math.random() - 0.5) * etherWarpEnergy * 2.8 : 0);
-      sp.y += sp.vy;
-      sp.phase += 0.035;
-
-      if (sp.x < 0) sp.x = w;
-      if (sp.x > w) sp.x = 0;
-      if (sp.y < 0) sp.y = h;
-      if (sp.y > h) sp.y = 0;
-
-      const sparkAlpha = Math.max(0.04, Math.min(0.75, sp.alpha + Math.sin(sp.phase) * 0.18 + etherWarpEnergy * 0.35));
-      etherCtx.fillStyle = isDark
-        ? `rgba(245, 158, 11, ${sparkAlpha})`
-        : `rgba(15, 23, 42, ${sparkAlpha * 0.35})`;
-      etherCtx.fillRect(sp.x, sp.y, sp.size, sp.size);
-    }
     etherCtx.restore();
 
     etherAnimFrameId = requestAnimationFrame(renderEtherFrame);
@@ -3390,11 +3324,11 @@ function initEtherVisualizer() {
 
 function triggerEtherPulse(freq = 88.0, isRandom = false) {
   etherTargetFreq = freq;
-  etherWarpEnergy = isRandom ? 2.0 : 1.0;
+  etherWarpEnergy = isRandom ? 1.6 : 0.9;
 
   // Flash subtle hardware feedback on radio tuner card
   document.body.classList.add('ether-tuning-warp');
-  setTimeout(() => document.body.classList.remove('ether-tuning-warp'), 350);
+  setTimeout(() => document.body.classList.remove('ether-tuning-warp'), 300);
 
   // Compute tuner origin coordinates
   const tuner = document.querySelector('.radio-tuner');
@@ -3407,38 +3341,25 @@ function triggerEtherPulse(freq = 88.0, isRandom = false) {
   }
 
   const maxR = Math.max(window.innerWidth, window.innerHeight) * 1.05;
-  const numRings = isRandom ? 3 : 2;
+  const numRings = isRandom ? 2 : 1;
 
   for (let i = 0; i < numRings; i++) {
     etherRings.push({
       cx: cx,
       cy: cy,
-      r: 15 + i * 22,
+      r: 20 + i * 25,
       maxR: maxR,
       speed: isRandom ? 6.5 : 5.0,
       delay: i * 6,
-      alpha: 0.88,
+      alpha: 0.85,
       freqText: `FM ${freq.toFixed(2)} MHz`,
       showText: i === 0,
       isRandom: isRandom,
-      dash: i % 2 === 0 ? [8, 5] : [4, 4]
+      dash: [6, 6]
     });
   }
-
-  // Energize sparks outwards from tuner center
-  if (etherSparks && etherSparks.length > 0) {
-    for (let i = 0; i < etherSparks.length; i++) {
-      if (Math.random() > 0.35) {
-        const angle = Math.random() * Math.PI * 2;
-        const spd = 1.5 + Math.random() * 2.8;
-        etherSparks[i].x = cx + Math.cos(angle) * 30;
-        etherSparks[i].y = cy + Math.sin(angle) * 30;
-        etherSparks[i].vx = Math.cos(angle) * spd;
-        etherSparks[i].vy = Math.sin(angle) * spd;
-      }
-    }
-  }
 }
+
 
 // --- App Initialization ---
 
