@@ -87,6 +87,8 @@ body {
 .container {
   max-width: 680px;
   margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 
 /* Links */
@@ -1605,4 +1607,30 @@ body.canvas-mode .radio-tuner {
   .tuner-scale {
     height: 40px;
   }
+}
+
+/* ==========================================================================
+   Radio Ether Wave Canvas Background (FM Carrier & Shockwave Visualizer)
+   ========================================================================== */
+.radio-ether-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+[data-theme="dark"] .radio-ether-canvas {
+  opacity: 0.98;
+}
+
+/* Subtle analog tuner hardware feedback on tuning */
+body.ether-tuning-warp .radio-tuner {
+  border-color: var(--amber-color);
+  box-shadow: 0 0 26px rgba(245, 158, 11, 0.35);
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }

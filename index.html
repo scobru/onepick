@@ -24,7 +24,10 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
 
-  <body>
+  <body class="canvas-mode">
+    <!-- ETHER RADIO WAVE VISUALIZER BACKGROUND -->
+    <canvas id="radio-ether-canvas" class="radio-ether-canvas" aria-hidden="true"></canvas>
+
     <div class="container">
       <header>
         <div class="header-row">
@@ -130,7 +133,7 @@
       </header>
 
       <!-- EXIT CANVAS FLOATING BAR (Canvas Mode) -->
-      <div id="canvas-exit-bar" class="canvas-exit-bar hidden">
+      <div id="canvas-exit-bar" class="canvas-exit-bar">
         <button id="exit-canvas-btn" class="bracket-btn btn-exit-canvas" type="button" title="Esci dalla modalità canvas (Esc)" data-i18n-title="canvas_exit_title">
           <span data-i18n="canvas_exit">[ ✕ esci dal canvas (Esc) ]</span>
         </button>
