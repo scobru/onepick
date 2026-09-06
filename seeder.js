@@ -55,7 +55,7 @@ export const SEED_BOTS = [
     username: 'archive-echo',
     passphrase: 'onepick-seed-archive-2026-ether',
     tag: 'read',
-    desc: 'Archivio radiofonico storico, letture liriche e conversazioni d'epoca. / Historical radio archive, lyrical readings, and period conversations.'
+    desc: "Archivio radiofonico storico, letture liriche e conversazioni d'epoca. / Historical radio archive, lyrical readings, and period conversations."
   }
 ];
 
