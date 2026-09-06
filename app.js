@@ -1414,11 +1414,12 @@ function detectMedia(rawUrl) {
   if (mixcloudMatch && mixcloudMatch[1] && mixcloudMatch[2]) {
     const mcUser = mixcloudMatch[1];
     const mcSlug = mixcloudMatch[2];
+    const canonicalShowUrl = `https://www.mixcloud.com/${mcUser}/${mcSlug}/`;
     return {
       type: 'mixcloud',
       user: mcUser,
       slug: mcSlug,
-      embedUrl: `https://www.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2F${encodeURIComponent(mcUser)}%2F${encodeURIComponent(mcSlug)}%2F`,
+      embedUrl: `https://www.mixcloud.com/widget/iframe/?feed=${encodeURIComponent(canonicalShowUrl)}&hide_cover=1`,
       rawUrl: url
     };
   }
@@ -1723,7 +1724,7 @@ function renderStationMedia(station) {
         height="120"
         src="${media.embedUrl}${autoplayParam}"
         frameborder="0"
-        allow="autoplay"
+        allow="autoplay; encrypted-media; fullscreen"
         title="onepick Mixcloud player"
         style="border: 0; width: 100%; border-radius: 4px;"
       ></iframe>

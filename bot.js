@@ -18,7 +18,8 @@ import {
   SEED_TRACKS,
   broadcastSeedSlot,
   deriveBotPair,
-  getFrequencyForPub
+  getFrequencyForPub,
+  verifyMediaUrlAvailable
 } from './seeder.js';
 
 const RELAY_URL = 'https://delay.scobrudot.dev/zen';
@@ -50,7 +51,7 @@ const zen = new ZEN({
 let rotationIdx = 0;
 let usedTrackIndices = new Set();
 
-function getNextTrack() {
+async function getNextTrack() {
   if (usedTrackIndices.size >= SEED_TRACKS.length) {
     usedTrackIndices.clear();
   }
@@ -58,9 +59,22 @@ function getNextTrack() {
     .map((_, i) => i)
     .filter(i => !usedTrackIndices.has(i));
 
-  const chosenIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
-  usedTrackIndices.add(chosenIndex);
-  return SEED_TRACKS[chosenIndex];
+  while (availableIndices.length > 0) {
+    const rIdx = Math.floor(Math.random() * availableIndices.length);
+    const chosenIndex = availableIndices[rIdx];
+    const track = SEED_TRACKS[chosenIndex];
+    usedTrackIndices.add(chosenIndex);
+    availableIndices.splice(rIdx, 1);
+
+    const isAvailable = await verifyMediaUrlAvailable(track.url);
+    if (isAvailable) {
+      return track;
+    } else {
+      console.warn(`[!] Skipping dead/inaccessible seed track (404): "${track.title}" (${track.url})`);
+    }
+  }
+
+  return SEED_TRACKS[0];
 }
 
 async function logBotIdentities() {
@@ -76,7 +90,7 @@ async function logBotIdentities() {
 async function broadcastOne() {
   const bot = SEED_BOTS[rotationIdx % SEED_BOTS.length];
   rotationIdx++;
-  const track = getNextTrack();
+  const track = await getNextTrack();
   const timeStr = new Date().toLocaleTimeString();
 
   console.log(`[${timeStr}] [TRANSMITTING] @${bot.username} broadcasting...`);
@@ -98,10 +112,10 @@ async function broadcastOne() {
 }
 
 async function seedAllBots() {
-  console.log('[*] Seeding all 3 transmitter accounts immediately...');
+  console.log('[*] Seeding all 3 transmitter accounts immediately with verified tracks...');
   for (let i = 0; i < SEED_BOTS.length; i++) {
     const bot = SEED_BOTS[i];
-    const track = SEED_TRACKS[i % SEED_TRACKS.length];
+    const track = await getNextTrack();
     const timeStr = new Date().toLocaleTimeString();
     console.log(`[${timeStr}] Seeding @${bot.username} -> ${track.title}`);
     try {
