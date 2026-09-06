@@ -40,6 +40,7 @@
               type="button"
               aria-label="Accendi / Spegni ricevitore radio"
               title="Accendi / Spegni ricevitore sonoro (sblocca audio e fruscio)"
+              data-i18n-title="power_btn_title"
             >
               <span id="power-icon">⏻</span> <span id="power-text" data-i18n="power_btn_on">ACCENDI RADIO</span>
             </button>
@@ -61,6 +62,7 @@
               type="button"
               aria-label="Cambia lingua / Switch language"
               title="Passa a Inglese / Switch to English"
+              data-i18n-title="lang_btn_title"
             >
               <span id="lang-text">[ EN ]</span>
             </button>
@@ -70,6 +72,7 @@
               class="bracket-btn"
               type="button"
               title="Guida e tutorial / Guide & tutorial"
+              data-i18n-title="tutorial_trigger_title"
             >
               <span data-i18n="nav_guide">[ guida ? ]</span>
             </button>
@@ -80,6 +83,7 @@
               type="button"
               aria-label="Toggle tema"
               title="Alterna tema chiaro / scuro"
+              data-i18n-title="theme_toggle_title"
             >
               <span id="theme-text">[ dark ]</span>
             </button>
@@ -89,6 +93,7 @@
               class="bracket-btn"
               type="button"
               title="Apri il tuo cassetto privato di bookmark locali"
+              data-i18n-title="cassetto_trigger_title"
             >
               <span data-i18n="nav_cassetto">[ cassetto </span><span id="cassetto-count">(0)</span> ]
             </button>
@@ -98,6 +103,7 @@
               class="bracket-btn"
               type="button"
               title="Accedi al tuo nodo trasmettitore"
+              data-i18n-title="login_trigger_title"
             >
               <span data-i18n="nav_login">[ login ]</span>
             </button>
@@ -105,7 +111,7 @@
             <div id="auth-controls" class="hidden" style="align-items: center; gap: 8px;">
               <span id="author-sigil-display" class="station-sigil-icon" title="Sigillo crittografico del tuo nodo" data-i18n-title="sigil_own_title"></span>
               <span class="auth-badge" id="author-badge" title="Chiave pubblica del tuo nodo"></span>
-              <button id="logout-btn" class="bracket-btn btn-danger" type="button" title="Disconnetti nodo">
+              <button id="logout-btn" class="bracket-btn btn-danger" type="button" title="Disconnetti nodo" data-i18n-title="logout_btn_title">
                 <span data-i18n="nav_logout">[ logout ]</span>
               </button>
             </div>
@@ -136,7 +142,7 @@
           <div class="section-header">
             <h2 data-i18n="radio_section_title">[ Sintonizzatore Radio ]</h2>
             <div class="section-header-actions" style="display: flex; align-items: center; gap: 8px;">
-              <span class="status-badge" id="current-station-badge" data-i18n="badge_tuned">sintonizzato</span>
+              <span class="status-badge" id="current-station-badge">sintonizzato</span>
               <button
                 id="radio-canvas-quick-btn"
                 class="bracket-btn btn-canvas-quick"
@@ -160,7 +166,7 @@
               </div>
               <div class="peer-frequency-row">
                 <span id="peer-sigil-display" class="station-sigil-icon" title="Sigillo crittografico della stazione" data-i18n-title="sigil_station_title"></span>
-                <div class="peer-frequency-key" id="peer-pub-display" title="Chiave pubblica del peer in onda" data-i18n="peer_scanning">
+                <div class="peer-frequency-key" id="peer-pub-display" title="Chiave pubblica del peer in onda">
                   nodo: in scansione...
                 </div>
               </div>
@@ -168,7 +174,7 @@
 
             <!-- Scala Analogica Sintonizzatore -->
             <div class="tuner-scale-container">
-              <div class="tuner-scale" id="tuner-scale" title="Clicca o trascina per sintonizzare manualmente">
+              <div class="tuner-scale" id="tuner-scale" title="Clicca o trascina per sintonizzare manualmente" data-i18n-title="scale_title">
                 <div class="scale-ticks" id="scale-ticks"></div>
                 <div class="tuner-needle" id="tuner-needle"></div>
               </div>
@@ -184,13 +190,13 @@
             <!-- Controlli Sintonizzazione -->
             <div class="tuner-controls">
               <div class="tuner-nav-group">
-                <button id="tune-prev-btn" class="bracket-btn" type="button" title="Frequenza precedente">
+                <button id="tune-prev-btn" class="bracket-btn" type="button" title="Frequenza precedente" data-i18n-title="tune_prev_title">
                   <span data-i18n="tune_prev">[ ◂ prec ]</span>
                 </button>
-                <button id="tune-random-btn" class="bracket-btn" type="button" title="Sintonizza frequenza a caso">
+                <button id="tune-random-btn" class="bracket-btn" type="button" title="Sintonizza frequenza a caso" data-i18n-title="tune_random_title">
                   <span data-i18n="tune_random">[ a caso ⚄ ]</span>
                 </button>
-                <button id="tune-next-btn" class="bracket-btn" type="button" title="Frequenza successiva">
+                <button id="tune-next-btn" class="bracket-btn" type="button" title="Frequenza successiva" data-i18n-title="tune_next_title">
                   <span data-i18n="tune_next">[ succ ▸ ]</span>
                 </button>
               </div>
@@ -211,7 +217,7 @@
                 <div class="pick-meta-row">
                   <div class="pick-author-cluster">
                     <span id="pick-sigil-display" class="station-sigil-icon" title="Sigillo crittografico del nodo" data-i18n-title="sigil_node_title"></span>
-                    <span id="pick-origin-badge" class="clickable-badge" title="Clicca per visualizzare la scheda tecnica della stazione" data-i18n="pick_origin_default">TRASMETTITORE AUTENTICATO</span>
+                    <span id="pick-origin-badge" class="clickable-badge" title="Clicca per visualizzare la scheda tecnica della stazione" data-i18n-title="pick_origin_badge_title">TRASMETTITORE AUTENTICATO</span>
                   </div>
                   <span class="peer-tag-badge" id="pick-tag-badge">#obscureweb</span>
                   <span id="pick-time-badge">in onda da --</span>
@@ -236,13 +242,13 @@
                   id="pick-url-link"
                 >
                   <span class="domain-pill" id="pick-domain-pill">[ link ]</span>
-                  <span id="pick-url-text" data-i18n="pick_loading">Caricamento frequenza...</span>
+                  <span id="pick-url-text">Caricamento frequenza...</span>
                 </a>
 
                 <!-- Player Audio / Media Integrato -->
                 <div id="media-player-container" class="media-player-container hidden"></div>
 
-                <div class="pick-caption" id="pick-caption-text" data-i18n="pick_no_signal">
+                <div class="pick-caption" id="pick-caption-text">
                   // Nessun segnale agganciato. Muovi la manopola della radio per sintonizzare una frequenza.
                 </div>
 
@@ -253,16 +259,18 @@
                       class="bracket-btn"
                       type="button"
                       title="Salva questo pick solo per te nel tuo cassetto privato locale"
+                      data-i18n-title="tooltip_save_cassetto"
                     >
-                      <span data-i18n="action_save_cassetto">[ Salva nel Cassetto ]</span>
+                      [ Salva nel Cassetto ]
                     </button>
                     <button
                       id="silent-nod-btn"
                       class="bracket-btn"
                       type="button"
                       title="Invia un cenno discreto e invisibile al trasmettitore"
+                      data-i18n-title="tooltip_silent_nod"
                     >
-                      <span data-i18n="action_silent_nod">[ Cenno Silenzioso ~ ]</span>
+                      [ Cenno Silenzioso ~ ]
                     </button>
                   </div>
 
@@ -272,6 +280,7 @@
                       class="bracket-btn"
                       type="button"
                       title="Visualizza scheda tecnica, permalink e dettagli del nodo"
+                      data-i18n-title="station_profile_title"
                     >
                       <span data-i18n="action_station_profile">[ Scheda Stazione ☵ ]</span>
                     </button>
@@ -280,6 +289,7 @@
                       class="bracket-btn"
                       type="button"
                       title="Copia link diretto a questa frequenza"
+                      data-i18n-title="copy_link_title"
                     >
                       <span data-i18n="action_copy_link">[ Copia ]</span>
                     </button>
@@ -288,6 +298,7 @@
                       class="bracket-btn btn-report"
                       type="button"
                       title="Segnala link sospetto/fraudolento o silenzia frequenza"
+                      data-i18n-title="report_btn_title"
                     >
                       [ ⚠ ]
                     </button>
@@ -302,13 +313,13 @@
         <section id="transmitter-section">
           <div class="section-header">
             <h2 data-i18n="transmitter_title">[ Il Tuo Slot Unico ]</h2>
-            <span class="status-badge" id="slot-status-badge" data-i18n="slot_inactive">inattivo</span>
+            <span class="status-badge" id="slot-status-badge">inattivo</span>
           </div>
 
           <!-- Banner Attrito Positivo -->
           <div class="friction-box locked" id="friction-box">
             <span class="friction-icon" id="friction-icon">🔒</span>
-            <div id="friction-text" data-i18n="friction_locked_text">
+            <div id="friction-text">
               <strong>Attrito Positivo attivo:</strong> Per poter aggiornare il tuo pick della giornata, devi prima ascoltare la rete. Salva almeno un pick nel tuo cassetto o invia un cenno silenzioso a una frequenza.
             </div>
           </div>
@@ -366,11 +377,12 @@
                   class="bracket-btn btn-success"
                   disabled
                   title="Soddisfa l'attrito positivo per sbloccare la trasmissione"
+                  data-i18n-title="transmit_btn_locked_title"
                 >
                   <span data-i18n="transmit_btn_locked">[ 🔒 Sblocca prima di trasmettere ]</span>
                 </button>
 
-                <span id="nods-received-badge" class="status-badge hidden" title="Cenni silenziosi ricevuti dai tuoi ascoltatori">
+                <span id="nods-received-badge" class="status-badge hidden" title="Cenni silenziosi ricevuti dai tuoi ascoltatori" data-i18n-title="nods_received_title">
                   ~ 0 cenni ricevuti
                 </span>
               </div>
@@ -449,7 +461,7 @@
             <div id="auth-alert" class="hidden" style="color: var(--danger-color); font-size: 0.85rem; margin-bottom: 14px;"></div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 20px;">
-              <button type="button" id="quick-guest-btn" class="bracket-btn" title="Crea un'identità temporanea generata sul momento">
+              <button type="button" id="quick-guest-btn" class="bracket-btn" title="Crea un'identità temporanea generata sul momento" data-i18n-title="btn_quick_guest_title">
                 <span data-i18n="btn_quick_guest">[ genera chiave casuale ]</span>
               </button>
               <div style="display: flex; gap: 8px;">
@@ -494,7 +506,7 @@
               <span class="profile-key" data-i18n="profile_crypto_key">Chiave Crittografica:</span>
               <div class="pubkey-container">
                 <code id="prof-pubkey-text" class="pubkey-code">~...</code>
-                <button id="prof-copy-pub-btn" class="bracket-btn" type="button" title="Copia chiave pubblica completa"><span data-i18n="btn_copy_pub">[ copia chiave ]</span></button>
+                <button id="prof-copy-pub-btn" class="bracket-btn" type="button" title="Copia chiave pubblica completa" data-i18n-title="btn_copy_pub_title"><span data-i18n="btn_copy_pub">[ copia chiave ]</span></button>
               </div>
             </div>
             <div class="profile-info-row">
@@ -505,14 +517,14 @@
               <span class="profile-key" data-i18n="profile_permalink">Permalink Stazione:</span>
               <div class="permalink-container">
                 <input type="text" id="prof-permalink-input" readonly class="permalink-input" />
-                <button id="prof-copy-link-btn" class="bracket-btn btn-success" type="button"><span data-i18n="btn_copy_link">[ copia link ]</span></button>
+                <button id="prof-copy-link-btn" class="bracket-btn btn-success" type="button" title="Copia permalink" data-i18n-title="btn_copy_link_title"><span data-i18n="btn_copy_link">[ copia link ]</span></button>
               </div>
             </div>
           </div>
 
           <div class="profile-actions-row">
             <button id="prof-mute-toggle-btn" class="bracket-btn btn-danger" type="button">
-              <span data-i18n="profile_btn_mute">[ Silenzia questa Stazione ]</span>
+              [ Silenzia questa Stazione ]
             </button>
             <button id="prof-report-trigger-btn" class="bracket-btn" type="button">
               <span data-i18n="profile_btn_report">[ Segnala Link ⚠ ]</span>

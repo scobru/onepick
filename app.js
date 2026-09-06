@@ -165,15 +165,25 @@ const reportReasonSelect = document.getElementById('report-reason-select');
 
 const TRANSLATIONS = {
   it: {
+    // Meta
+    meta_title: 'onepick / frequenza attiva',
+    meta_desc: 'onepick — Uno stato, non un archivio. Sostituisce la cronologia infinita con una singola frequenza culturale attiva. Protocollo P2P decentralizzato su Zen.',
+
     // Header & Brand
     power_btn_on: 'ACCENDI RADIO',
     power_btn_off: 'SPEGNI RADIO',
+    power_btn_title: 'Accendi / Spegni ricevitore sonoro (sblocca audio e fruscio)',
     lang_btn_label: '[ EN ]',
     lang_btn_title: 'Passa a Inglese / Switch to English',
+    theme_toggle_title: 'Alterna tema chiaro / scuro',
+    tutorial_trigger_title: 'Guida e tutorial / Guide & tutorial',
     nav_guide: '[ guida ? ]',
     nav_cassetto: '[ cassetto ',
+    cassetto_trigger_title: 'Apri il tuo cassetto privato di bookmark locali',
     nav_login: '[ login ]',
+    login_trigger_title: 'Accedi al tuo nodo trasmettitore',
     nav_logout: '[ logout ]',
+    logout_btn_title: 'Disconnetti nodo',
     bio_text: 'Uno stato, non un archivio · singola frequenza attiva · attrito positivo · P2P su Zen',
     relay_connecting: 'in connessione',
     relay_online: 'online',
@@ -183,24 +193,38 @@ const TRANSLATIONS = {
     radio_section_title: '[ Sintonizzatore Radio ]',
     badge_tuned: 'sintonizzato',
     badge_own_frequency: 'la tua frequenza',
+    badge_node_prefix: 'NODO',
+    badge_transmitter_prefix: 'TRASMETTITORE',
     peer_scanning: 'nodo: in scansione...',
     peer_label: 'nodo: ',
+    scale_title: 'Clicca o trascina per sintonizzare manualmente',
     tune_prev: '[ ◂ prec ]',
+    tune_prev_title: 'Frequenza precedente',
     tune_random: '[ a caso ⚄ ]',
+    tune_random_title: 'Sintonizza frequenza a caso',
     tune_next: '[ succ ▸ ]',
+    tune_next_title: 'Frequenza successiva',
     tag_all: '[ tutti ]',
     pick_origin_default: 'TRASMETTITORE AUTENTICATO',
     pick_origin_own: 'LA TUA FREQUENZA',
+    pick_origin_badge_title: 'Clicca per visualizzare la scheda tecnica della stazione',
     jammed_banner_text: '<strong>Segnale Disturbato:</strong> Questo nodo è stato segnalato dai peer della rete Zen come sospetto o fraudolento.',
     jammed_override_btn: '[ Sintonizza comunque ]',
     pick_loading: 'Caricamento frequenza...',
     pick_no_signal: '// Nessun segnale agganciato. Muovi la manopola della radio per sintonizzare una frequenza.',
+    pick_no_reflection: '// Nessuna riflessione allegata.',
     action_save_cassetto: '[ Salva nel Cassetto ]',
     action_saved_cassetto: '[ Salvato nel Cassetto ✓ ]',
+    tooltip_save_cassetto: 'Salva questo pick solo per te nel tuo cassetto privato locale',
     action_silent_nod: '[ Cenno Silenzioso ~ ]',
     action_nod_sent: '[ Cenno Inviato ~ ]',
+    action_own_station: '[ La Tua Stazione ]',
+    tooltip_silent_nod: 'Invia un cenno discreto e invisibile al trasmettitore',
     action_station_profile: '[ Scheda Stazione ☵ ]',
+    station_profile_title: 'Visualizza scheda tecnica, permalink e dettagli del nodo',
     action_copy_link: '[ Copia ]',
+    copy_link_title: 'Copia link diretto a questa frequenza',
+    report_btn_title: 'Segnala link sospetto/fraudolento o silenzia frequenza',
 
     // Transmitter
     transmitter_title: '[ Il Tuo Slot Unico ]',
@@ -208,6 +232,8 @@ const TRANSLATIONS = {
     slot_active: 'in onda',
     friction_locked_text: '<strong>Attrito Positivo attivo:</strong> Per poter aggiornare il tuo pick della giornata, devi prima ascoltare la rete. Salva almeno un pick nel tuo cassetto o invia un cenno silenzioso a una frequenza.',
     friction_unlocked_text: '<strong>Attrito Positivo completato:</strong> Hai ascoltato la rete. Il tuo trasmettitore è sbloccato: irradia la tua frequenza.',
+    friction_free_text: '<strong>Rete libera:</strong> Nessun altro nodo è attualmente in onda sulla rete Zen. Sei la prima frequenza attiva! Lo slot è sbloccato per avviare la trasmissione.',
+    friction_free_btn_title: 'Pubblica il primo pick sulla rete',
     transmitter_prompt: 'Autenticati con <strong>[ login ]</strong> per attivare la tua frequenza. Ogni trasmissione sovrascrive istantaneamente la precedente: chi visita il tuo nodo vede solo ciò che ti ossessiona ora.',
     label_pick_url: 'Un Link (URL web o musica: TuneCamp, Spotify, Bandcamp, SoundCloud, YouTube, MP3):',
     placeholder_pick_url: 'https://... (es. tunecamp, spotify, bandcamp, soundcloud, youtube o stream audio)',
@@ -218,6 +244,10 @@ const TRANSLATIONS = {
     transmit_btn_locked: '[ 🔒 Sblocca prima di trasmettere ]',
     transmit_btn_unlocked: '[ 🔓 Irradia Frequenza ]',
     transmit_btn_sending: '[ Irradiazione in corso... ]',
+    transmit_btn_locked_title: 'Soddisfa l\'attrito positivo per sbloccare la trasmissione',
+    transmit_btn_unlocked_title: 'Pubblica o sovrascrivi il tuo slot attivo',
+    btn_broadcast_slot: '[ Trasmetti sul tuo Slot ]',
+    nods_received_title: 'Cenni silenziosi ricevuti dai tuoi ascoltatori',
     state_warning_callout: '// <strong>State over History:</strong> questo invio cancellerà e sovrascriverà per sempre il tuo pick precedente. Nessun archivio pubblico verrà conservato.',
 
     // Cassetto Modal
@@ -227,9 +257,11 @@ const TRANSLATIONS = {
     btn_export_json: '[ esporta JSON ]',
     btn_export_md: '[ esporta Markdown ]',
     btn_clear: '[ svuota ]',
+    btn_delete: '[ elimina ]',
     cassetto_empty: '// Il cassetto è vuoto.<br />Salva un pick ascoltato dalla radio per riporlo qui.',
     muted_desc: 'Frequenze che hai silenziato dal tuo ricevitore radio:',
     muted_empty: '// Nessuna stazione attualmente silenziata.',
+    muted_station_desc: '// Frequenza silenziata.',
     btn_restore: '[ ripristina ]',
 
     // Auth Modal
@@ -240,8 +272,13 @@ const TRANSLATIONS = {
     auth_pass_label: 'Passphrase Crittografica:',
     auth_pass_placeholder: 'Passphrase segreta...',
     btn_quick_guest: '[ genera chiave casuale ]',
+    btn_quick_guest_title: 'Crea un\'identità temporanea generata sul momento',
+    btn_generating: '[ Generazione... ]',
+    btn_deriving: '[ Derivazione chiavi... ]',
     btn_cancel: '[ annulla ]',
     btn_activate_node: '[ attiva nodo ]',
+    auth_alert_required: 'Inserisci nome nodo e passphrase.',
+    auth_alert_crypto_err: 'Errore crittografico: ',
 
     // Sigils
     sigil_own_title: 'Sigillo crittografico del tuo nodo',
@@ -258,10 +295,14 @@ const TRANSLATIONS = {
     profile_on_air_since: 'In onda da:',
     profile_permalink: 'Permalink Stazione:',
     btn_copy_pub: '[ copia chiave ]',
+    btn_copy_pub_title: 'Copia chiave pubblica completa',
     btn_copy_link: '[ copia link ]',
+    btn_copy_link_title: 'Copia permalink',
     profile_btn_mute: '[ Silenzia questa Stazione ]',
     profile_btn_unmute: '[ Ripristina Stazione ]',
     profile_btn_report: '[ Segnala Link ⚠ ]',
+    prompt_copy_pubkey: 'Copia chiave pubblica:',
+    prompt_copy_link: 'Copia permalink:',
 
     // Report Modal
     report_modal_title: '[ Segnala o Silenzia Frequenza ]',
@@ -289,7 +330,11 @@ const TRANSLATIONS = {
     toast_link_copied: 'Permalink stazione copiato negli appunti!',
     toast_pubkey_copied: 'Chiave crittografica copiata negli appunti!',
     toast_saved_cassetto: 'Pick salvato nel tuo cassetto privato!',
+    toast_cassetto_removed: 'Rimosso dal cassetto privato.',
     toast_nod_sent: 'Cenno silenzioso inviato al trasmettitore!',
+    toast_nod_sent_private: '✓ Cenno inviato privatamente all\'autore! (Invisibile al pubblico)',
+    toast_cannot_nod_self: 'Non puoi inviare un cenno alla tua stessa frequenza.',
+    toast_already_nodded: 'Hai già inviato un cenno a questa frequenza.',
     toast_muted: 'Frequenza silenziata sul tuo browser.',
     toast_unmuted: 'Frequenza ripristinata nel ricevitore.',
     toast_community_reported: '⚠️ Segnalazione irradiata sulla rete Zen P2P!',
@@ -297,13 +342,34 @@ const TRANSLATIONS = {
     toast_jammed_override: 'Segnale sintonizzato a tuo rischio.',
     toast_logged_out: 'Disconnesso dal nodo.',
     toast_guest_ready: 'Identità casuale generata! Benvenuto.',
-    toast_transmit_success: 'Frequenza irradiata con successo sulla rete Zen!',
-    toast_node_active: 'Nodo attivo. Frequenza pronta.',
+    toast_transmit_success: '✓ Slot aggiornato con successo! Frequenza attiva in onda.',
+    toast_slot_error: 'Errore durante la pubblicazione sullo slot: ',
+    toast_radio_powered_on: '📻 Ricevitore acceso: autoplay continuo e fruscio sbloccati!',
+    toast_radio_powered_off: 'Autoplay radio disattivato (player in-page ancora utilizzabili).',
+    toast_friction_cleared_save: '✓ Pick salvato nel cassetto. Attrito positivo superato: trasmettitore sbloccato!',
+    toast_friction_cleared_nod: '✓ Cenno silenzioso inviato. Attrito positivo superato: trasmettitore sbloccato!',
+    toast_login_required: 'Autenticati prima con [ login ] per trasmettere.',
+    toast_friction_required: 'Attrito Positivo attivo: salva prima un pick o invia un cenno per sbloccare.',
+    toast_invalid_url: 'Inserisci un URL valido.',
+    toast_char_limit: 'Il testo supera rigidamente i 140 caratteri!',
+    toast_no_signal_band: 'Nessun segnale attivo su questa banda.',
+    toast_no_signal_mesh: 'Nessun segnale attivo sulla rete.',
+    toast_enjoy: 'Buon ascolto su onepick!',
+    toast_lang_switched: 'Lingua impostata in Italiano',
+    confirm_clear_cassetto: 'Vuoi davvero svuotare il tuo cassetto privato?',
     nods_received_prefix: '~ ',
     nods_received_singular: 'cenno ricevuto',
     nods_received_plural: 'cenni ricevuti',
     nods_short_singular: 'cenno',
     nods_short_plural: 'cenni',
+    btn_view_picks: '[ vedi pick ({n}) ]',
+    btn_muted_stations: '[ silenziate ({n}) ]',
+    profile_node_active: 'nodo attivo',
+    profile_node_transmitter: 'nodo trasmettitore',
+    cassetto_node_label: 'nodo',
+    toast_node_ready_prefix: 'Nodo ',
+    toast_node_ready_suffix: ' attivo. Frequenza pronta.',
+    auth_badge_pubkey_title: 'Chiave pubblica: ',
 
     // Canvas Mode
     canvas_btn: '[ ⛶ canvas ]',
@@ -320,15 +386,25 @@ const TRANSLATIONS = {
     footer_website: 'sito'
   },
   en: {
+    // Meta
+    meta_title: 'onepick / active frequency',
+    meta_desc: 'onepick — A state, not an archive. Replaces infinite feeds with a single active cultural frequency. Decentralized P2P protocol on Zen.',
+
     // Header & Brand
     power_btn_on: 'TURN ON RADIO',
     power_btn_off: 'TURN OFF RADIO',
+    power_btn_title: 'Turn on / off sound receiver (unlocks audio and analog static)',
     lang_btn_label: '[ IT ]',
     lang_btn_title: 'Switch to Italian / Passa a Italiano',
+    theme_toggle_title: 'Toggle light / dark theme',
+    tutorial_trigger_title: 'Guide & tutorial / Guida e tutorial',
     nav_guide: '[ guide ? ]',
     nav_cassetto: '[ drawer ',
+    cassetto_trigger_title: 'Open your private local drawer',
     nav_login: '[ login ]',
+    login_trigger_title: 'Login to your transmitter node',
     nav_logout: '[ logout ]',
+    logout_btn_title: 'Disconnect node',
     bio_text: 'A state, not an archive · single active frequency · positive friction · P2P on Zen',
     relay_connecting: 'connecting',
     relay_online: 'online',
@@ -338,24 +414,38 @@ const TRANSLATIONS = {
     radio_section_title: '[ Radio Tuner ]',
     badge_tuned: 'tuned',
     badge_own_frequency: 'your frequency',
+    badge_node_prefix: 'NODE',
+    badge_transmitter_prefix: 'TRANSMITTER',
     peer_scanning: 'node: scanning...',
     peer_label: 'node: ',
+    scale_title: 'Click or drag to tune manually',
     tune_prev: '[ ◂ prev ]',
+    tune_prev_title: 'Previous frequency',
     tune_random: '[ random ⚄ ]',
+    tune_random_title: 'Tune random frequency',
     tune_next: '[ next ▸ ]',
+    tune_next_title: 'Next frequency',
     tag_all: '[ all ]',
     pick_origin_default: 'AUTHENTICATED TRANSMITTER',
     pick_origin_own: 'YOUR FREQUENCY',
+    pick_origin_badge_title: 'Click to view station specs',
     jammed_banner_text: '<strong>Jammed Signal:</strong> This node was reported by Zen network peers as suspicious or fraudulent.',
     jammed_override_btn: '[ Tune anyway ]',
     pick_loading: 'Loading frequency...',
     pick_no_signal: '// No signal locked. Adjust the radio tuner to pick up a frequency.',
+    pick_no_reflection: '// No reflection attached.',
     action_save_cassetto: '[ Save to Drawer ]',
     action_saved_cassetto: '[ Saved to Drawer ✓ ]',
+    tooltip_save_cassetto: 'Save this pick for yourself in your private local drawer',
     action_silent_nod: '[ Silent Nod ~ ]',
     action_nod_sent: '[ Nod Sent ~ ]',
+    action_own_station: '[ Your Station ]',
+    tooltip_silent_nod: 'Send a quiet, invisible nod to the transmitter',
     action_station_profile: '[ Station Specs ☵ ]',
+    station_profile_title: 'View station specs, permalink and node details',
     action_copy_link: '[ Copy ]',
+    copy_link_title: 'Copy direct link to this frequency',
+    report_btn_title: 'Report suspicious/fraudulent link or mute frequency',
 
     // Transmitter
     transmitter_title: '[ Your Single Slot ]',
@@ -363,6 +453,8 @@ const TRANSLATIONS = {
     slot_active: 'on air',
     friction_locked_text: '<strong>Positive Friction active:</strong> To update your pick of the day, you must first listen to the network. Save at least one pick to your drawer or send a silent nod to a station.',
     friction_unlocked_text: '<strong>Positive Friction completed:</strong> You listened to the network. Your transmitter is unlocked: broadcast your frequency.',
+    friction_free_text: '<strong>Open network:</strong> No other node is currently on air on the Zen mesh. You are the first active frequency! Your slot is unlocked to start broadcasting.',
+    friction_free_btn_title: 'Publish the first pick to the network',
     transmitter_prompt: 'Authenticate via <strong>[ login ]</strong> to activate your frequency. Every transmission instantly overwrites the previous one: visitors see only what obsesses you now.',
     label_pick_url: 'A Link (Web URL or music: TuneCamp, Spotify, Bandcamp, SoundCloud, YouTube, MP3):',
     placeholder_pick_url: 'https://... (e.g. tunecamp, spotify, bandcamp, soundcloud, youtube or audio stream)',
@@ -373,6 +465,10 @@ const TRANSLATIONS = {
     transmit_btn_locked: '[ 🔒 Unlock before broadcasting ]',
     transmit_btn_unlocked: '[ 🔓 Broadcast Frequency ]',
     transmit_btn_sending: '[ Broadcasting... ]',
+    transmit_btn_locked_title: 'Complete positive friction to unlock broadcasting',
+    transmit_btn_unlocked_title: 'Publish or overwrite your active slot',
+    btn_broadcast_slot: '[ Broadcast to your Slot ]',
+    nods_received_title: 'Silent nods received from your listeners',
     state_warning_callout: '// <strong>State over History:</strong> this submission will permanently erase and overwrite your previous pick. No public archive will be kept.',
 
     // Cassetto Modal
@@ -382,9 +478,11 @@ const TRANSLATIONS = {
     btn_export_json: '[ export JSON ]',
     btn_export_md: '[ export Markdown ]',
     btn_clear: '[ clear ]',
+    btn_delete: '[ delete ]',
     cassetto_empty: '// Your drawer is empty.<br />Save a pick heard on the radio to store it here.',
     muted_desc: 'Frequencies you have muted from your radio receiver:',
     muted_empty: '// No stations currently muted.',
+    muted_station_desc: '// Muted frequency.',
     btn_restore: '[ restore ]',
 
     // Auth Modal
@@ -395,8 +493,13 @@ const TRANSLATIONS = {
     auth_pass_label: 'Cryptographic Passphrase:',
     auth_pass_placeholder: 'Secret passphrase...',
     btn_quick_guest: '[ generate random key ]',
+    btn_quick_guest_title: 'Generate a temporary random identity',
+    btn_generating: '[ Generating... ]',
+    btn_deriving: '[ Deriving keys... ]',
     btn_cancel: '[ cancel ]',
     btn_activate_node: '[ activate node ]',
+    auth_alert_required: 'Please enter node alias and passphrase.',
+    auth_alert_crypto_err: 'Cryptographic error: ',
 
     // Sigils
     sigil_own_title: 'Cryptographic sigil of your node',
@@ -413,10 +516,14 @@ const TRANSLATIONS = {
     profile_on_air_since: 'On air since:',
     profile_permalink: 'Station Permalink:',
     btn_copy_pub: '[ copy key ]',
+    btn_copy_pub_title: 'Copy full public key',
     btn_copy_link: '[ copy link ]',
+    btn_copy_link_title: 'Copy permalink',
     profile_btn_mute: '[ Mute this Station ]',
     profile_btn_unmute: '[ Restore Station ]',
     profile_btn_report: '[ Report Link ⚠ ]',
+    prompt_copy_pubkey: 'Copy public key:',
+    prompt_copy_link: 'Copy permalink:',
 
     // Report Modal
     report_modal_title: '[ Report or Mute Frequency ]',
@@ -444,7 +551,11 @@ const TRANSLATIONS = {
     toast_link_copied: 'Station frequency permalink copied to clipboard!',
     toast_pubkey_copied: 'Cryptographic key copied to clipboard!',
     toast_saved_cassetto: 'Pick saved to your private drawer!',
+    toast_cassetto_removed: 'Removed from private drawer.',
     toast_nod_sent: 'Silent nod sent to transmitter!',
+    toast_nod_sent_private: '✓ Silent nod sent privately to the author! (Invisible to the public)',
+    toast_cannot_nod_self: 'You cannot send a nod to your own frequency.',
+    toast_already_nodded: 'You have already sent a nod to this frequency.',
     toast_muted: 'Frequency muted on your browser.',
     toast_unmuted: 'Frequency restored to receiver.',
     toast_community_reported: '⚠️ Report radiated on Zen P2P mesh network!',
@@ -452,13 +563,34 @@ const TRANSLATIONS = {
     toast_jammed_override: 'Signal tuned at your own risk.',
     toast_logged_out: 'Disconnected from node.',
     toast_guest_ready: 'Random identity generated! Welcome.',
-    toast_transmit_success: 'Frequency broadcast successfully to Zen network!',
-    toast_node_active: 'Node active. Frequency ready.',
+    toast_transmit_success: '✓ Slot updated successfully! Active frequency on air.',
+    toast_slot_error: 'Error broadcasting slot: ',
+    toast_radio_powered_on: '📻 Receiver on: continuous playback and analog static unlocked!',
+    toast_radio_powered_off: 'Radio autoplay disabled (in-page players still usable).',
+    toast_friction_cleared_save: '✓ Pick saved to drawer. Positive friction passed: transmitter unlocked!',
+    toast_friction_cleared_nod: '✓ Silent nod sent. Positive friction passed: transmitter unlocked!',
+    toast_login_required: 'Authenticate first via [ login ] to broadcast.',
+    toast_friction_required: 'Positive Friction active: save a pick or send a nod to unlock first.',
+    toast_invalid_url: 'Please enter a valid URL.',
+    toast_char_limit: 'Text strictly exceeds 140 characters!',
+    toast_no_signal_band: 'No active signal on this band.',
+    toast_no_signal_mesh: 'No active signal on the network.',
+    toast_enjoy: 'Enjoy tuning into onepick!',
+    toast_lang_switched: 'Language switched to English',
+    confirm_clear_cassetto: 'Do you really want to clear your private drawer?',
     nods_received_prefix: '~ ',
     nods_received_singular: 'nod received',
     nods_received_plural: 'nods received',
     nods_short_singular: 'nod',
     nods_short_plural: 'nods',
+    btn_view_picks: '[ view picks ({n}) ]',
+    btn_muted_stations: '[ muted ({n}) ]',
+    profile_node_active: 'active node',
+    profile_node_transmitter: 'transmitter node',
+    cassetto_node_label: 'node',
+    toast_node_ready_prefix: 'Node ',
+    toast_node_ready_suffix: ' active. Frequency ready.',
+    auth_badge_pubkey_title: 'Public key: ',
 
     // Canvas Mode
     canvas_btn: '[ ⛶ canvas ]',
@@ -599,6 +731,11 @@ function setLanguage(lang) {
     if (val) el.placeholder = val;
   });
 
+  // Update document title and meta description
+  document.title = t('meta_title');
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.setAttribute('content', t('meta_desc'));
+
   // Update power toggle button label
   if (powerText) {
     powerText.textContent = isRadioOn ? t('power_btn_off') : t('power_btn_on');
@@ -612,6 +749,9 @@ function setLanguage(lang) {
   // Update cassetto badge
   updateCassettoBadge();
 
+  // Update muted stations toggle button label
+  updateMutedCountBadge();
+
   // Update friction status
   updateFrictionUI();
 
@@ -621,26 +761,45 @@ function setLanguage(lang) {
   // Update relay status
   updateRelayStatus(isRelayConnected);
 
-  // If station tuned, refresh dynamic badges
-  if (activeStationPub) {
-    const station = stationsMap.get(activeStationPub);
-    if (station) {
-      if (pickTimeBadge) pickTimeBadge.textContent = formatTimeAgo(station.ts);
-      if (activeStationPub === (currentPair && currentPair.pub)) {
-        if (pickOriginBadge) {
-          const authorLabel = currentUsername || truncateKey(activeStationPub);
-          const nodsText = myNodsCount > 0 ? ` · ~ ${myNodsCount} ${myNodsCount === 1 ? t('nods_short_singular') : t('nods_short_plural')}` : '';
-          pickOriginBadge.textContent = `${t('pick_origin_own')} (${authorLabel})${nodsText}`;
-        }
-        if (currentStationBadge) {
-          currentStationBadge.textContent = myNodsCount > 0 ? `${t('badge_own_frequency')} · ${myNodsCount} ${myNodsCount === 1 ? t('nods_short_singular') : t('nods_short_plural')}` : t('badge_own_frequency');
-        }
-      } else {
-        if (currentStationBadge) currentStationBadge.textContent = t('slot_active');
-      }
+  // Update auth controls & transmitter UI state
+  if (currentPair) {
+    if (authorBadge) {
+      authorBadge.title = `${t('auth_badge_pubkey_title')}${currentPair.pub}`;
+    }
+    if (slotStatusBadge) {
+      slotStatusBadge.textContent = t('slot_active');
+    }
+    if (nodsReceivedBadge) {
+      nodsReceivedBadge.textContent = `${t('nods_received_prefix')}${myNodsCount} ${myNodsCount === 1 ? t('nods_received_singular') : t('nods_received_plural')}`;
     }
   } else {
+    if (transmitterPrompt) {
+      transmitterPrompt.innerHTML = t('transmitter_prompt');
+    }
+    if (slotStatusBadge) {
+      slotStatusBadge.textContent = t('slot_inactive');
+    }
+  }
+
+  // If station tuned, refresh dynamic station card UI
+  if (activeStationPub && stationsMap.has(activeStationPub)) {
+    refreshStationCardUI(stationsMap.get(activeStationPub));
+  } else {
     renderEmptyRadioState();
+  }
+
+  // If profile modal is open, refresh it
+  if (stationProfileModal && !stationProfileModal.classList.contains('hidden') && activeStationPub) {
+    openStationProfile(activeStationPub);
+  }
+
+  // If cassetto modal is open, refresh it
+  if (cassettoModal && !cassettoModal.classList.contains('hidden')) {
+    if (showingMutedTab) {
+      renderMutedStationsTab();
+    } else {
+      renderCassettoModal();
+    }
   }
 
   // If tutorial is open, re-render step
@@ -717,7 +876,7 @@ function nextTutorialStep() {
   } else {
     localStorage.setItem('onepick_tutorial_seen', 'true');
     closeTutorialModal();
-    showToast(currentLang === 'it' ? 'Buon ascolto su onepick!' : 'Enjoy tuning into onepick!');
+    showToast(t('toast_enjoy'));
   }
 }
 
@@ -731,7 +890,7 @@ function setupLanguageAndTutorial() {
   langToggleBtn?.addEventListener('click', () => {
     const nextLang = currentLang === 'it' ? 'en' : 'it';
     setLanguage(nextLang);
-    showToast(nextLang === 'en' ? 'Language switched to English' : 'Lingua impostata in Italiano');
+    showToast(t('toast_lang_switched'));
   });
 
   tutorialTrigger?.addEventListener('click', () => {
@@ -926,9 +1085,9 @@ function satisfyPositiveFriction(reason = 'interaction') {
   localStorage.setItem('onepick_friction_unlocked_at', Date.now().toString());
   updateFrictionUI();
   if (reason === 'save') {
-    showToast('✓ Pick salvato nel cassetto. Attrito positivo superato: trasmettitore sbloccato!');
+    showToast(t('toast_friction_cleared_save'));
   } else if (reason === 'nod') {
-    showToast('✓ Cenno silenzioso inviato. Attrito positivo superato: trasmettitore sbloccato!');
+    showToast(t('toast_friction_cleared_nod'));
   }
 }
 
@@ -947,14 +1106,12 @@ function updateFrictionUI() {
     frictionBox.className = 'friction-box unlocked';
     if (frictionIcon) frictionIcon.textContent = '🔓';
     if (frictionText) {
-      frictionText.innerHTML = currentLang === 'it'
-        ? '<strong>Rete libera:</strong> Nessun altro nodo è attualmente in onda sulla rete Zen. Sei la prima frequenza attiva! Lo slot è sbloccato per avviare la trasmissione.'
-        : '<strong>Open network:</strong> No other node is currently on air on the Zen mesh. You are the first active frequency! Your slot is unlocked to start broadcasting.';
+      frictionText.innerHTML = t('friction_free_text');
     }
     if (transmitBtn) {
       transmitBtn.disabled = false;
-      transmitBtn.textContent = currentLang === 'it' ? '[ Trasmetti sul tuo Slot ]' : '[ Broadcast to your Slot ]';
-      transmitBtn.title = currentLang === 'it' ? 'Pubblica il primo pick sulla rete' : 'Publish the first pick to the network';
+      transmitBtn.textContent = t('btn_broadcast_slot');
+      transmitBtn.title = t('friction_free_btn_title');
     }
     return;
   }
@@ -967,8 +1124,8 @@ function updateFrictionUI() {
     }
     if (transmitBtn) {
       transmitBtn.disabled = false;
-      transmitBtn.textContent = currentLang === 'it' ? '[ Trasmetti sul tuo Slot ]' : '[ Broadcast to your Slot ]';
-      transmitBtn.title = currentLang === 'it' ? 'Pubblica o sovrascrivi il tuo slot attivo' : 'Publish or overwrite your active slot';
+      transmitBtn.textContent = t('btn_broadcast_slot');
+      transmitBtn.title = t('transmit_btn_unlocked_title');
     }
   } else {
     frictionBox.className = 'friction-box locked';
@@ -979,7 +1136,7 @@ function updateFrictionUI() {
     if (transmitBtn) {
       transmitBtn.disabled = true;
       transmitBtn.textContent = t('transmit_btn_locked');
-      transmitBtn.title = currentLang === 'it' ? 'Salva un pick nel cassetto o invia un cenno per sbloccare' : 'Save a pick to drawer or send a nod to unlock';
+      transmitBtn.title = t('transmit_btn_locked_title');
     }
   }
 }
@@ -1424,14 +1581,14 @@ function togglePowerRadio() {
     if (isRadioOn) {
       powerToggleBtn.classList.add('active');
       if (powerIcon) powerIcon.textContent = '🔈';
-      if (powerText) powerText.textContent = 'RADIO ACCESA';
-      showToast('📻 Ricevitore acceso: autoplay continuo e fruscio sbloccati!');
+      if (powerText) powerText.textContent = t('power_btn_off');
+      showToast(t('toast_radio_powered_on'));
       playTuningStatic(0.3);
     } else {
       powerToggleBtn.classList.remove('active');
       if (powerIcon) powerIcon.textContent = '⏻';
-      if (powerText) powerText.textContent = 'ACCENDI RADIO';
-      showToast('Autoplay radio disattivato (player in-page ancora utilizzabili).');
+      if (powerText) powerText.textContent = t('power_btn_on');
+      showToast(t('toast_radio_powered_off'));
       radioEq?.classList.add('hidden');
     }
   }
@@ -1466,18 +1623,18 @@ function renderEmptyRadioState() {
   if (pickDomainPill) pickDomainPill.textContent = currentLang === 'it' ? '[ etere ]' : '[ ether ]';
   if (pickUrlText) pickUrlText.textContent = currentLang === 'it' ? 'Nessun pick attivo rilevato sulla rete Zen' : 'No active pick detected on Zen mesh';
   if (pickCaptionText) {
-    pickCaptionText.textContent = currentLang === 'it'
-      ? '// L\'etere è silenzioso. Nessun nodo sta trasmettendo su questo relay.\n// Autenticati con [ login ] per irradiare la prima frequenza attiva o sintonizzati tramite ?peer=<pub>.'
-      : '// The airwaves are silent. No nodes are currently broadcasting on this relay.\n// Authenticate via [ login ] to broadcast the first active frequency or tune in via ?peer=<pub>.';
+    pickCaptionText.textContent = t('pick_no_signal');
     pickCaptionText.classList.remove('user-caption');
   }
 
   if (saveCassettoBtn) {
     saveCassettoBtn.textContent = t('action_save_cassetto');
+    saveCassettoBtn.title = t('tooltip_save_cassetto');
     saveCassettoBtn.disabled = true;
   }
   if (silentNodBtn) {
     silentNodBtn.textContent = t('action_silent_nod');
+    silentNodBtn.title = t('tooltip_silent_nod');
     silentNodBtn.disabled = true;
   }
   if (currentStationBadge) currentStationBadge.textContent = currentLang === 'it' ? 'in scansione' : 'scanning';
@@ -1488,15 +1645,11 @@ function renderEmptyRadioState() {
   radioEq?.classList.add('hidden');
 }
 
-function tuneToStation(pub) {
-  const station = stationsMap.get(pub);
+function refreshStationCardUI(station) {
   if (!station) return;
-
-  activeStationPub = pub;
+  const pub = station.pub;
   const freq = station.freq || getFrequencyForPub(pub);
-  station.freq = freq;
 
-  // Update tuner screen with 2 decimals
   if (freqMhzEl) freqMhzEl.textContent = `FM ${freq.toFixed(2)}`;
   if (peerSigilDisplay) {
     peerSigilDisplay.innerHTML = generateSigilSvg(pub, 18);
@@ -1505,31 +1658,9 @@ function tuneToStation(pub) {
     peerPubDisplay.textContent = `${t('peer_label')}${truncateKey(pub)}`;
     peerPubDisplay.title = `${currentLang === 'it' ? 'Chiave pubblica' : 'Public key'}: ${pub}`;
   }
-  updateNeedlePosition(freq);
 
-  // Check Community Jamming (reports from the mesh)
-  const reports = stationReportsMap.get(pub);
-  const reportCount = reports ? reports.size : 0;
-  const isJammed = reportCount > 0 && !jammedOverrides.has(pub);
-
-  if (isJammed) {
-    jammedSignalBanner?.classList.remove('hidden');
-    mediaPlayerContainer?.classList.add('jammed-obscured');
-    playJammingStatic(0.38);
-  } else {
-    jammedSignalBanner?.classList.add('hidden');
-    mediaPlayerContainer?.classList.remove('jammed-obscured');
-    playTuningStatic(0.22);
-  }
-
-  renderStationMedia(station);
-
-  // Update Pick Card
   if (pickSigilDisplay) {
     pickSigilDisplay.innerHTML = generateSigilSvg(pub, 18);
-  }
-  if (pickOriginBadge) {
-    pickOriginBadge.textContent = station.author ? `${currentLang === 'it' ? 'NODO' : 'NODE'}: ${station.author}` : `${currentLang === 'it' ? 'TRASMETTITORE' : 'TRANSMITTER'}: ${truncateKey(pub)}`;
   }
   if (pickTagBadge) {
     pickTagBadge.textContent = `#${station.tag || 'sound'}`;
@@ -1551,23 +1682,24 @@ function tuneToStation(pub) {
       pickCaptionText.textContent = station.caption;
       pickCaptionText.classList.add('user-caption');
     } else {
-      pickCaptionText.textContent = currentLang === 'it' ? '// Nessuna riflessione allegata.' : '// No reflection attached.';
+      pickCaptionText.textContent = t('pick_no_reflection');
       pickCaptionText.classList.remove('user-caption');
     }
   }
 
-  // Update button states & enable
   if (saveCassettoBtn) {
     saveCassettoBtn.disabled = false;
     const isSaved = isPickInCassetto(station.url);
     saveCassettoBtn.textContent = isSaved ? t('action_saved_cassetto') : t('action_save_cassetto');
+    saveCassettoBtn.title = t('tooltip_save_cassetto');
   }
+
   if (silentNodBtn) {
     const isOwnStation = currentPair && currentPair.pub === pub;
     const alreadySent = hasSentNod(pub);
     if (isOwnStation) {
       silentNodBtn.disabled = true;
-      silentNodBtn.textContent = currentLang === 'it' ? '[ La Tua Stazione ]' : '[ Your Station ]';
+      silentNodBtn.textContent = t('action_own_station');
     } else if (alreadySent) {
       silentNodBtn.disabled = true;
       silentNodBtn.textContent = t('action_nod_sent');
@@ -1575,9 +1707,9 @@ function tuneToStation(pub) {
       silentNodBtn.disabled = false;
       silentNodBtn.textContent = t('action_silent_nod');
     }
+    silentNodBtn.title = t('tooltip_silent_nod');
   }
 
-  // Check if active station is own station
   if (currentPair && currentPair.pub === pub) {
     if (currentStationBadge) {
       currentStationBadge.textContent = myNodsCount > 0 ? `${t('badge_own_frequency')} · ${myNodsCount} ${myNodsCount === 1 ? t('nods_short_singular') : t('nods_short_plural')}` : t('badge_own_frequency');
@@ -1588,13 +1720,45 @@ function tuneToStation(pub) {
     }
   } else {
     if (currentStationBadge) currentStationBadge.textContent = t('slot_active');
+    if (pickOriginBadge) {
+      pickOriginBadge.textContent = station.author ? `${t('badge_node_prefix')}: ${station.author}` : `${t('badge_transmitter_prefix')}: ${truncateKey(pub)}`;
+    }
   }
+}
+
+function tuneToStation(pub) {
+  const station = stationsMap.get(pub);
+  if (!station) return;
+
+  activeStationPub = pub;
+  const freq = station.freq || getFrequencyForPub(pub);
+  station.freq = freq;
+
+  updateNeedlePosition(freq);
+
+  // Check Community Jamming (reports from the mesh)
+  const reports = stationReportsMap.get(pub);
+  const reportCount = reports ? reports.size : 0;
+  const isJammed = reportCount > 0 && !jammedOverrides.has(pub);
+
+  if (isJammed) {
+    jammedSignalBanner?.classList.remove('hidden');
+    mediaPlayerContainer?.classList.add('jammed-obscured');
+    playJammingStatic(0.38);
+  } else {
+    jammedSignalBanner?.classList.add('hidden');
+    mediaPlayerContainer?.classList.remove('jammed-obscured');
+    playTuningStatic(0.22);
+  }
+
+  renderStationMedia(station);
+  refreshStationCardUI(station);
 }
 
 function tuneToClosestFrequency(targetFreq) {
   const stations = getFilteredStations();
   if (stations.length === 0) {
-    showToast('Nessun segnale attivo su questa banda.');
+    showToast(t('toast_no_signal_band'));
     return;
   }
 
@@ -1616,7 +1780,7 @@ function tuneToClosestFrequency(targetFreq) {
 function tuneStep(direction = 1) {
   const stations = getFilteredStations();
   if (stations.length === 0) {
-    showToast('Nessun segnale attivo sulla rete.');
+    showToast(t('toast_no_signal_mesh'));
     return;
   }
 
@@ -1635,7 +1799,7 @@ function tuneStep(direction = 1) {
 function tuneRandom() {
   const stations = getFilteredStations();
   if (stations.length === 0) {
-    showToast('Nessun segnale attivo sulla rete.');
+    showToast(t('toast_no_signal_mesh'));
     return;
   }
   if (stations.length === 1) {
@@ -1671,7 +1835,7 @@ tagChips.forEach(chip => {
         tuneToStation(stations[0].pub);
       }
     } else {
-      showToast(`Nessuna frequenza attiva trovata per #${currentTagFilter}`);
+      showToast(currentLang === 'it' ? `Nessuna frequenza attiva trovata per #${currentTagFilter}` : `No active frequency found for #${currentTagFilter}`);
     }
   });
 });
@@ -1705,12 +1869,12 @@ function recordSentNod(pub) {
 async function sendSilentNod(targetPub) {
   if (!targetPub) return;
   if (currentPair && currentPair.pub === targetPub) {
-    showToast('Non puoi inviare un cenno alla tua stessa frequenza.');
+    showToast(t('toast_cannot_nod_self'));
     return;
   }
 
   if (hasSentNod(targetPub)) {
-    showToast('Hai già inviato un cenno a questa frequenza.');
+    showToast(t('toast_already_nodded'));
     return;
   }
 
@@ -1728,11 +1892,11 @@ async function sendSilentNod(targetPub) {
     }
     recordSentNod(targetPub);
     if (silentNodBtn) {
-      silentNodBtn.textContent = '[ Cenno Inviato ~ ]';
+      silentNodBtn.textContent = t('action_nod_sent');
       silentNodBtn.disabled = true;
     }
     satisfyPositiveFriction('nod');
-    showToast('✓ Cenno inviato privatamente all\'autore! (Invisibile al pubblico)');
+    showToast(t('toast_nod_sent_private'));
   } catch (err) {
     console.error('Errore invio cenno:', err);
     recordSentNod(targetPub);
@@ -1752,9 +1916,9 @@ shareFrequencyBtn?.addEventListener('click', () => {
   const url = new URL(window.location.href);
   url.searchParams.set('peer', activeStationPub);
   navigator.clipboard.writeText(url.toString()).then(() => {
-    showToast('Link frequenza copiato negli appunti!');
+    showToast(t('toast_link_copied'));
   }).catch(() => {
-    prompt('Copia questo link:', url.toString());
+    prompt(t('prompt_copy_link'), url.toString());
   });
 });
 
@@ -1797,8 +1961,8 @@ function toggleSaveCurrentPick() {
     // Remove
     items.splice(existingIndex, 1);
     saveCassettoItems(items);
-    if (saveCassettoBtn) saveCassettoBtn.textContent = '[ Salva nel Cassetto ]';
-    showToast('Rimosso dal cassetto privato.');
+    if (saveCassettoBtn) saveCassettoBtn.textContent = t('action_save_cassetto');
+    showToast(t('toast_cassetto_removed'));
   } else {
     // Add
     items.unshift({
@@ -1809,7 +1973,7 @@ function toggleSaveCurrentPick() {
       savedAt: Date.now()
     });
     saveCassettoItems(items);
-    if (saveCassettoBtn) saveCassettoBtn.textContent = '[ Nel Cassetto ✓ ]';
+    if (saveCassettoBtn) saveCassettoBtn.textContent = t('action_saved_cassetto');
     satisfyPositiveFriction('save');
   }
   renderCassettoModal();
@@ -1842,7 +2006,7 @@ function renderCassettoModal() {
       </a>
       <div class="cassetto-item-caption">${item.caption || ''}</div>
       <div class="cassetto-item-actions">
-        <button class="bracket-btn delete-cassetto-item" data-index="${index}" type="button">[ elimina ]</button>
+        <button class="bracket-btn delete-cassetto-item" data-index="${index}" type="button">${t('btn_delete')}</button>
       </div>
     `;
     cassettoItemsList.appendChild(li);
@@ -1858,7 +2022,7 @@ function renderCassettoModal() {
       if (activeStationPub) {
         const active = stationsMap.get(activeStationPub);
         if (active && saveCassettoBtn) {
-          saveCassettoBtn.textContent = isPickInCassetto(active.url) ? '[ Nel Cassetto ✓ ]' : '[ Salva nel Cassetto ]';
+          saveCassettoBtn.textContent = isPickInCassetto(active.url) ? t('action_saved_cassetto') : t('action_save_cassetto');
         }
       }
     });
@@ -1885,13 +2049,15 @@ exportCassettoJsonBtn?.addEventListener('click', () => {
 
 exportCassettoMdBtn?.addEventListener('click', () => {
   const items = getCassettoItems();
-  let md = '# onepick / Cassetto Privato\n\nArchivio personale esportato da onepick.\n\n';
+  let md = currentLang === 'it'
+    ? '# onepick / Cassetto Privato\n\nArchivio personale esportato da onepick.\n\n'
+    : '# onepick / Private Drawer\n\nPersonal archive exported from onepick.\n\n';
   items.forEach(it => {
     md += `### [${it.url}](${it.url})\n`;
     md += `*${it.caption || ''}*\n\n`;
     md += `- Tag: #${it.tag || 'sound'}\n`;
-    md += `- Nodo: \`${it.authorPub || ''}\`\n`;
-    md += `- Salvato il: ${new Date(it.savedAt).toISOString()}\n\n---\n\n`;
+    md += `- ${currentLang === 'it' ? 'Nodo' : 'Node'}: \`${it.authorPub || ''}\`\n`;
+    md += `- ${currentLang === 'it' ? 'Salvato il' : 'Saved on'}: ${new Date(it.savedAt).toISOString()}\n\n---\n\n`;
   });
   const blob = new Blob([md], { type: 'text/markdown' });
   const a = document.createElement('a');
@@ -1901,16 +2067,16 @@ exportCassettoMdBtn?.addEventListener('click', () => {
 });
 
 clearCassettoBtn?.addEventListener('click', () => {
-  if (confirm('Vuoi davvero svuotare il tuo cassetto privato?')) {
+  if (confirm(t('confirm_clear_cassetto'))) {
     saveCassettoItems([]);
     renderCassettoModal();
     if (activeStationPub) {
       const active = stationsMap.get(activeStationPub);
       if (active && saveCassettoBtn) {
-        saveCassettoBtn.textContent = '[ Salva nel Cassetto ]';
+        saveCassettoBtn.textContent = t('action_save_cassetto');
       }
     }
-    showToast('Cassetto svuotato.');
+    showToast(t('toast_cassetto_cleared'));
   }
 });
 
@@ -1936,7 +2102,7 @@ function muteStation(pub) {
   if (!pub) return;
   mutedStations.add(pub);
   saveMutedStations();
-  showToast('Frequenza silenziata dal tuo ricevitore.');
+  showToast(t('toast_muted'));
   if (activeStationPub === pub) {
     const available = getFilteredStations().filter(s => s.pub !== pub);
     if (available.length > 0) {
@@ -1951,13 +2117,18 @@ function unmuteStation(pub) {
   if (!pub) return;
   mutedStations.delete(pub);
   saveMutedStations();
-  showToast('Frequenza ripristinata nel ricevitore.');
+  showToast(t('toast_unmuted'));
   renderMutedStationsTab();
 }
 
 function updateMutedCountBadge() {
   if (toggleMutedStationsBtn) {
-    toggleMutedStationsBtn.textContent = `[ silenziate (${mutedStations.size}) ]`;
+    if (showingMutedTab) {
+      const picksCount = getCassettoItems().length;
+      toggleMutedStationsBtn.textContent = t('btn_view_picks').replace('{n}', picksCount);
+    } else {
+      toggleMutedStationsBtn.textContent = t('btn_muted_stations').replace('{n}', mutedStations.size);
+    }
   }
 }
 
@@ -1966,13 +2137,12 @@ let showingMutedTab = false;
 function setupCassettoMutedTab() {
   toggleMutedStationsBtn?.addEventListener('click', () => {
     showingMutedTab = !showingMutedTab;
+    updateMutedCountBadge();
     if (showingMutedTab) {
-      toggleMutedStationsBtn.textContent = `[ vedi pick (${getCassettoItems().length}) ]`;
       cassettoPicksTab?.classList.add('hidden');
       cassettoMutedTab?.classList.remove('hidden');
       renderMutedStationsTab();
     } else {
-      toggleMutedStationsBtn.textContent = `[ silenziate (${mutedStations.size}) ]`;
       cassettoPicksTab?.classList.remove('hidden');
       cassettoMutedTab?.classList.add('hidden');
       renderCassettoModal();
@@ -2000,11 +2170,11 @@ function renderMutedStationsTab() {
     li.innerHTML = `
       <div class="cassetto-item-header">
         <span class="cassetto-node-badge">${sigilHtml}FM ${freq.toFixed(2)} MHz · ${truncateKey(pub)}</span>
-        <span>${s && s.author ? s.author : 'nodo'}</span>
+        <span>${s && s.author ? s.author : t('cassetto_node_label')}</span>
       </div>
-      <div class="cassetto-item-caption">${s && s.caption ? s.caption : '// Frequenza silenziata.'}</div>
+      <div class="cassetto-item-caption">${s && s.caption ? s.caption : t('muted_station_desc')}</div>
       <div class="cassetto-item-actions">
-        <button class="bracket-btn btn-success unmute-station-btn" data-pub="${pub}" type="button">[ ripristina ]</button>
+        <button class="bracket-btn btn-success unmute-station-btn" data-pub="${pub}" type="button">${t('btn_restore')}</button>
       </div>
     `;
     mutedStationsList.appendChild(li);
@@ -2031,7 +2201,7 @@ async function sendCommunityReport(targetPub, reason) {
     if (zen) {
       zen.get('onepick:reports:' + targetPub).get(reporterId).put(reportPayload);
     }
-    showToast('⚠️ Segnalazione irradiata sulla rete Zen P2P!');
+    showToast(t('toast_community_reported'));
     muteStation(targetPub);
   } catch (err) {
     console.error('Errore invio report:', err);
@@ -2075,7 +2245,7 @@ function openStationProfile(pub) {
     profHeaderName.textContent = station.author || truncateKey(pub);
   }
   if (profHeaderFreq) {
-    profHeaderFreq.textContent = `FM ${freq.toFixed(2)} MHz · ${station.author ? (currentLang === 'it' ? 'nodo attivo' : 'active node') : (currentLang === 'it' ? 'nodo trasmettitore' : 'transmitter node')}`;
+    profHeaderFreq.textContent = `FM ${freq.toFixed(2)} MHz · ${station.author ? t('profile_node_active') : t('profile_node_transmitter')}`;
   }
 
   if (profFreqText) profFreqText.textContent = `FM ${freq.toFixed(2)} MHz`;
@@ -2089,7 +2259,7 @@ function openStationProfile(pub) {
 
   if (profMuteToggleBtn) {
     const isMuted = mutedStations.has(pub);
-    profMuteToggleBtn.textContent = isMuted ? '[ Ripristina Stazione ]' : '[ Silenzia questa Stazione ]';
+    profMuteToggleBtn.textContent = isMuted ? t('profile_btn_unmute') : t('profile_btn_mute');
     profMuteToggleBtn.className = isMuted ? 'bracket-btn btn-success' : 'bracket-btn btn-danger';
   }
 
@@ -2112,18 +2282,18 @@ function setupProfileAndReportUI() {
   profCopyPubBtn?.addEventListener('click', () => {
     if (!activeStationPub) return;
     navigator.clipboard.writeText(activeStationPub).then(() => {
-      showToast('Chiave crittografica copiata negli appunti!');
+      showToast(t('toast_pubkey_copied'));
     }).catch(() => {
-      prompt('Copia chiave pubblica:', activeStationPub);
+      prompt(t('prompt_copy_pubkey'), activeStationPub);
     });
   });
 
   profCopyLinkBtn?.addEventListener('click', () => {
     if (profPermalinkInput) {
       navigator.clipboard.writeText(profPermalinkInput.value).then(() => {
-        showToast('Permalink stazione copiato negli appunti!');
+        showToast(t('toast_link_copied'));
       }).catch(() => {
-        prompt('Copia permalink:', profPermalinkInput.value);
+        prompt(t('prompt_copy_link'), profPermalinkInput.value);
       });
     }
   });
@@ -2171,7 +2341,7 @@ function setupProfileAndReportUI() {
     jammedOverrides.add(activeStationPub);
     jammedSignalBanner?.classList.add('hidden');
     mediaPlayerContainer?.classList.remove('jammed-obscured');
-    showToast('Segnale sintonizzato a tuo rischio.');
+    showToast(t('toast_jammed_override'));
   });
 }
 
@@ -2207,12 +2377,12 @@ function initTransmitterForm() {
     e.preventDefault();
 
     if (!currentPair) {
-      showToast('Autenticati prima con [ login ] per trasmettere.');
+      showToast(t('toast_login_required'));
       return;
     }
 
     if (!frictionUnlocked && hasPeerStations()) {
-      showToast('Attrito Positivo attivo: salva prima un pick o invia un cenno per sbloccare.');
+      showToast(t('toast_friction_required'));
       return;
     }
 
@@ -2222,12 +2392,12 @@ function initTransmitterForm() {
     const tag = selectedPickTagInput.value.trim() || 'sound';
 
     if (!url) {
-      showToast('Inserisci un URL valido.');
+      showToast(t('toast_invalid_url'));
       return;
     }
 
     if (caption.length > 140) {
-      showToast('Il testo supera rigidamente i 140 caratteri!');
+      showToast(t('toast_char_limit'));
       return;
     }
 
@@ -2242,7 +2412,7 @@ function initTransmitterForm() {
 
     try {
       transmitBtn.disabled = true;
-      transmitBtn.textContent = '[ Trasmissione in corso... ]';
+      transmitBtn.textContent = t('transmit_btn_sending');
 
       // 1. Overwrite user's single slot in Zen graph (with timeout protection)
       await new Promise((resolve, reject) => {
@@ -2287,18 +2457,18 @@ function initTransmitterForm() {
       updateStationsCounter();
 
       if (slotStatusBadge) {
-        slotStatusBadge.textContent = 'in onda';
+        slotStatusBadge.textContent = t('slot_active');
         slotStatusBadge.className = 'status-badge auth-badge';
       }
 
-      showToast('✓ Slot aggiornato con successo! Frequenza attiva in onda.');
+      showToast(t('toast_transmit_success'));
       updateFrictionUI();
     } catch (err) {
       console.error('Errore durante la trasmissione:', err);
-      showToast('Errore durante la pubblicazione sullo slot: ' + (err.message || 'Riprova'));
+      showToast(t('toast_slot_error') + (err.message || (currentLang === 'it' ? 'Riprova' : 'Try again')));
     } finally {
       transmitBtn.disabled = false;
-      transmitBtn.textContent = '[ Trasmetti sul tuo Slot ]';
+      transmitBtn.textContent = t('btn_broadcast_slot');
     }
   });
 }
@@ -2336,14 +2506,14 @@ function setupAuthUI() {
     loginTriggerBtn?.classList.remove('hidden');
     transmitterForm?.classList.add('hidden');
     if (transmitterPrompt) {
-      transmitterPrompt.innerHTML = 'Autenticati con <strong>[ login ]</strong> per attivare la tua frequenza. Ogni trasmissione sovrascrive istantaneamente la precedente: chi visita il tuo nodo vede solo ciò che ti ossessiona ora.';
+      transmitterPrompt.innerHTML = t('transmitter_prompt');
     }
     if (slotStatusBadge) {
-      slotStatusBadge.textContent = 'inattivo';
+      slotStatusBadge.textContent = t('slot_inactive');
       slotStatusBadge.className = 'status-badge';
     }
     if (nodsReceivedBadge) nodsReceivedBadge.classList.add('hidden');
-    showToast('Nodo disconnesso.');
+    showToast(t('toast_logged_out'));
   });
 
   // Deterministic login
@@ -2354,7 +2524,7 @@ function setupAuthUI() {
 
     if (!username || !password) {
       if (authAlert) {
-        authAlert.textContent = 'Inserisci nome nodo e passphrase.';
+        authAlert.textContent = t('auth_alert_required');
         authAlert.classList.remove('hidden');
       }
       return;
@@ -2362,7 +2532,7 @@ function setupAuthUI() {
 
     try {
       const submitBtn = document.getElementById('auth-submit-btn');
-      if (submitBtn) submitBtn.textContent = '[ Derivazione chiavi... ]';
+      if (submitBtn) submitBtn.textContent = t('btn_deriving');
 
       const pair = await derivePair(username, password);
       loginWithPair(pair, username);
@@ -2371,28 +2541,28 @@ function setupAuthUI() {
     } catch (err) {
       console.error('Errore derivazione chiavi:', err);
       if (authAlert) {
-        authAlert.textContent = 'Errore crittografico: ' + err.message;
+        authAlert.textContent = t('auth_alert_crypto_err') + err.message;
         authAlert.classList.remove('hidden');
       }
     } finally {
       const submitBtn = document.getElementById('auth-submit-btn');
-      if (submitBtn) submitBtn.textContent = '[ attiva nodo ]';
+      if (submitBtn) submitBtn.textContent = t('btn_activate_node');
     }
   });
 
   // Quick random guest identity
   quickGuestBtn?.addEventListener('click', async () => {
     try {
-      quickGuestBtn.textContent = '[ Generazione... ]';
+      quickGuestBtn.textContent = t('btn_generating');
       const pair = await ZEN.pair();
       const randomName = 'guest-' + Math.random().toString(36).slice(2, 6);
       loginWithPair(pair, randomName);
       authModal?.classList.add('hidden');
-      showToast('✓ Nodo ospite generato e connesso con successo!');
+      showToast(t('toast_guest_ready'));
     } catch (err) {
       console.error(err);
     } finally {
-      quickGuestBtn.textContent = '[ genera chiave casuale ]';
+      quickGuestBtn.textContent = t('btn_quick_guest');
     }
   });
 }
@@ -2408,7 +2578,7 @@ function loginWithPair(pair, username) {
   }
   if (authorBadge) {
     authorBadge.textContent = `${username} (${truncateKey(pair.pub)})`;
-    authorBadge.title = `Chiave pubblica: ${pair.pub}`;
+    authorBadge.title = `${t('auth_badge_pubkey_title')}${pair.pub}`;
   }
   authControls?.classList.remove('hidden');
   loginTriggerBtn?.classList.add('hidden');
@@ -2432,7 +2602,7 @@ function loginWithPair(pair, username) {
         if (selectedPickTagInput) selectedPickTagInput.value = slot.tag;
       }
       if (slotStatusBadge) {
-        slotStatusBadge.textContent = 'in onda';
+        slotStatusBadge.textContent = t('slot_active');
         slotStatusBadge.className = 'status-badge auth-badge';
       }
 
@@ -2451,24 +2621,24 @@ function loginWithPair(pair, username) {
       myNodsCount = myReceivedNods.size;
 
       if (nodsReceivedBadge) {
-        nodsReceivedBadge.textContent = `~ ${myNodsCount} ${myNodsCount === 1 ? 'cenno ricevuto' : 'cenni ricevuti'}`;
+        nodsReceivedBadge.textContent = `${t('nods_received_prefix')}${myNodsCount} ${myNodsCount === 1 ? t('nods_received_singular') : t('nods_received_plural')}`;
         nodsReceivedBadge.classList.remove('hidden');
       }
 
       // If currently viewing own station in the receiver, update station badges immediately
       if (activeStationPub === pair.pub) {
         if (currentStationBadge) {
-          currentStationBadge.textContent = `la tua frequenza · ${myNodsCount} cenni`;
+          currentStationBadge.textContent = `${t('badge_own_frequency')} · ${myNodsCount} ${myNodsCount === 1 ? t('nods_short_singular') : t('nods_short_plural')}`;
         }
         if (pickOriginBadge) {
           const authorLabel = currentUsername || truncateKey(pair.pub);
-          pickOriginBadge.textContent = `LA TUA FREQUENZA (${authorLabel}) · ~ ${myNodsCount} ${myNodsCount === 1 ? 'cenno' : 'cenni'}`;
+          pickOriginBadge.textContent = `${t('pick_origin_own')} (${authorLabel}) · ${t('nods_received_prefix')}${myNodsCount} ${myNodsCount === 1 ? t('nods_short_singular') : t('nods_short_plural')}`;
         }
       }
     }
   });
 
-  showToast(`Nodo ${username} attivo. Frequenza pronta.`);
+  showToast(`${t('toast_node_ready_prefix')}${username}${t('toast_node_ready_suffix')}`);
 }
 
 // --- Zen Mesh P2P Engine & Peer Discovery ---
@@ -2545,7 +2715,7 @@ function updateRelayStatus(online) {
     }
   }
   if (relayText) {
-    relayText.textContent = online ? 'online' : 'in connessione';
+    relayText.textContent = online ? t('relay_online') : t('relay_connecting');
   }
 }
 
@@ -2585,7 +2755,7 @@ function subscribeToNetworkFrequencies() {
 function updateStationsCounter() {
   if (onlineStationsCount) {
     const count = stationsMap.size;
-    onlineStationsCount.textContent = `frequenze in onda: ${count}`;
+    onlineStationsCount.textContent = `${t('online_stations_prefix')}${count}`;
   }
 }
 
