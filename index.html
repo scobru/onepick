@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="onepick — Uno stato, non un archivio. Sostituisce la cronologia infinita con una singola frequenza culturale attiva. Protocollo P2P decentralizzato su Zen."
+    />
+    <title>onepick / frequenza attiva</title>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/1079164?v=4" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#ffffff" id="theme-color-meta" />
+    <script>
+      (function () {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme === 'dark' || (!savedTheme && prefersDark) ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <header>
+        <div class="header-row">
+          <h1 class="brand">
+            <span class="brand-dot" title="Segnale attivo"></span>
+            <a href=".">onepick</a>
+          </h1>
+
+          <div class="header-actions">
+            <button
+              id="power-toggle"
+              class="bracket-btn btn-power"
+              type="button"
+              aria-label="Accendi / Spegni ricevitore radio"
+              title="Accendi / Spegni ricevitore sonoro (sblocca audio e fruscio)"
+            >
+              <span id="power-icon">⏻</span> <span id="power-text" data-i18n="power_btn_on">ACCENDI RADIO</span>
+            </button>
+
+            <button
+              id="lang-toggle"
+              class="bracket-btn"
+              type="button"
+              aria-label="Cambia lingua / Switch language"
+              title="Passa a Inglese / Switch to English"
+            >
+              <span id="lang-text">[ EN ]</span>
+            </button>
+
+            <button
+              id="tutorial-trigger"
+              class="bracket-btn"
+              type="button"
+              title="Guida e tutorial / Guide & tutorial"
+            >
+              <span data-i18n="nav_guide">[ guida ? ]</span>
+            </button>
+
+            <button
+              id="theme-toggle"
+              class="bracket-btn"
+              type="button"
+              aria-label="Toggle tema"
+              title="Alterna tema chiaro / scuro"
+            >
+              <span id="theme-text">[ dark ]</span>
+            </button>
+
+            <button
+              id="cassetto-trigger"
+              class="bracket-btn"
+              type="button"
+              title="Apri il tuo cassetto privato di bookmark locali"
+            >
+              <span data-i18n="nav_cassetto">[ cassetto </span><span id="cassetto-count">(0)</span> ]
+            </button>
+
+            <button
+              id="login-trigger"
+              class="bracket-btn"
+              type="button"
+              title="Accedi al tuo nodo trasmettitore"
+            >
+              <span data-i18n="nav_login">[ login ]</span>
+            </button>
+
+            <div id="auth-controls" class="hidden" style="align-items: center; gap: 8px;">
+              <span id="author-sigil-display" class="station-sigil-icon" title="Sigillo crittografico del tuo nodo" data-i18n-title="sigil_own_title"></span>
+              <span class="auth-badge" id="author-badge" title="Chiave pubblica del tuo nodo"></span>
+              <button id="logout-btn" class="bracket-btn btn-danger" type="button" title="Disconnetti nodo">
+                <span data-i18n="nav_logout">[ logout ]</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p class="bio" data-i18n="bio_text">
+          Uno stato, non un archivio · singola frequenza attiva · attrito positivo · P2P su Zen
+        </p>
+
+        <div class="relay-status">
+          <span class="status-dot" id="relay-dot"></span>
+          <span>relay: delay.scobrudot.dev/zen (<span id="relay-text">in connessione</span>)</span>
+          <span style="margin-left: auto; color: var(--bio-color);" id="online-stations-count">frequenze in onda: 0</span>
+        </div>
+      </header>
+
+      <main>
+        <!-- SINTONIZZATORE RADIO (Feed a Rotazione Umana) -->
+        <section id="radio-section">
+          <div class="section-header">
+            <h2 data-i18n="radio_section_title">[ Sintonizzatore Radio ]</h2>
+            <span class="status-badge" id="current-station-badge" data-i18n="badge_tuned">sintonizzato</span>
+          </div>
+
+          <div class="radio-tuner">
+            <div class="frequency-banner">
+              <div class="frequency-display">
+                <span id="freq-mhz">FM 94.20</span>
+                <span class="freq-unit">MHz</span>
+                <div class="radio-eq-bars hidden" id="radio-eq" title="Audio in riproduzione">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+              <div class="peer-frequency-row">
+                <span id="peer-sigil-display" class="station-sigil-icon" title="Sigillo crittografico della stazione" data-i18n-title="sigil_station_title"></span>
+                <div class="peer-frequency-key" id="peer-pub-display" title="Chiave pubblica del peer in onda" data-i18n="peer_scanning">
+                  nodo: in scansione...
+                </div>
+              </div>
+            </div>
+
+            <!-- Scala Analogica Sintonizzatore -->
+            <div class="tuner-scale-container">
+              <div class="tuner-scale" id="tuner-scale" title="Clicca o trascina per sintonizzare manualmente">
+                <div class="scale-ticks" id="scale-ticks"></div>
+                <div class="tuner-needle" id="tuner-needle"></div>
+              </div>
+              <div class="scale-legend">
+                <span>88.00 MHz</span>
+                <span>94.00</span>
+                <span>100.00</span>
+                <span>104.00</span>
+                <span>108.00 MHz</span>
+              </div>
+            </div>
+
+            <!-- Controlli Sintonizzazione -->
+            <div class="tuner-controls">
+              <div class="tuner-nav-group">
+                <button id="tune-prev-btn" class="bracket-btn" type="button" title="Frequenza precedente">
+                  <span data-i18n="tune_prev">[ ◂ prec ]</span>
+                </button>
+                <button id="tune-random-btn" class="bracket-btn" type="button" title="Sintonizza frequenza a caso">
+                  <span data-i18n="tune_random">[ a caso ⚄ ]</span>
+                </button>
+                <button id="tune-next-btn" class="bracket-btn" type="button" title="Frequenza successiva">
+                  <span data-i18n="tune_next">[ succ ▸ ]</span>
+                </button>
+              </div>
+
+              <div class="tag-chips" id="tag-filter-container">
+                <button class="tag-chip active" data-tag="all"><span data-i18n="tag_all">[ tutti ]</span></button>
+                <button class="tag-chip" data-tag="sound">#sound</button>
+                <button class="tag-chip" data-tag="read">#read</button>
+                <button class="tag-chip" data-tag="obscureweb">#obscureweb</button>
+                <button class="tag-chip" data-tag="art">#art</button>
+                <button class="tag-chip" data-tag="code">#code</button>
+              </div>
+            </div>
+
+            <!-- Scheda del Pick Attivo -->
+            <div id="pick-display-container">
+              <div class="pick-card" id="active-pick-card">
+                <div class="pick-meta-row">
+                  <div class="pick-author-cluster">
+                    <span id="pick-sigil-display" class="station-sigil-icon" title="Sigillo crittografico del nodo" data-i18n-title="sigil_node_title"></span>
+                    <span id="pick-origin-badge" class="clickable-badge" title="Clicca per visualizzare la scheda tecnica della stazione" data-i18n="pick_origin_default">TRASMETTITORE AUTENTICATO</span>
+                  </div>
+                  <span class="peer-tag-badge" id="pick-tag-badge">#obscureweb</span>
+                  <span id="pick-time-badge">in onda da --</span>
+                </div>
+
+                <!-- Banner Segnale Disturbato (Community Jamming) -->
+                <div id="jammed-signal-banner" class="jammed-banner hidden">
+                  <div class="jammed-banner-content">
+                    <span class="jammed-icon">⚠️</span>
+                    <div class="jammed-text" id="jammed-banner-text" data-i18n="jammed_banner_text">
+                      <strong>Segnale Disturbato:</strong> Questo nodo è stato segnalato dai peer della rete Zen come sospetto o fraudolento.
+                    </div>
+                    <button id="override-jammed-btn" class="bracket-btn jammed-toggle-btn" type="button"><span data-i18n="jammed_override_btn">[ Sintonizza comunque ]</span></button>
+                  </div>
+                </div>
+
+                <a
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="pick-target-link"
+                  id="pick-url-link"
+                >
+                  <span class="domain-pill" id="pick-domain-pill">[ link ]</span>
+                  <span id="pick-url-text" data-i18n="pick_loading">Caricamento frequenza...</span>
+                </a>
+
+                <!-- Player Audio / Media Integrato -->
+                <div id="media-player-container" class="media-player-container hidden"></div>
+
+                <div class="pick-caption" id="pick-caption-text" data-i18n="pick_no_signal">
+                  // Nessun segnale agganciato. Muovi la manopola della radio per sintonizzare una frequenza.
+                </div>
+
+                <div class="pick-actions">
+                  <div class="pick-action-group">
+                    <button
+                      id="save-cassetto-btn"
+                      class="bracket-btn"
+                      type="button"
+                      title="Salva questo pick solo per te nel tuo cassetto privato locale"
+                    >
+                      <span data-i18n="action_save_cassetto">[ Salva nel Cassetto ]</span>
+                    </button>
+                    <button
+                      id="silent-nod-btn"
+                      class="bracket-btn"
+                      type="button"
+                      title="Invia un cenno discreto e invisibile al trasmettitore"
+                    >
+                      <span data-i18n="action_silent_nod">[ Cenno Silenzioso ~ ]</span>
+                    </button>
+                  </div>
+
+                  <div class="pick-action-group">
+                    <button
+                      id="station-profile-btn"
+                      class="bracket-btn"
+                      type="button"
+                      title="Visualizza scheda tecnica, permalink e dettagli del nodo"
+                    >
+                      <span data-i18n="action_station_profile">[ Scheda Stazione ☵ ]</span>
+                    </button>
+                    <button
+                      id="share-frequency-btn"
+                      class="bracket-btn"
+                      type="button"
+                      title="Copia link diretto a questa frequenza"
+                    >
+                      <span data-i18n="action_copy_link">[ Copia ]</span>
+                    </button>
+                    <button
+                      id="report-station-btn"
+                      class="bracket-btn btn-report"
+                      type="button"
+                      title="Segnala link sospetto/fraudolento o silenzia frequenza"
+                    >
+                      [ ⚠ ]
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TRASMETTITORE: LO SLOT UNICO (State over History & Positive Friction) -->
+        <section id="transmitter-section">
+          <div class="section-header">
+            <h2 data-i18n="transmitter_title">[ Il Tuo Slot Unico ]</h2>
+            <span class="status-badge" id="slot-status-badge" data-i18n="slot_inactive">inattivo</span>
+          </div>
+
+          <!-- Banner Attrito Positivo -->
+          <div class="friction-box locked" id="friction-box">
+            <span class="friction-icon" id="friction-icon">🔒</span>
+            <div id="friction-text" data-i18n="friction_locked_text">
+              <strong>Attrito Positivo attivo:</strong> Per poter aggiornare il tuo pick della giornata, devi prima ascoltare la rete. Salva almeno un pick nel tuo cassetto o invia un cenno silenzioso a una frequenza.
+            </div>
+          </div>
+
+          <div class="transmitter-card">
+            <div class="transmitter-meta" id="transmitter-prompt" data-i18n="transmitter_prompt">
+              Autenticati con <strong>[ login ]</strong> per attivare la tua frequenza. Ogni trasmissione sovrascrive istantaneamente la precedente: chi visita il tuo nodo vede solo ciò che ti ossessiona ora.
+            </div>
+
+            <form id="transmitter-form" class="hidden">
+              <div class="form-group">
+                <label for="pick-url-input" data-i18n="label_pick_url">Un Link (URL web o musica: TuneCamp, Spotify, Bandcamp, SoundCloud, YouTube, MP3):</label>
+                <input
+                  type="text"
+                  id="pick-url-input"
+                  placeholder="https://... (es. tunecamp, spotify, bandcamp, soundcloud, youtube o stream audio)"
+                  data-i18n-placeholder="placeholder_pick_url"
+                  required
+                  autocomplete="off"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="pick-caption-input" data-i18n="label_pick_caption">Una Riga (Cosa ti sta ossessionando adesso?):</label>
+                <textarea
+                  id="pick-caption-input"
+                  maxlength="140"
+                  placeholder="Una sola riflessione, sensazione o motivazione (rigidamente max 140 caratteri)..."
+                  data-i18n-placeholder="placeholder_pick_caption"
+                  required
+                ></textarea>
+                <div class="char-counter-row">
+                  <span data-i18n="char_counter_hint">Nessun commento nidificato, nessun thread infinito.</span>
+                  <span class="char-counter" id="char-counter">0 / 140</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label data-i18n="label_pick_affinity">Affinità minima (Tag):</label>
+                <div class="radio-preset-tags">
+                  <button type="button" class="tag-chip active" data-pick-tag="sound">#sound</button>
+                  <button type="button" class="tag-chip" data-pick-tag="read">#read</button>
+                  <button type="button" class="tag-chip" data-pick-tag="obscureweb">#obscureweb</button>
+                  <button type="button" class="tag-chip" data-pick-tag="thought">#thought</button>
+                  <button type="button" class="tag-chip" data-pick-tag="art">#art</button>
+                  <button type="button" class="tag-chip" data-pick-tag="code">#code</button>
+                </div>
+                <input type="hidden" id="selected-pick-tag" value="sound" />
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 20px;">
+                <button
+                  type="submit"
+                  id="transmit-btn"
+                  class="bracket-btn btn-success"
+                  disabled
+                  title="Soddisfa l'attrito positivo per sbloccare la trasmissione"
+                >
+                  <span data-i18n="transmit_btn_locked">[ 🔒 Sblocca prima di trasmettere ]</span>
+                </button>
+
+                <span id="nods-received-badge" class="status-badge hidden" title="Cenni silenziosi ricevuti dai tuoi ascoltatori">
+                  ~ 0 cenni ricevuti
+                </span>
+              </div>
+
+              <div class="state-warning-callout" data-i18n="state_warning_callout">
+                // <strong>State over History:</strong> questo invio cancellerà e sovrascriverà per sempre il tuo pick precedente. Nessun archivio pubblico verrà conservato.
+              </div>
+            </form>
+          </div>
+        </section>
+      </main>
+
+      <!-- CASSETTO PRIVATO MODAL -->
+      <div id="cassetto-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="cassetto-title">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 id="cassetto-title" data-i18n="cassetto_title">[ Il Tuo Cassetto Privato ]</h3>
+            <button id="close-cassetto-btn" class="bracket-btn" type="button"><span data-i18n="btn_close">[ chiudi ✕ ]</span></button>
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--desc-color); margin-top: 0;" data-i18n="cassetto_desc">
+            Questo è il tuo archivio locale personale. I pick salvati rimangono solo in questo browser: nessun like pubblico, nessun contatore visibile agli altri.
+          </p>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;">
+            <button id="export-cassetto-json" class="bracket-btn" type="button"><span data-i18n="btn_export_json">[ esporta JSON ]</span></button>
+            <button id="export-cassetto-md" class="bracket-btn" type="button"><span data-i18n="btn_export_md">[ esporta Markdown ]</span></button>
+            <button id="toggle-muted-stations-btn" class="bracket-btn" type="button">[ silenziate (0) ]</button>
+            <button id="clear-cassetto-btn" class="bracket-btn btn-danger" type="button" style="margin-left: auto;"><span data-i18n="btn_clear">[ svuota ]</span></button>
+          </div>
+
+          <div id="cassetto-tabs-content">
+            <div id="cassetto-picks-tab">
+              <ul id="cassetto-items-list" class="cassetto-list"></ul>
+              <div id="cassetto-empty" class="empty-state" data-i18n="cassetto_empty">
+                // Il cassetto è vuoto.<br />Salva un pick ascoltato dalla radio per riporlo qui.
+              </div>
+            </div>
+
+            <div id="cassetto-muted-tab" class="hidden">
+              <div style="font-size: 0.82rem; color: var(--desc-color); margin-bottom: 10px;" data-i18n="muted_desc">
+                Frequenze che hai silenziato dal tuo ricevitore radio:
+              </div>
+              <ul id="muted-stations-list" class="cassetto-list"></ul>
+              <div id="muted-empty" class="empty-state" data-i18n="muted_empty">
+                // Nessuna stazione attualmente silenziata.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUTH MODAL -->
+      <div id="auth-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 id="auth-title" data-i18n="auth_title">[ Nodo Trasmettitore / Login ]</h3>
+            <button id="close-auth-btn" class="bracket-btn" type="button"><span data-i18n="btn_close">[ chiudi ✕ ]</span></button>
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--desc-color); margin-top: 0;" data-i18n="auth_desc">
+            Le chiavi crittografiche del tuo nodo sono derivate deterministicamente (PBKDF2 SHA-256) sul tuo dispositivo. Nessun dato personale è inviato a server centrali.
+          </p>
+
+          <form id="auth-form">
+            <div class="form-group">
+              <label for="auth-username" data-i18n="auth_user_label">Nome Nodo / Alias:</label>
+              <input type="text" id="auth-username" placeholder="es. scobru, radio-zero..." data-i18n-placeholder="auth_user_placeholder" required autocomplete="username" />
+            </div>
+
+            <div class="form-group">
+              <label for="auth-password" data-i18n="auth_pass_label">Passphrase Crittografica:</label>
+              <input type="password" id="auth-password" placeholder="Passphrase segreta..." data-i18n-placeholder="auth_pass_placeholder" required autocomplete="current-password" />
+            </div>
+
+            <div id="auth-alert" class="hidden" style="color: var(--danger-color); font-size: 0.85rem; margin-bottom: 14px;"></div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 20px;">
+              <button type="button" id="quick-guest-btn" class="bracket-btn" title="Crea un'identità temporanea generata sul momento">
+                <span data-i18n="btn_quick_guest">[ genera chiave casuale ]</span>
+              </button>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" id="auth-cancel-btn" class="bracket-btn"><span data-i18n="btn_cancel">[ annulla ]</span></button>
+                <button type="submit" id="auth-submit-btn" class="bracket-btn btn-success"><span data-i18n="btn_activate_node">[ attiva nodo ]</span></button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- SCHEDA STAZIONE / PROFILO LIVE MODAL -->
+      <div id="station-profile-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="prof-station-title">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 id="prof-station-title" data-i18n="profile_title">[ Scheda Stazione · Live Frequency ]</h3>
+            <button id="close-profile-btn" class="bracket-btn" type="button"><span data-i18n="btn_close">[ chiudi ✕ ]</span></button>
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--desc-color); margin-top: 0;" data-i18n="profile_desc">
+            Identità crittografica del nodo e frequenza attiva. <em>State over History:</em> non esiste archivio pubblico o profilo-museo, visualizzi solo l'ossessione del momento.
+          </p>
+
+          <div class="station-profile-details">
+            <div class="prof-header-cluster">
+              <div id="prof-sigil-large" class="prof-sigil-large" title="Sigillo crittografico univoco della stazione" data-i18n-title="sigil_unique_title"></div>
+              <div class="prof-header-titles">
+                <div class="prof-node-title" id="prof-header-name">scobru</div>
+                <div class="prof-freq-sub" id="prof-header-freq">FM 105.72 MHz · nodo attivo</div>
+              </div>
+            </div>
+
+            <div class="profile-info-row">
+              <span class="profile-key" data-i18n="profile_fm_freq">Frequenza FM:</span>
+              <span class="profile-val bold" id="prof-freq-text">FM 105.72 MHz</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-key" data-i18n="profile_node_id">Identità Nodo:</span>
+              <span class="profile-val" id="prof-name-text">scobru</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-key" data-i18n="profile_crypto_key">Chiave Crittografica:</span>
+              <div class="pubkey-container">
+                <code id="prof-pubkey-text" class="pubkey-code">~...</code>
+                <button id="prof-copy-pub-btn" class="bracket-btn" type="button" title="Copia chiave pubblica completa"><span data-i18n="btn_copy_pub">[ copia chiave ]</span></button>
+              </div>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-key" data-i18n="profile_on_air_since">In onda da:</span>
+              <span class="profile-val" id="prof-time-text">adesso</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-key" data-i18n="profile_permalink">Permalink Stazione:</span>
+              <div class="permalink-container">
+                <input type="text" id="prof-permalink-input" readonly class="permalink-input" />
+                <button id="prof-copy-link-btn" class="bracket-btn btn-success" type="button"><span data-i18n="btn_copy_link">[ copia link ]</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-actions-row">
+            <button id="prof-mute-toggle-btn" class="bracket-btn btn-danger" type="button">
+              <span data-i18n="profile_btn_mute">[ Silenzia questa Stazione ]</span>
+            </button>
+            <button id="prof-report-trigger-btn" class="bracket-btn" type="button">
+              <span data-i18n="profile_btn_report">[ Segnala Link ⚠ ]</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODALE SEGNALAZIONE & MODERAZIONE DECENTRALIZZATA -->
+      <div id="report-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 id="report-modal-title" data-i18n="report_modal_title">[ Segnala o Silenzia Frequenza ]</h3>
+            <button id="close-report-btn" class="bracket-btn" type="button"><span data-i18n="btn_close">[ chiudi ✕ ]</span></button>
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--desc-color); margin-top: 0;" data-i18n="report_modal_desc">
+            onepick è una rete P2P decentralizzata. La moderazione si basa su <strong>autonomia personale</strong> (silenziamento locale) e <strong>Community Jamming</strong> (segnalazione mesh condivisa).
+          </p>
+
+          <div class="report-box">
+            <h4 data-i18n="report_local_title">1. Silenziamento Locale (Solo per te)</h4>
+            <p style="font-size: 0.82rem; color: var(--desc-color); margin-top: 2px; margin-bottom: 10px;" data-i18n="report_local_desc">
+              Il tuo ricevitore radio salterà automaticamente questa frequenza durante la rotazione. Puoi ripristinarla quando vuoi dal tuo Cassetto.
+            </p>
+            <button id="execute-local-mute-btn" class="bracket-btn btn-danger" type="button">
+              <span data-i18n="btn_execute_local_mute">[ 🔇 Silenzia questa stazione sul mio browser ]</span>
+            </button>
+          </div>
+
+          <div class="report-box" style="margin-top: 18px;">
+            <h4 data-i18n="report_community_title">2. Segnalazione alla Rete P2P (Community Jamming)</h4>
+            <p style="font-size: 0.82rem; color: var(--desc-color); margin-top: 2px; margin-bottom: 10px;" data-i18n="report_community_desc">
+              Invia una segnalazione crittografica sulla rete Zen. Se una frequenza riceve segnalazioni concordanti, l'etere simulerà un disturbo radio oscurando il contenuto preventivamente.
+            </p>
+
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label for="report-reason-select" data-i18n="report_reason_label">Motivo della segnalazione:</label>
+              <select id="report-reason-select" class="report-select">
+                <option value="phishing" data-i18n="opt_phishing">Phishing / Tentativo di truffa o furto credenziali</option>
+                <option value="malware" data-i18n="opt_malware">Malware / Download pericoloso o ingannevole</option>
+                <option value="spam" data-i18n="opt_spam">Spam / Bot o aggregatore automatico non umano</option>
+                <option value="abusive" data-i18n="opt_abusive">Contenuto illegale o lesivo</option>
+              </select>
+            </div>
+
+            <button id="execute-community-report-btn" class="bracket-btn btn-danger" type="button">
+              <span data-i18n="btn_execute_community_report">[ ⚠️ Irradia segnalazione sulla rete Zen ]</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TUTORIAL & ONBOARDING GUIDATO MODAL -->
+      <div id="tutorial-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="tutorial-modal-title">
+        <div class="modal-content tutorial-modal-content">
+          <div class="modal-header">
+            <h3 id="tutorial-modal-title" data-i18n="tutorial_modal_title">[ Guida Introduttiva · Come Funziona onepick ]</h3>
+            <button id="close-tutorial-btn" class="bracket-btn" type="button"><span data-i18n="btn_close">[ chiudi ✕ ]</span></button>
+          </div>
+
+          <div class="tutorial-stepper-header">
+            <span class="tutorial-step-badge" id="tutorial-step-badge">STEP 01 / 05</span>
+            <div class="tutorial-dots" id="tutorial-dots">
+              <span class="dot active"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+          </div>
+
+          <div class="tutorial-body" id="tutorial-step-content">
+            <!-- Step content generated dynamically in app.js -->
+          </div>
+
+          <div class="tutorial-footer">
+            <label class="tutorial-remember-label">
+              <input type="checkbox" id="tutorial-dont-show-checkbox" />
+              <span id="tutorial-dont-show-text" data-i18n="tutorial_dont_show">Non mostrare più all'avvio</span>
+            </label>
+
+            <div class="tutorial-nav-buttons">
+              <button id="tutorial-prev-btn" class="bracket-btn hidden" type="button">
+                <span data-i18n="tutorial_btn_prev">[ ◂ Precedente ]</span>
+              </button>
+              <button id="tutorial-next-btn" class="bracket-btn btn-success" type="button">
+                <span id="tutorial-next-text" data-i18n="tutorial_btn_next">[ Successivo ▸ ]</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOAST NOTIFICATION -->
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+      <footer>
+        <div>onepick · State over History</div>
+        <div id="footer-status">zen mesh p2p · delay.scobrudot.dev</div>
+      </footer>
+    </div>
+
+    <!-- MAIN APP SCRIPT -->
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
