@@ -2802,6 +2802,7 @@ function setupAuthUI() {
       slotStatusBadge.className = 'status-badge';
     }
     if (nodsReceivedBadge) nodsReceivedBadge.classList.add('hidden');
+    updateUrlValidationUI();
     showToast(t('toast_logged_out'));
   });
 

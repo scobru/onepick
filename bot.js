@@ -4,7 +4,7 @@
  * onepick — Background Autopopulate Bot Service
  *
  * Runs autonomously to keep the onepick Zen P2P radio alive with 3 bot accounts
- * rotating and publishing curated YouTube, SoundCloud, and Bandcamp tracks every 15 minutes.
+ * rotating and publishing curated YouTube, SoundCloud, Bandcamp, Internet Archive, Audius, Mixcloud, and TuneCamp tracks every 15 minutes.
  *
  * Usage:
  *   node bot.js                 # Runs 24/7 with 15 min timer

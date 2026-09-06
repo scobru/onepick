@@ -1,7 +1,7 @@
 /**
  * onepick — Autonomous Seed Engine & Background Bot
  * Autopopulates the decentralized Zen P2P radio with curated cultural transmissions
- * across YouTube, SoundCloud, and Bandcamp rotating every 15 minutes.
+ * across YouTube, SoundCloud, Bandcamp, Internet Archive, Audius, Mixcloud, and TuneCamp rotating every 15 minutes.
  */
 
 export const SALT_PREFIX = 'onepick:zen:station:';
@@ -160,6 +160,48 @@ export const SEED_TRACKS = [
     url: 'https://lawrenceenglish.bandcamp.com/album/wilderness-of-mirrors',
     title: 'Lawrence English - Wilderness of Mirrors',
     caption: 'Dense sonic walls, extreme field recording, and hypnotic drones via Room40.',
+    tag: 'sound'
+  },
+
+  // --- Internet Archive Streams (100% Verified Playable Public Domain & Netlabel Gems) ---
+  {
+    url: 'https://archive.org/details/ird059',
+    title: 'The Conet Project - Shortwave Numbers Stations',
+    caption: 'Misteriose trasmissioni numeriche su onde corte e frequenze spettrali dall\'etere analogico.',
+    tag: 'obscureweb'
+  },
+  {
+    url: 'https://archive.org/details/ca015_va_cs',
+    title: 'Clinical Sounds Vol. 1 - Netlabel Ambient Drone',
+    caption: 'Paesaggi sonori subacquei e drone minimalista dal catalogo aperto delle Netlabel storiche.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://archive.org/details/78_chop-suey-mambo_alfredito-and-his-orchestra-al-lang_gbia0001871a',
+    title: 'Alfredito - Chop Suey Mambo (1954 Vintage 78rpm)',
+    caption: 'Archivio storico 78 giri George Blood: graffi caldi, lacca a 78rpm e mambo d\'altri tempi.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://archive.org/details/Apollo11Audio',
+    title: 'NASA - Apollo 11 Mission Audio Transmissions',
+    caption: 'Comunicazioni originali terra-luna e rumori telemetrici dello spazio profondo preservati su Internet Archive.',
+    tag: 'code'
+  },
+
+  // --- Audius Decentralized Web3 Streams ---
+  {
+    url: 'https://audius.co/embed/track/Jb3xzj7',
+    title: 'Washed Out - Feel It All Around (Jay Bird Remix)',
+    caption: 'Chillwave solare e ritmi sognanti in streaming decentralizzato su protocollo Audius.',
+    tag: 'sound'
+  },
+
+  // --- Mixcloud Long-form Radio Sets ---
+  {
+    url: 'https://www.mixcloud.com/residentadvisor/ra900/',
+    title: 'Resident Advisor - RA.900 Podcast',
+    caption: 'Pietra miliare del clubbing globale: deep electronic session per ascolto continuo.',
     tag: 'sound'
   }
 ];

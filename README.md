@@ -34,7 +34,13 @@ Riconoscimento e streaming diretto in-page per:
 * **SoundCloud**: widget nativo con autoplay e tracciamento audio.
 * **Bandcamp**: player embedded con palette adattiva chiaro/scuro.
 * **TuneCamp / Subsonic Federation**: risoluzione dei metadati decentralizzati e streaming nativo HTML5.
+* **Internet Archive (`archive.org`)**: player embedded per l'enorme archivio di registrazioni storiche 78rpm, netlabels aperte e trasmissioni audio.
+* **Audius**: streaming decentralizzato Web3 via protocollo Audius con player compatto in-page.
+* **Mixcloud**: streaming per DJ mix, sessioni ambient e programmi radiofonici.
+* **Spotify**: widget per brani e playlist.
 * **Stream diretti MP3 / Audio**: riproduzione continua con equalizzatore analogico animato.
+
+> **Regola Tag `#sound`**: Se il nodo trasmette con affinità `#sound`, l'input accetta *esclusivamente* tracce riproducibili dai provider sopra elencati. Per gli altri tag culturali (`#read`, `#obscureweb`, `#art`, `#code`) il ricevitore è aperto a qualsiasi URL web valido.
 
 ### ⛶ Modalità Canvas (Focus View)
 * Centra a pieno schermo unicamente il box sintonizzatore della radio, nascondendo header, sezione trasmettitore e footer.
