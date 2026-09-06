@@ -1132,7 +1132,7 @@ function detectMedia(rawUrl) {
     return {
       type: 'youtube',
       id: ytMatch[1],
-      embedUrl: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?enablejsapi=1`
+      embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}?enablejsapi=1`
     };
   }
 

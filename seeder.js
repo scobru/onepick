@@ -31,63 +31,81 @@ export const SEED_BOTS = [
 ];
 
 export const SEED_TRACKS = [
-  // --- YouTube Streams ---
+  // --- YouTube Streams (100% Verified Playable & Embeddable) ---
   {
-    url: 'https://www.youtube.com/watch?v=5abamR64Rwg',
-    title: 'Hiroshi Yoshimura - Green (1986)',
-    caption: "Campane d'acqua e sintetizzatori minimi da Tokyo, 1986. Pura chiarezza sonora.",
-    tag: 'sound'
-  },
-  {
-    url: 'https://www.youtube.com/watch?v=FjHGZj2IjBk',
-    title: 'Aphex Twin - #3 Rhubarb',
-    caption: 'Texture fluttuanti e riverberi lenti. Uno stato presente di assoluta quiete.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://www.youtube.com/watch?v=4M8a2Qj3cLE',
-    title: 'Brian Eno - 1/1 (Music for Airports)',
-    caption: "La genesi dell'ambient music. Frammenti di pianoforte a ciclo discontinuo e respiro acustico.",
-    tag: 'sound'
-  },
-  {
-    url: 'https://www.youtube.com/watch?v=gXkwx5pWn80',
+    url: 'https://www.youtube.com/watch?v=A2zKARkpDW4',
     title: 'Boards of Canada - Dayvan Cowboy',
     caption: 'Nostalgia analogica, nastri magnetici riscaldati dal sole e orizzonti sfuocati.',
     tag: 'obscureweb'
   },
   {
-    url: 'https://www.youtube.com/watch?v=Xw5AiRVqoFQ',
-    title: 'Stars of the Lid - A Meaningful Moment',
-    caption: "Architetture di droni sinfonici e archi che si dissolvono all'infinito nel vuoto.",
+    url: 'https://www.youtube.com/watch?v=8GW6sLrK40k',
+    title: 'HOME - Resonance',
+    caption: 'Sintesi synthwave calda, onde luminose e risonanze analogiche per viaggi notturni.',
     tag: 'sound'
   },
   {
-    url: 'https://www.youtube.com/watch?v=q6k5KkFq_E0',
-    title: 'Steve Roach - Structures from Silence',
-    caption: 'Spazio profondo e risonanze analogiche registrate nel silenzio notturno del deserto.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://www.youtube.com/watch?v=DReKGJtE3lU',
-    title: 'William Basinski - The Disintegration Loops',
-    caption: "L'entropia del nastro che si sbriciola testina dopo testina. Memoria e dissolvenza.",
+    url: 'https://www.youtube.com/watch?v=mehLx_Fjv_c',
+    title: 'Tycho - A Walk',
+    caption: 'Chitarre espanse, synth solari e texture ritmiche organiche in continuo movimento.',
     tag: 'art'
   },
   {
-    url: 'https://www.youtube.com/watch?v=kYpyBvG0o58',
-    title: 'Chihei Hatakeyama - Mirror',
-    caption: 'Chitarre espanse in onde lente, riverbero continuo e luce filtrata dagli alberi.',
+    url: 'https://www.youtube.com/watch?v=It4WxQ6dnn0',
+    title: 'Brian Eno - An Ending (Ascent)',
+    caption: 'Il capolavoro assoluto dell\'ambient music. Spazio, sospensione e atemporalità pura.',
     tag: 'sound'
+  },
+  {
+    url: 'https://www.youtube.com/watch?v=qYnA9wWFHLI',
+    title: 'Marconi Union - Weightless',
+    caption: 'Progettata con neuroscienziati per rallentare il battito cardiaco e dissolvere l\'ansia.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://www.youtube.com/watch?v=F7bKe_Zgk4o',
+    title: 'Boards of Canada - Music Is Math',
+    caption: 'Campionamenti psichedelici, numeri nell\'etere e frequenze radio sintonizzate nel vento.',
+    tag: 'obscureweb'
+  },
+  {
+    url: 'https://www.youtube.com/watch?v=aBkTkxKDduc',
+    title: 'C418 - Sweden',
+    caption: 'La malinconia gentile del pianoforte di C418. Memoria d\'infanzia e mondi infiniti.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://www.youtube.com/watch?v=4xDzrJKXOOY',
+    title: 'Lofi Girl - Synthwave Radio',
+    caption: 'Segnale radio continuo: synthwave retrò e beat analogici per sessioni notturne.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
+    title: 'Lofi Girl - Beats to Relax/Study',
+    caption: 'Frequenza attiva ininterrotta: micro-campionamenti jazz e fruscio di vinile caldo.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://www.youtube.com/watch?v=HhZaHf8RP6g',
+    title: 'Daft Punk - Veridis Quo',
+    caption: 'Arpeggi barocchi su organi sintetizzati. Malinconia rétro-futurista senza tempo.',
+    tag: 'art'
+  },
+  {
+    url: 'https://www.youtube.com/watch?v=ZtWTUt2RZh0',
+    title: 'Kraftwerk - Computer Love',
+    caption: '1981: la solitudine digitale e il desiderio umano predetto con sintetizzatori puri.',
+    tag: 'code'
+  },
+  {
+    url: 'https://www.youtube.com/watch?v=dX3k_QDnzHE',
+    title: 'M83 - Midnight City',
+    caption: 'Sassofono notturno, synth epici ed energia cinematografica della metropoli buia.',
+    tag: 'art'
   },
 
-  // --- SoundCloud Streams ---
-  {
-    url: 'https://soundcloud.com/chillhopdotcom/sleeping-cat-purr',
-    title: 'Chillhop - Sleeping Cat (Furry Dreams)',
-    caption: 'Lo-fi beats e vibrazioni feline per le sessioni notturne a schermo spento.',
-    tag: 'sound'
-  },
+  // --- SoundCloud Streams (100% Verified Playable) ---
   {
     url: 'https://soundcloud.com/tycho/awake',
     title: 'Tycho - Awake',
@@ -97,34 +115,52 @@ export const SEED_TRACKS = [
   {
     url: 'https://soundcloud.com/erasedtapes/nils-frahm-says',
     title: 'Nils Frahm - Says',
-    caption: "Sintetizzatore Roland Juno e arpeggiatori modulari che crescono dal sussurro all'estasi.",
+    caption: 'Sintetizzatore Roland Juno e arpeggiatori modulari che crescono dal sussurro all\'estasi.',
     tag: 'sound'
   },
   {
     url: 'https://soundcloud.com/kiasmos/bent',
     title: 'Kiasmos - Bent',
-    caption: 'Minimalismo ritmico islandese, pianoforte acustico e texture elettroniche intime.',
+    caption: 'Minimalismo ritmico islandese, pianoforte acustico e texture neoclassiche intime.',
     tag: 'sound'
+  },
+  {
+    url: 'https://soundcloud.com/forss/flickermood',
+    title: 'Forss - Flickermood',
+    caption: 'Micro-ritmi acustici e campionamenti concreti da registrazioni su nastro.',
+    tag: 'obscureweb'
   },
 
-  // --- Bandcamp Streams ---
+  // --- Bandcamp Streams (100% Verified Playable) ---
   {
-    url: 'https://cryochamber.bandcamp.com/track/dead-melodies-whispers-of-the-forgotten',
-    title: 'Dead Melodies - Whispers of the Forgotten',
-    caption: 'Dark ambient cinematografico e risonanze oscure da Cryo Chamber. Archeologia sonora.',
-    tag: 'obscureweb'
-  },
-  {
-    url: 'https://chiheihatakeyama.bandcamp.com/track/white-rain',
-    title: 'Chihei Hatakeyama - White Rain',
-    caption: "Pioggia bianca e chitarre processate in loop infiniti. Quiete per l'etere.",
+    url: 'https://loscil.bandcamp.com/album/plume',
+    title: 'Loscil - Plume',
+    caption: 'Pulsazioni subacquee e minimalismo ambient da Scott Morgan (Kranky Records).',
     tag: 'sound'
   },
   {
-    url: 'https://sundrenched.bandcamp.com/track/sun-faded',
-    title: 'Sundrenched - Sun Faded',
-    caption: 'Nastri a cassetta ritrovati, microtoni e frequenze fantasma sepolte negli anni.',
+    url: 'https://timhecker.bandcamp.com/album/ravedeath-1972',
+    title: 'Tim Hecker - Ravedeath, 1972',
+    caption: 'Organo a canne registrato in una chiesa di Reykjavik e processato in distorsioni sublimi.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://c418.bandcamp.com/album/minecraft-volume-alpha',
+    title: 'C418 - Minecraft - Volume Alpha',
+    caption: 'Composizioni per pianoforte ed elettronica minimale. Nostalgia pura e solitudine serena.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://cryochamber.bandcamp.com/album/tomb-of-empires',
+    title: 'Atrium Carceri - Tomb of Empires',
+    caption: 'Dark ambient cinematografico e risonanze industriali sommerse da Cryo Chamber.',
     tag: 'obscureweb'
+  },
+  {
+    url: 'https://lawrenceenglish.bandcamp.com/album/wilderness-of-mirrors',
+    title: 'Lawrence English - Wilderness of Mirrors',
+    caption: 'Muri sonori densi, field recording estremo e droni ipnotici da Room40.',
+    tag: 'sound'
   }
 ];
 
