@@ -56,6 +56,27 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-archive-2026-ether',
     tag: 'read',
     desc: "Archivio radiofonico storico, letture liriche e conversazioni d'epoca. / Historical radio archive, lyrical readings, and period conversations."
+  },
+  {
+    id: 'mystic',
+    username: 'mystic-whispers',
+    passphrase: 'onepick-seed-mystic-2026-ether',
+    tag: 'obscureweb',
+    desc: 'Ancient whispers and forgotten folklore from global oral traditions.'
+  },
+  {
+    id: 'neon',
+    username: 'neon-drift',
+    passphrase: 'onepick-seed-neon-2026-fm',
+    tag: 'sound',
+    desc: 'Synthwave odyssey through neon-lit digital landscapes and retro-futuristic ambience.'
+  },
+  {
+    id: 'void',
+    username: 'void-pulse',
+    passphrase: 'onepick-seed-void-2026-art',
+    tag: 'art',
+    desc: 'Abstract visual art meets ambient soundscapes for contemplative listening experiences.'
   }
 ];
 
