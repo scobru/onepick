@@ -49,6 +49,13 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-echo-2026-reverb',
     tag: 'read',
     desc: 'Spoken word archives, literary field trips, slow cinema, and tape echo chambers.'
+  },
+  {
+    id: 'archive-echo',
+    username: 'archive-echo',
+    passphrase: 'onepick-seed-archive-2026-ether',
+    tag: 'read',
+    desc: 'Archivio radiofonico storico, letture liriche e conversazioni d'epoca. / Historical radio archive, lyrical readings, and period conversations.'
   }
 ];
 
