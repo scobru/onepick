@@ -12,21 +12,21 @@ export const SEED_BOTS = [
     username: 'radio-obscura',
     passphrase: 'onepick-seed-obscura-2026-ether',
     tag: 'obscureweb',
-    desc: 'Frequenze dimenticate, lo-fi tape loops e gemme analogiche del web sommerso.'
+    desc: 'Forgotten frequencies, lo-fi tape loops, and analog gems from the obscure web.'
   },
   {
     id: 'transit',
     username: 'sound-transit',
     passphrase: 'onepick-seed-transit-2026-fm',
     tag: 'sound',
-    desc: 'Architettura sonora e ascolto profondo: field recordings, drone e suoni in transito.'
+    desc: 'Sonic architecture & deep listening: field recordings, drone, and transit soundscapes.'
   },
   {
     id: 'zero',
     username: 'ambient-zero',
     passphrase: 'onepick-seed-zero-2026-relay',
     tag: 'art',
-    desc: 'Segnali minimi, nastri a ciclo continuo e quiete presente per menti iperstimolate.'
+    desc: 'Minimal signals, endless tape loops, and present stillness for overstimulated minds.'
   }
 ];
 
@@ -35,73 +35,73 @@ export const SEED_TRACKS = [
   {
     url: 'https://www.youtube.com/watch?v=A2zKARkpDW4',
     title: 'Boards of Canada - Dayvan Cowboy',
-    caption: 'Nostalgia analogica, nastri magnetici riscaldati dal sole e orizzonti sfuocati.',
+    caption: 'Analog nostalgia, sun-drenched magnetic tapes, and blurred horizons.',
     tag: 'obscureweb'
   },
   {
     url: 'https://www.youtube.com/watch?v=8GW6sLrK40k',
     title: 'HOME - Resonance',
-    caption: 'Sintesi synthwave calda, onde luminose e risonanze analogiche per viaggi notturni.',
+    caption: 'Warm synthwave pulses, luminous waves, and analog glow for late-night transit.',
     tag: 'sound'
   },
   {
     url: 'https://www.youtube.com/watch?v=mehLx_Fjv_c',
     title: 'Tycho - A Walk',
-    caption: 'Chitarre espanse, synth solari e texture ritmiche organiche in continuo movimento.',
+    caption: 'Drifting guitars, solar synthesizers, and organic rhythmic textures in perpetual motion.',
     tag: 'art'
   },
   {
     url: 'https://www.youtube.com/watch?v=It4WxQ6dnn0',
     title: 'Brian Eno - An Ending (Ascent)',
-    caption: 'Il capolavoro assoluto dell\'ambient music. Spazio, sospensione e atemporalità pura.',
+    caption: 'The pinnacle of ambient music. Pure weightlessness, suspension, and timelessness.',
     tag: 'sound'
   },
   {
     url: 'https://www.youtube.com/watch?v=qYnA9wWFHLI',
     title: 'Marconi Union - Weightless',
-    caption: 'Progettata con neuroscienziati per rallentare il battito cardiaco e dissolvere l\'ansia.',
+    caption: 'Engineered with sound therapists to slow heart rate and dissolve anxiety into space.',
     tag: 'sound'
   },
   {
     url: 'https://www.youtube.com/watch?v=F7bKe_Zgk4o',
     title: 'Boards of Canada - Music Is Math',
-    caption: 'Campionamenti psichedelici, numeri nell\'etere e frequenze radio sintonizzate nel vento.',
+    caption: 'Psychedelic micro-samples, broadcast numbers, and phantom frequencies in the air.',
     tag: 'obscureweb'
   },
   {
     url: 'https://www.youtube.com/watch?v=aBkTkxKDduc',
     title: 'C418 - Sweden',
-    caption: 'La malinconia gentile del pianoforte di C418. Memoria d\'infanzia e mondi infiniti.',
+    caption: 'Gentle piano melancholy by C418. Pure childhood memory and infinite blocky worlds.',
     tag: 'sound'
   },
   {
     url: 'https://www.youtube.com/watch?v=4xDzrJKXOOY',
     title: 'Lofi Girl - Synthwave Radio',
-    caption: 'Segnale radio continuo: synthwave retrò e beat analogici per sessioni notturne.',
+    caption: 'Continuous analog signal: retro synthwave and dusty beats for midnight flow.',
     tag: 'sound'
   },
   {
     url: 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
     title: 'Lofi Girl - Beats to Relax/Study',
-    caption: 'Frequenza attiva ininterrotta: micro-campionamenti jazz e fruscio di vinile caldo.',
+    caption: 'Uninterrupted broadcast: warm jazz chops, soft vinyl crackle, and steady calm.',
     tag: 'sound'
   },
   {
     url: 'https://www.youtube.com/watch?v=HhZaHf8RP6g',
     title: 'Daft Punk - Veridis Quo',
-    caption: 'Arpeggi barocchi su organi sintetizzati. Malinconia rétro-futurista senza tempo.',
+    caption: 'Baroque arpeggios on synthesized organ. Timeless retro-futuristic longing.',
     tag: 'art'
   },
   {
     url: 'https://www.youtube.com/watch?v=ZtWTUt2RZh0',
     title: 'Kraftwerk - Computer Love',
-    caption: '1981: la solitudine digitale e il desiderio umano predetto con sintetizzatori puri.',
+    caption: '1981: digital loneliness and human connection foretold through pure synthesis.',
     tag: 'code'
   },
   {
     url: 'https://www.youtube.com/watch?v=dX3k_QDnzHE',
     title: 'M83 - Midnight City',
-    caption: 'Sassofono notturno, synth epici ed energia cinematografica della metropoli buia.',
+    caption: 'Nocturnal saxophone, soaring synth lines, and the cinematic rush of city lights.',
     tag: 'art'
   },
 
@@ -109,25 +109,25 @@ export const SEED_TRACKS = [
   {
     url: 'https://soundcloud.com/tycho/awake',
     title: 'Tycho - Awake',
-    caption: 'Linee di chitarra scintillanti, synth analogici e calore solare in continuo movimento.',
+    caption: 'Shimmering guitar lines, lush analog pads, and sun-soaked warmth in constant motion.',
     tag: 'art'
   },
   {
     url: 'https://soundcloud.com/erasedtapes/nils-frahm-says',
     title: 'Nils Frahm - Says',
-    caption: 'Sintetizzatore Roland Juno e arpeggiatori modulari che crescono dal sussurro all\'estasi.',
+    caption: 'Roland Juno synth and modular arpeggiators swelling from a whisper into ecstasy.',
     tag: 'sound'
   },
   {
     url: 'https://soundcloud.com/kiasmos/bent',
     title: 'Kiasmos - Bent',
-    caption: 'Minimalismo ritmico islandese, pianoforte acustico e texture neoclassiche intime.',
+    caption: 'Icelandic rhythmic minimalism, delicate acoustic piano, and intimate electronic warmth.',
     tag: 'sound'
   },
   {
     url: 'https://soundcloud.com/forss/flickermood',
     title: 'Forss - Flickermood',
-    caption: 'Micro-ritmi acustici e campionamenti concreti da registrazioni su nastro.',
+    caption: 'Acoustic micro-rhythms and musique concrète sampled directly from church tape reels.',
     tag: 'obscureweb'
   },
 
@@ -135,31 +135,31 @@ export const SEED_TRACKS = [
   {
     url: 'https://loscil.bandcamp.com/album/plume',
     title: 'Loscil - Plume',
-    caption: 'Pulsazioni subacquee e minimalismo ambient da Scott Morgan (Kranky Records).',
+    caption: 'Subaquatic pulses and patient ambient minimalism by Scott Morgan (Kranky Records).',
     tag: 'sound'
   },
   {
     url: 'https://timhecker.bandcamp.com/album/ravedeath-1972',
     title: 'Tim Hecker - Ravedeath, 1972',
-    caption: 'Organo a canne registrato in una chiesa di Reykjavik e processato in distorsioni sublimi.',
+    caption: 'Pipe organ recorded in a Reykjavik church, processed into devastatingly sublime noise.',
     tag: 'sound'
   },
   {
     url: 'https://c418.bandcamp.com/album/minecraft-volume-alpha',
     title: 'C418 - Minecraft - Volume Alpha',
-    caption: 'Composizioni per pianoforte ed elettronica minimale. Nostalgia pura e solitudine serena.',
+    caption: 'Minimalist piano and subtle electronics. Serene solitude and quiet wonder.',
     tag: 'sound'
   },
   {
     url: 'https://cryochamber.bandcamp.com/album/tomb-of-empires',
     title: 'Atrium Carceri - Tomb of Empires',
-    caption: 'Dark ambient cinematografico e risonanze industriali sommerse da Cryo Chamber.',
+    caption: 'Cinematic dark ambient and subterranean industrial resonances from Cryo Chamber.',
     tag: 'obscureweb'
   },
   {
     url: 'https://lawrenceenglish.bandcamp.com/album/wilderness-of-mirrors',
     title: 'Lawrence English - Wilderness of Mirrors',
-    caption: 'Muri sonori densi, field recording estremo e droni ipnotici da Room40.',
+    caption: 'Dense sonic walls, extreme field recording, and hypnotic drones via Room40.',
     tag: 'sound'
   }
 ];
