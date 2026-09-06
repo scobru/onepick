@@ -1005,7 +1005,44 @@ footer {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer-brand {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.footer-author {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  color: var(--desc-color);
+  font-size: 0.8rem;
+}
+
+.footer-author-link {
+  font-weight: 700;
+  color: var(--text-color);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer-sublink {
+  color: var(--bio-color);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.footer-sep {
+  color: var(--border-muted);
 }
 
 /* Empty state */
@@ -1383,9 +1420,102 @@ footer {
   display: none !important;
 }
 
+/* ==========================================================================
+   Canvas Mode (Focus View)
+   Places only the radio box centered in the viewport and hides all else
+   ========================================================================== */
+
+body.canvas-mode {
+  min-height: 100vh;
+  margin: 0;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  position: relative;
+  background-image: radial-gradient(var(--border-muted) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+body.canvas-mode header,
+body.canvas-mode #transmitter-section,
+body.canvas-mode footer {
+  display: none !important;
+}
+
+body.canvas-mode .container {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+body.canvas-mode #radio-section {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+body.canvas-mode .radio-tuner {
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.09);
+}
+
+[data-theme="dark"] body.canvas-mode .radio-tuner {
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+}
+
+/* Floating exit button in canvas mode */
+.canvas-exit-bar {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: fadeInExit 0.2s ease forwards;
+}
+
+@keyframes fadeInExit {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.btn-exit-canvas {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  font-weight: 600;
+}
+
+.btn-exit-canvas:hover {
+  background-color: var(--link-hover-bg);
+  color: var(--link-hover-color);
+}
+
+.btn-canvas-quick {
+  font-size: 0.76rem;
+  padding: 2px 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 @media (max-width: 600px) {
   body {
     padding: 20px 14px 60px;
+  }
+  body.canvas-mode {
+    padding: 60px 12px 20px;
+    justify-content: flex-start;
+  }
+  .canvas-exit-bar {
+    top: 12px;
+    right: 12px;
   }
   .brand {
     font-size: 1.7rem;

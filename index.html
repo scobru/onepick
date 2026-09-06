@@ -45,6 +45,17 @@
             </button>
 
             <button
+              id="canvas-toggle"
+              class="bracket-btn"
+              type="button"
+              aria-label="Modalità Canvas"
+              title="Modalità Canvas: centra solo il box radio e nasconde il resto"
+              data-i18n-title="canvas_btn_title"
+            >
+              <span id="canvas-btn-text" data-i18n="canvas_btn">[ ⛶ canvas ]</span>
+            </button>
+
+            <button
               id="lang-toggle"
               class="bracket-btn"
               type="button"
@@ -112,12 +123,30 @@
         </div>
       </header>
 
+      <!-- EXIT CANVAS FLOATING BAR (Canvas Mode) -->
+      <div id="canvas-exit-bar" class="canvas-exit-bar hidden">
+        <button id="exit-canvas-btn" class="bracket-btn btn-exit-canvas" type="button" title="Esci dalla modalità canvas (Esc)" data-i18n-title="canvas_exit_title">
+          <span data-i18n="canvas_exit">[ ✕ esci dal canvas (Esc) ]</span>
+        </button>
+      </div>
+
       <main>
         <!-- SINTONIZZATORE RADIO (Feed a Rotazione Umana) -->
         <section id="radio-section">
           <div class="section-header">
             <h2 data-i18n="radio_section_title">[ Sintonizzatore Radio ]</h2>
-            <span class="status-badge" id="current-station-badge" data-i18n="badge_tuned">sintonizzato</span>
+            <div class="section-header-actions" style="display: flex; align-items: center; gap: 8px;">
+              <span class="status-badge" id="current-station-badge" data-i18n="badge_tuned">sintonizzato</span>
+              <button
+                id="radio-canvas-quick-btn"
+                class="bracket-btn btn-canvas-quick"
+                type="button"
+                title="Attiva vista canvas (centra solo la radio)"
+                data-i18n-title="canvas_btn_title"
+              >
+                <span class="canvas-quick-icon">⛶</span> <span data-i18n="canvas_label">canvas</span>
+              </button>
+            </div>
           </div>
 
           <div class="radio-tuner">
@@ -582,8 +611,22 @@
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
       <footer>
-        <div>onepick · State over History</div>
-        <div id="footer-status">zen mesh p2p · delay.scobrudot.dev</div>
+        <div class="footer-left">
+          <div class="footer-brand">onepick · State over History</div>
+          <div class="footer-author">
+            <span data-i18n="footer_by">un progetto di</span>
+            <a href="https://github.com/scobru" target="_blank" rel="noopener noreferrer" class="footer-author-link">scobru</a>
+            <span class="footer-sep">·</span>
+            <a href="https://scobrudot.dev" target="_blank" rel="noopener noreferrer" class="footer-sublink" title="Sito web / Website" data-i18n="footer_website">sito</a>
+            <span class="footer-sep">/</span>
+            <a href="https://github.com/scobru" target="_blank" rel="noopener noreferrer" class="footer-sublink" title="Profilo GitHub / GitHub profile">github</a>
+            <span class="footer-sep">/</span>
+            <a href="https://github.com/scobru/one-pick" target="_blank" rel="noopener noreferrer" class="footer-sublink" title="Repository GitHub">repo</a>
+          </div>
+        </div>
+        <div class="footer-right">
+          <div id="footer-status">zen mesh p2p · delay.scobrudot.dev</div>
+        </div>
       </footer>
     </div>
 

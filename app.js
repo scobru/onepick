@@ -1,4 +1,5 @@
 import ZEN from './zen.min.js';
+import { startAutonomousSeeder } from './seeder.js';
 
 // --- Configuration & Constants ---
 const RELAY_URL = 'https://delay.scobrudot.dev/zen';
@@ -19,6 +20,7 @@ let frictionUnlocked = false;
 let myNodsCount = 0;
 let isRadioOn = false;
 let audioCtx = null;
+let isCanvasMode = false;
 let mutedStations = new Set();
 let stationReportsMap = new Map(); // pub -> Map(reporterId -> report)
 let jammedOverrides = new Set(); // set of pub where user dismissed warning
@@ -30,6 +32,11 @@ const TOTAL_TUTORIAL_STEPS = 5;
 const powerToggleBtn = document.getElementById('power-toggle');
 const powerText = document.getElementById('power-text');
 const powerIcon = document.getElementById('power-icon');
+const canvasToggleBtn = document.getElementById('canvas-toggle');
+const canvasBtnText = document.getElementById('canvas-btn-text');
+const radioCanvasQuickBtn = document.getElementById('radio-canvas-quick-btn');
+const canvasExitBar = document.getElementById('canvas-exit-bar');
+const exitCanvasBtn = document.getElementById('exit-canvas-btn');
 const radioEq = document.getElementById('radio-eq');
 const mediaPlayerContainer = document.getElementById('media-player-container');
 
@@ -296,7 +303,21 @@ const TRANSLATIONS = {
     nods_received_singular: 'cenno ricevuto',
     nods_received_plural: 'cenni ricevuti',
     nods_short_singular: 'cenno',
-    nods_short_plural: 'cenni'
+    nods_short_plural: 'cenni',
+
+    // Canvas Mode
+    canvas_btn: '[ ⛶ canvas ]',
+    canvas_btn_exit: '[ ✕ esci ]',
+    canvas_btn_title: 'Modalità Canvas: centra solo il box radio e nasconde il resto',
+    canvas_exit: '[ ✕ esci dal canvas (Esc) ]',
+    canvas_exit_title: 'Esci dalla modalità canvas (Esc)',
+    canvas_label: 'canvas',
+    toast_canvas_on: 'Modalità Canvas attiva (premi Esc per uscire)',
+    toast_canvas_off: 'Modalità Canvas disattivata',
+
+    // Footer
+    footer_by: 'un progetto di',
+    footer_website: 'sito'
   },
   en: {
     // Header & Brand
@@ -437,7 +458,21 @@ const TRANSLATIONS = {
     nods_received_singular: 'nod received',
     nods_received_plural: 'nods received',
     nods_short_singular: 'nod',
-    nods_short_plural: 'nods'
+    nods_short_plural: 'nods',
+
+    // Canvas Mode
+    canvas_btn: '[ ⛶ canvas ]',
+    canvas_btn_exit: '[ ✕ exit ]',
+    canvas_btn_title: 'Canvas Mode: center radio box only and hide everything else',
+    canvas_exit: '[ ✕ exit canvas (Esc) ]',
+    canvas_exit_title: 'Exit canvas mode (Esc)',
+    canvas_label: 'canvas',
+    toast_canvas_on: 'Canvas mode active (press Esc to exit)',
+    toast_canvas_off: 'Canvas mode exited',
+
+    // Footer
+    footer_by: 'a project by',
+    footer_website: 'website'
   }
 };
 
@@ -567,6 +602,11 @@ function setLanguage(lang) {
   // Update power toggle button label
   if (powerText) {
     powerText.textContent = isRadioOn ? t('power_btn_off') : t('power_btn_on');
+  }
+
+  // Update canvas toggle button label
+  if (canvasBtnText) {
+    canvasBtnText.textContent = isCanvasMode ? t('canvas_btn_exit') : t('canvas_btn');
   }
 
   // Update cassetto badge
@@ -2467,6 +2507,28 @@ function initZen() {
     // Subscribe to Network Frequencies Directory
     subscribeToNetworkFrequencies();
 
+    // Launch Autonomous Background Seeder (15-min rotation + cold-start ether population)
+    setTimeout(() => {
+      try {
+        const seeder = startAutonomousSeeder(zen, ZEN, {
+          intervalMs: 15 * 60 * 1000,
+          onBroadcast: (res) => {
+            if (res) {
+              console.log(`[onepick seeder] Rotated @${res.bot} on FM ${res.freq.toFixed(2)}: ${res.track.title}`);
+            }
+          }
+        });
+        window.onepickSeeder = seeder;
+
+        // Check network on page entry: auto-seed missing bots or rotate stale stations (>15 min)
+        setTimeout(() => {
+          seeder.checkAndSeedOnPageEntry(stationsMap);
+        }, 3000);
+      } catch (seedErr) {
+        console.warn('Seeder init warning:', seedErr);
+      }
+    }, 1500);
+
   } catch (err) {
     console.error('Errore inizializzazione Zen:', err);
     updateRelayStatus(false);
@@ -2474,6 +2536,7 @@ function initZen() {
 }
 
 function updateRelayStatus(online) {
+  isRelayConnected = !!online;
   if (relayDot) {
     if (online) {
       relayDot.classList.add('online');
@@ -2569,12 +2632,75 @@ function checkInitialPeerParam() {
   }
 }
 
+// --- Canvas Mode (Radio Focus View) ---
+
+function toggleCanvasMode(force) {
+  const nextState = typeof force === 'boolean' ? force : !isCanvasMode;
+  isCanvasMode = nextState;
+
+  if (isCanvasMode) {
+    document.body.classList.add('canvas-mode');
+    canvasExitBar?.classList.remove('hidden');
+    canvasToggleBtn?.classList.add('btn-active');
+    radioCanvasQuickBtn?.classList.add('btn-active');
+    if (canvasBtnText) canvasBtnText.textContent = t('canvas_btn_exit');
+    showToast(t('toast_canvas_on'));
+  } else {
+    document.body.classList.remove('canvas-mode');
+    canvasExitBar?.classList.add('hidden');
+    canvasToggleBtn?.classList.remove('btn-active');
+    radioCanvasQuickBtn?.classList.remove('btn-active');
+    if (canvasBtnText) canvasBtnText.textContent = t('canvas_btn');
+    showToast(t('toast_canvas_off'));
+  }
+
+  // Refresh needle position after layout reflow
+  setTimeout(() => {
+    if (activeStationPub && stationsMap.has(activeStationPub)) {
+      const station = stationsMap.get(activeStationPub);
+      if (station && station.freq) {
+        updateNeedlePosition(station.freq);
+      }
+    }
+  }, 100);
+}
+
+function setupCanvasMode() {
+  canvasToggleBtn?.addEventListener('click', () => toggleCanvasMode());
+  radioCanvasQuickBtn?.addEventListener('click', () => toggleCanvasMode());
+  exitCanvasBtn?.addEventListener('click', () => toggleCanvasMode(false));
+
+  // Keyboard shortcuts:
+  // - Esc: exit canvas mode
+  // - 'c' or 'C': toggle canvas mode when not editing inputs or modals
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (isCanvasMode) {
+        toggleCanvasMode(false);
+      }
+      return;
+    }
+
+    if ((e.key === 'c' || e.key === 'C') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const activeEl = document.activeElement;
+      const tag = activeEl ? activeEl.tagName.toLowerCase() : '';
+      const isInput = tag === 'input' || tag === 'textarea' || activeEl?.isContentEditable;
+      const isModalOpen = document.querySelector('.modal-overlay:not(.hidden)');
+      if (!isInput && !isModalOpen) {
+        e.preventDefault();
+        toggleCanvasMode();
+      }
+    }
+  });
+}
+
 // --- App Initialization ---
 
 function initApp() {
   initTheme();
   setupLanguageAndTutorial();
   setLanguage(currentLang);
+  setupCanvasMode();
   initTunerScale();
   loadMutedStations();
   checkFrictionStatus();
