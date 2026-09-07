@@ -1,16 +1,16 @@
 # Graph Report - onepick  (2026-09-07)
 
 ## Corpus Check
-- 6 files · ~26,061 words
+- 6 files · ~26,142 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 397 nodes · 913 edges · 20 communities (11 shown, 9 thin omitted)
-- Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 105 edges (avg confidence: 0.53)
+- 398 nodes · 915 edges · 20 communities (11 shown, 9 thin omitted)
+- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 105 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8ff42b3a`
+- Built from commit: `8812c308`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -67,7 +67,7 @@
 
 ### Community 0 - "app.js"
 Cohesion: 0.01
-Nodes (143): audiusTrackCache, authAlert, authCancelBtn, authControls, authForm, authModal, authorBadge, authorSigilDisplay (+135 more)
+Nodes (140): audiusTrackCache, authAlert, authCancelBtn, authControls, authForm, authModal, authorBadge, authorSigilDisplay (+132 more)
 
 ### Community 1 - "zen.min.js"
 Cohesion: 0.12
@@ -75,7 +75,7 @@ Nodes (42): _(), A(), B(), b62Decode(), b62Encode(), c(), compactPoint(), concat
 
 ### Community 2 - "t"
 Cohesion: 0.09
-Nodes (67): checkFrictionStatus(), checkInitialPeerParam(), closeTutorialModal(), detectMedia(), escapeHtml(), extractCleanMediaUrl(), formatTimeAgo(), generateSigilSvg() (+59 more)
+Nodes (70): checkFrictionStatus(), checkInitialPeerParam(), closeTutorialModal(), detectMedia(), escapeHtml(), extractCleanMediaUrl(), extractDomain(), formatTimeAgo() (+62 more)
 
 ### Community 3 - "bot.js"
 Cohesion: 0.22
@@ -106,8 +106,8 @@ Cohesion: 0.67
 Nodes (3): derivePair(), setupAuthUI(), zen
 
 ### Community 11 - "hasSentNod"
-Cohesion: 0.67
-Nodes (4): getSentNods(), hasSentNod(), recordSentNod(), sendSilentNod()
+Cohesion: 0.50
+Nodes (5): getSentNods(), getTrackHash(), hasSentNod(), recordSentNod(), sendSilentNod()
 
 ## Knowledge Gaps
 - **175 isolated node(s):** `stationsMap`, `mutedStations`, `stationReportsMap`, `jammedOverrides`, `powerToggleBtn` (+170 more)

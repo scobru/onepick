@@ -374,7 +374,7 @@ const TRANSLATIONS = {
     toast_nod_sent: 'Cenno silenzioso inviato al trasmettitore!',
     toast_nod_sent_private: '✓ Cenno inviato privatamente all\'autore! (Invisibile al pubblico)',
     toast_cannot_nod_self: 'Non puoi inviare un cenno alla tua stessa frequenza.',
-    toast_already_nodded: 'Hai già inviato un cenno a questa frequenza.',
+    toast_already_nodded: 'Hai già inviato un cenno per questo pick.',
     toast_muted: 'Frequenza silenziata sul tuo browser.',
     toast_unmuted: 'Frequenza ripristinata nel ricevitore.',
     toast_community_reported: '⚠️ Segnalazione irradiata sulla rete Zen P2P!',
@@ -619,7 +619,7 @@ const TRANSLATIONS = {
     toast_nod_sent: 'Silent nod sent to transmitter!',
     toast_nod_sent_private: '✓ Silent nod sent privately to the author! (Invisible to the public)',
     toast_cannot_nod_self: 'You cannot send a nod to your own frequency.',
-    toast_already_nodded: 'You have already sent a nod to this frequency.',
+    toast_already_nodded: 'You have already sent a nod for this pick.',
     toast_muted: 'Frequency muted on your browser.',
     toast_unmuted: 'Frequency restored to receiver.',
     toast_community_reported: '⚠️ Report radiated on Zen P2P mesh network!',
@@ -2123,7 +2123,7 @@ function refreshStationCardUI(station) {
 
   if (silentNodBtn) {
     const isOwnStation = currentPair && currentPair.pub === pub;
-    const alreadySent = hasSentNod(pub);
+    const alreadySent = hasSentNod(pub, station.url);
     if (isOwnStation) {
       silentNodBtn.disabled = true;
       silentNodBtn.textContent = t('action_own_station');
@@ -2279,17 +2279,31 @@ function getSentNods() {
   }
 }
 
-function hasSentNod(pub) {
+function getTrackHash(url) {
+  if (!url) return 'generic';
+  let hash = 0;
+  for (let i = 0; i < url.length; i++) {
+    hash = ((hash << 5) - hash) + url.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(36);
+}
+
+function hasSentNod(pub, trackUrl) {
   if (!pub) return false;
   const list = getSentNods();
+  if (trackUrl) {
+    return list.includes(`${pub}::${trackUrl}`);
+  }
   return list.includes(pub);
 }
 
-function recordSentNod(pub) {
+function recordSentNod(pub, trackUrl) {
   if (!pub) return;
   const list = getSentNods();
-  if (!list.includes(pub)) {
-    list.push(pub);
+  const key = trackUrl ? `${pub}::${trackUrl}` : pub;
+  if (!list.includes(key)) {
+    list.push(key);
     localStorage.setItem('onepick_sent_nods', JSON.stringify(list));
   }
 }
@@ -2301,15 +2315,21 @@ async function sendSilentNod(targetPub) {
     return;
   }
 
-  if (hasSentNod(targetPub)) {
+  const station = stationsMap.get(targetPub);
+  const trackUrl = station ? station.url : '';
+
+  if (hasSentNod(targetPub, trackUrl)) {
     showToast(t('toast_already_nodded'));
     return;
   }
 
-  const nodId = currentPair ? currentPair.pub : 'anon_' + Math.random().toString(36).slice(2, 9);
+  const fromId = currentPair ? currentPair.pub : 'anon_' + Math.random().toString(36).slice(2, 9);
+  const trackHash = getTrackHash(trackUrl);
+  const nodId = `${fromId}_${trackHash}`;
   const nodData = {
-    from: nodId,
+    from: fromId,
     target: targetPub,
+    url: trackUrl || '',
     ts: Date.now()
   };
 
@@ -2318,7 +2338,7 @@ async function sendSilentNod(targetPub) {
       // Put to public nods inbox for this target station:
       zen.get('onepick:nods:' + targetPub).get(nodId).put(nodData);
     }
-    recordSentNod(targetPub);
+    recordSentNod(targetPub, trackUrl);
     if (silentNodBtn) {
       silentNodBtn.textContent = t('action_nod_sent');
       silentNodBtn.disabled = true;
@@ -2327,7 +2347,7 @@ async function sendSilentNod(targetPub) {
     showToast(t('toast_nod_sent_private'));
   } catch (err) {
     console.error('Errore invio cenno:', err);
-    recordSentNod(targetPub);
+    recordSentNod(targetPub, trackUrl);
     satisfyPositiveFriction('nod');
   }
 }
