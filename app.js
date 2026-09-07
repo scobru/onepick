@@ -890,13 +890,18 @@ function renderTutorialStep(step) {
 
 function openTutorialModal(step = 1) {
   renderTutorialStep(step);
+  if (tutorialDontShowCheckbox) {
+    tutorialDontShowCheckbox.checked = localStorage.getItem('onepick_tutorial_dont_show') === 'true';
+  }
   tutorialModal?.classList.remove('hidden');
 }
 
 function closeTutorialModal() {
   tutorialModal?.classList.add('hidden');
   if (tutorialDontShowCheckbox && tutorialDontShowCheckbox.checked) {
-    localStorage.setItem('onepick_tutorial_seen', 'true');
+    localStorage.setItem('onepick_tutorial_dont_show', 'true');
+  } else {
+    localStorage.removeItem('onepick_tutorial_dont_show');
   }
 }
 
@@ -904,7 +909,6 @@ function nextTutorialStep() {
   if (currentTutorialStep < TOTAL_TUTORIAL_STEPS) {
     renderTutorialStep(currentTutorialStep + 1);
   } else {
-    localStorage.setItem('onepick_tutorial_seen', 'true');
     closeTutorialModal();
     showToast(t('toast_enjoy'));
   }
@@ -925,6 +929,20 @@ function setupLanguageAndTutorial() {
 
   tutorialTrigger?.addEventListener('click', () => {
     openTutorialModal(1);
+  });
+
+  tutorialDontShowCheckbox?.addEventListener('change', () => {
+    if (tutorialDontShowCheckbox.checked) {
+      localStorage.setItem('onepick_tutorial_dont_show', 'true');
+    } else {
+      localStorage.removeItem('onepick_tutorial_dont_show');
+    }
+  });
+
+  tutorialModal?.addEventListener('click', (e) => {
+    if (e.target === tutorialModal) {
+      closeTutorialModal();
+    }
   });
 
   closeTutorialBtn?.addEventListener('click', closeTutorialModal);
@@ -3345,6 +3363,15 @@ function setupCanvasMode() {
   // - 'c' or 'C': toggle canvas mode when not editing inputs or modals
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
+      if (tutorialModal && !tutorialModal.classList.contains('hidden')) {
+        closeTutorialModal();
+        return;
+      }
+      const openModal = document.querySelector('.modal-overlay:not(.hidden)');
+      if (openModal) {
+        openModal.classList.add('hidden');
+        return;
+      }
       if (isCanvasMode) {
         toggleCanvasMode(false);
       }
@@ -3587,18 +3614,16 @@ function initApp() {
   // Power radio initialization & listener
   setupPowerRadio();
 
+  // Always show the guide before everything else, unless user explicitly checked "Non mostrare più all'avvio"
+  const dontShow = localStorage.getItem('onepick_tutorial_dont_show') === 'true';
+  if (!dontShow) {
+    openTutorialModal(1);
+  }
+
   // Tune initial station after setup
   setTimeout(() => {
     checkInitialPeerParam();
     updateStationsCounter();
-
-    // Check if tutorial should be shown automatically on first visit
-    const tutorialSeen = localStorage.getItem('onepick_tutorial_seen');
-    if (tutorialSeen !== 'true') {
-      setTimeout(() => {
-        openTutorialModal(1);
-      }, 700);
-    }
   }, 400);
 }
 
