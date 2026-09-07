@@ -107,6 +107,50 @@ export const SOMAFM_FALLBACK_TRACKS = [];
 export const SEED_TRACKS = [];
 
 /**
+ * Universal helper for fetching external resources in both Node and Browser.
+ * In browser: uses /api/proxy (Vercel Serverless) with edge-caching first,
+ * then falls back to direct fetch, and finally public CORS proxies.
+ */
+export async function fetchWithCORSProxy(url, { signal, asJson = false } = {}) {
+  // 1. Node.js environment (bot CLI service) -> direct fetch
+  if (typeof window === 'undefined') {
+    const res = await fetch(url, { signal });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return asJson ? await res.json() : await res.text();
+  }
+
+  // 2. Browser on web server (Vercel): try our local /api/proxy endpoint
+  if (window.location && window.location.protocol && window.location.protocol.startsWith('http')) {
+    try {
+      const vercelProxyUrl = `/api/proxy?url=${encodeURIComponent(url)}`;
+      const res = await fetch(vercelProxyUrl, { signal });
+      if (res.ok) {
+        return asJson ? await res.json() : await res.text();
+      }
+    } catch (e) {}
+  }
+
+  // 3. Direct browser fetch (for CORS-enabled APIs like SomaFM, Archive.org, Mixcloud)
+  try {
+    const directRes = await fetch(url, { signal });
+    if (directRes.ok) {
+      return asJson ? await directRes.json() : await directRes.text();
+    }
+  } catch (e) {}
+
+  // 4. Fallback public proxy
+  try {
+    const pUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    const res = await fetch(pUrl, { signal });
+    if (res.ok) {
+      return asJson ? await res.json() : await res.text();
+    }
+  } catch (e) {}
+
+  throw new Error(`Impossibile recuperare dati da ${url}`);
+}
+
+/**
  * Base Abstract Provider class
  */
 export class BaseProvider {
@@ -393,22 +437,10 @@ export class YouTubeFeedProvider extends BaseProvider {
     const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${chosenChannel.id}`;
     let xml = '';
 
-    if (typeof window === 'undefined') {
-      const res = await fetch(feedUrl, { signal });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      xml = await res.text();
-    } else {
-      try {
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(feedUrl)}`;
-        const res = await fetch(proxyUrl, { signal });
-        if (res.ok) xml = await res.text();
-      } catch (e) {}
-
-      if (!xml) {
-        const res = await fetch(feedUrl, { signal });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        xml = await res.text();
-      }
+    try {
+      xml = await fetchWithCORSProxy(feedUrl, { signal, asJson: false });
+    } catch (e) {
+      return [];
     }
 
     const entries = xml.split('<entry>');
@@ -464,7 +496,7 @@ export class BandcampProvider extends BaseProvider {
 
     try {
       const timeoutSignal = typeof AbortSignal !== 'undefined' && AbortSignal.timeout
-        ? AbortSignal.timeout(6000)
+        ? AbortSignal.timeout(12000)
         : undefined;
       const live = await this.fetchLiveTracks({ ...context, signal: timeoutSignal });
       if (Array.isArray(live) && live.length > 0) {
@@ -478,7 +510,7 @@ export class BandcampProvider extends BaseProvider {
         return live;
       }
     } catch (e) {
-      console.warn('[BandcampProvider] Fallback a tracce locali:', e.message || e);
+      console.warn('[BandcampProvider] Live fetch notice:', e.message || e);
     }
 
     return cache;
@@ -487,23 +519,10 @@ export class BandcampProvider extends BaseProvider {
   async fetchLiveTracks({ tag, signal } = {}) {
     const feedUrl = 'https://daily.bandcamp.com/feed';
     let xml = '';
-
-    if (typeof window === 'undefined') {
-      const res = await fetch(feedUrl, { signal });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      xml = await res.text();
-    } else {
-      try {
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(feedUrl)}`;
-        const res = await fetch(proxyUrl, { signal });
-        if (res.ok) xml = await res.text();
-      } catch (e) {}
-
-      if (!xml) {
-        const res = await fetch(feedUrl, { signal });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        xml = await res.text();
-      }
+    try {
+      xml = await fetchWithCORSProxy(feedUrl, { signal, asJson: false });
+    } catch (e) {
+      return [];
     }
 
     const items = xml.split('<item>');
@@ -530,9 +549,9 @@ export class BandcampProvider extends BaseProvider {
       return articles;
     }
 
-    // For #sound (audio player): crawl latest articles and extract real playable Bandcamp album links!
+    // For #sound (audio player): crawl top 3 latest articles and extract real playable Bandcamp album links
     const articleUrls = [];
-    for (let i = 1; i < Math.min(items.length, 8); i++) {
+    for (let i = 1; i < Math.min(items.length, 4); i++) {
       const linkMatch = items[i].match(/<link>(https:\/\/daily\.bandcamp\.com\/[^\/]+\/[^<]+)<\/link>/);
       if (linkMatch && linkMatch[1]) {
         articleUrls.push(linkMatch[1].trim());
@@ -541,22 +560,7 @@ export class BandcampProvider extends BaseProvider {
 
     const albumPromises = articleUrls.map(async (artUrl) => {
       try {
-        let artHtml = '';
-        if (typeof window === 'undefined') {
-          const res = await fetch(artUrl, { signal });
-          if (res.ok) artHtml = await res.text();
-        } else {
-          try {
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(artUrl)}`;
-            const res = await fetch(proxyUrl, { signal });
-            if (res.ok) artHtml = await res.text();
-          } catch (e) {}
-          if (!artHtml) {
-            const res = await fetch(artUrl, { signal });
-            if (res.ok) artHtml = await res.text();
-          }
-        }
-
+        const artHtml = await fetchWithCORSProxy(artUrl, { signal, asJson: false });
         if (!artHtml) return null;
 
         const albumLinks = [...artHtml.matchAll(/https:\/\/[a-zA-Z0-9_\-]+\.bandcamp\.com\/album\/[a-zA-Z0-9_\-]+/g)].map(m => m[0]);
@@ -604,20 +608,10 @@ export class MixcloudProvider extends BaseProvider {
     const url = `https://api.mixcloud.com/tag/${selectedTag}/popular/?limit=25`;
 
     let data = null;
-    if (typeof window === 'undefined') {
-      const res = await fetch(url, { signal });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      data = await res.json();
-    } else {
-      try {
-        const res = await fetch(url, { signal });
-        if (res.ok) data = await res.json();
-      } catch (e) {}
-      if (!data) {
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-        const res = await fetch(proxyUrl, { signal });
-        if (res.ok) data = await res.json();
-      }
+    try {
+      data = await fetchWithCORSProxy(url, { signal, asJson: true });
+    } catch (e) {
+      return [];
     }
 
     const items = data?.data;
@@ -655,21 +649,10 @@ export class SomaFMProvider extends BaseProvider {
   async fetchLiveTracks({ signal } = {}) {
     const url = 'https://somafm.com/channels.json';
     let data = null;
-
-    if (typeof window === 'undefined') {
-      const res = await fetch(url, { signal });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      data = await res.json();
-    } else {
-      try {
-        const res = await fetch(url, { signal });
-        if (res.ok) data = await res.json();
-      } catch (e) {}
-      if (!data) {
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-        const res = await fetch(proxyUrl, { signal });
-        if (res.ok) data = await res.json();
-      }
+    try {
+      data = await fetchWithCORSProxy(url, { signal, asJson: true });
+    } catch (e) {
+      return [];
     }
 
     const channels = data?.channels;

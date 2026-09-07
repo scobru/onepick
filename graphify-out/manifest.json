@@ -15,8 +15,8 @@
     "semantic_hash": ""
   },
   "seeder.js": {
-    "mtime": 1788782124.3758757,
-    "ast_hash": "33f483d0436ceb4f5bdf9dc9c692fd14",
+    "mtime": 1788783098.9610612,
+    "ast_hash": "be2b1f57f7a5916015c89cc2e59be712",
     "semantic_hash": ""
   },
   "zen.min.js": {
@@ -37,6 +37,11 @@
   "favicon.svg": {
     "mtime": 1788701732.5946915,
     "ast_hash": "8887fe7712fbaf5e2ae2e377c73a47cb",
+    "semantic_hash": ""
+  },
+  "api/proxy.js": {
+    "mtime": 1788783000.6799073,
+    "ast_hash": "6baf37487cf2d9349b3fc21bacc82442",
     "semantic_hash": ""
   }
 }
