@@ -1,5 +1,5 @@
 import ZEN from './zen.min.js';
-import { startAutonomousSeeder } from './seeder.js';
+import { startAutonomousSeeder, rotateBotStation, SEED_BOTS } from './seeder.js';
 
 // --- Configuration & Constants ---
 const RELAY_URL = 'https://delay.scobrudot.dev/zen';
@@ -92,6 +92,10 @@ const silentNodBtn = document.getElementById('silent-nod-btn');
 const shareFrequencyBtn = document.getElementById('share-frequency-btn');
 const stationProfileBtn = document.getElementById('station-profile-btn');
 const reportStationBtn = document.getElementById('report-station-btn');
+const rotateTrackBtn = document.getElementById('rotate-track-btn');
+const rotateTrackText = document.getElementById('rotate-track-text');
+const profRotateBtn = document.getElementById('prof-rotate-btn');
+const profRotateText = document.getElementById('prof-rotate-text');
 const jammedSignalBanner = document.getElementById('jammed-signal-banner');
 const overrideJammedBtn = document.getElementById('override-jammed-btn');
 
@@ -247,6 +251,14 @@ const TRANSLATIONS = {
     action_copy_link: '⎘ Copia',
     copy_link_title: 'Copia link diretto a questa frequenza',
     report_btn_title: 'Segnala link sospetto/fraudolento o silenzia frequenza',
+    action_rotate_track: '⟳ Nuova Traccia',
+    action_rotate_bot: '⟳ Ruota Bot',
+    action_rotating: '⟳ in arrivo...',
+    tooltip_rotate_track: 'Richiedi una nuova traccia live per questo bot (Scorciatoia: R)',
+    tooltip_rotate_bot: 'Ruota una stazione bot della rete su una nuova traccia live (Scorciatoia: R)',
+    toast_bot_rotated: '✓ Nuova traccia live per @{bot}: "{title}"',
+    toast_bot_rotate_error: 'Errore durante la rotazione dinamica: ',
+    prof_btn_rotate_bot: '⟳ Ruota Brano Bot',
 
     // Transmitter
     transmitter_title: 'Il Tuo Slot Unico',
@@ -492,6 +504,14 @@ const TRANSLATIONS = {
     action_copy_link: '⎘ Copy',
     copy_link_title: 'Copy direct link to this frequency',
     report_btn_title: 'Report suspicious/fraudulent link or mute frequency',
+    action_rotate_track: '⟳ New Track',
+    action_rotate_bot: '⟳ Rotate Bot',
+    action_rotating: '⟳ fetching...',
+    tooltip_rotate_track: 'Request a new live track for this bot (Shortcut: R)',
+    tooltip_rotate_bot: 'Rotate a network bot station to a new live track (Shortcut: R)',
+    toast_bot_rotated: '✓ New live track for @{bot}: "{title}"',
+    toast_bot_rotate_error: 'Error during dynamic rotation: ',
+    prof_btn_rotate_bot: '⟳ Rotate Bot Track',
 
     // Transmitter
     transmitter_title: 'Your Single Slot',
@@ -2056,6 +2076,7 @@ function renderEmptyRadioState() {
     silentNodBtn.title = t('tooltip_silent_nod');
     silentNodBtn.disabled = true;
   }
+  updateRotateTrackBtnUI();
   if (currentStationBadge) currentStationBadge.textContent = currentLang === 'it' ? 'in scansione' : 'scanning';
   if (mediaPlayerContainer) {
     mediaPlayerContainer.innerHTML = '';
@@ -2136,6 +2157,8 @@ function refreshStationCardUI(station) {
     }
     silentNodBtn.title = t('tooltip_silent_nod');
   }
+
+  updateRotateTrackBtnUI();
 
   if (currentPair && currentPair.pub === pub) {
     if (currentStationBadge) {
@@ -2355,6 +2378,116 @@ async function sendSilentNod(targetPub) {
 silentNodBtn?.addEventListener('click', () => {
   if (!activeStationPub) return;
   sendSilentNod(activeStationPub);
+});
+
+// --- Manual Dynamic Bot Rotation Interaction ---
+
+let isRotatingBot = false;
+
+function isCurrentStationBot() {
+  if (!activeStationPub) return null;
+  const station = stationsMap.get(activeStationPub);
+  if (!station) return null;
+  return SEED_BOTS.find(b => b.username === station.author) || null;
+}
+
+function updateRotateTrackBtnUI() {
+  if (!rotateTrackBtn) return;
+  if (isRotatingBot) return;
+
+  const bot = isCurrentStationBot();
+  if (bot) {
+    rotateTrackBtn.disabled = false;
+    rotateTrackBtn.title = t('tooltip_rotate_track');
+    if (rotateTrackText) {
+      rotateTrackText.textContent = t('action_rotate_track');
+    } else {
+      rotateTrackBtn.textContent = t('action_rotate_track');
+    }
+  } else {
+    rotateTrackBtn.disabled = false;
+    rotateTrackBtn.title = t('tooltip_rotate_bot');
+    if (rotateTrackText) {
+      rotateTrackText.textContent = t('action_rotate_bot');
+    } else {
+      rotateTrackBtn.textContent = t('action_rotate_bot');
+    }
+  }
+}
+
+async function handleManualBotRotation() {
+  if (isRotatingBot) return;
+  isRotatingBot = true;
+
+  if (rotateTrackBtn) {
+    rotateTrackBtn.disabled = true;
+    if (rotateTrackText) {
+      rotateTrackText.textContent = t('action_rotating');
+    } else {
+      rotateTrackBtn.textContent = t('action_rotating');
+    }
+  }
+  if (profRotateBtn) {
+    profRotateBtn.disabled = true;
+    if (profRotateText) {
+      profRotateText.textContent = t('action_rotating');
+    } else {
+      profRotateBtn.textContent = t('action_rotating');
+    }
+  }
+
+  try {
+    const currentBot = isCurrentStationBot();
+    const targetBot = currentBot || SEED_BOTS[Math.floor(Math.random() * SEED_BOTS.length)];
+    const currentStation = stationsMap.get(activeStationPub);
+    const currentUrl = (currentBot && currentStation) ? currentStation.url : null;
+
+    showToast(currentLang === 'it' ? `⟳ Interrogazione provider live per @${targetBot.username}...` : `⟳ Querying live provider for @${targetBot.username}...`);
+
+    const res = await rotateBotStation(zen, ZEN, targetBot, currentUrl);
+    if (res && res.pair && res.slotData) {
+      const stationObj = {
+        pub: res.pair.pub,
+        author: res.bot,
+        url: res.slotData.url,
+        caption: res.slotData.caption || '',
+        tag: res.slotData.tag || 'sound',
+        ts: res.slotData.ts,
+        freq: res.freq
+      };
+      stationsMap.set(res.pair.pub, stationObj);
+      updateStationsCounter();
+      updateFrictionUI();
+
+      tuneToStation(res.pair.pub);
+
+      showToast(
+        t('toast_bot_rotated')
+          .replace('{bot}', res.bot)
+          .replace('{title}', res.track?.title || res.slotData.caption || 'Nuova traccia')
+      );
+    }
+  } catch (err) {
+    console.error('Errore rotazione manuale bot:', err);
+    showToast(t('toast_bot_rotate_error') + (err.message || 'Riprova'));
+  } finally {
+    isRotatingBot = false;
+    updateRotateTrackBtnUI();
+    if (profRotateBtn) {
+      profRotateBtn.disabled = false;
+      if (profRotateText) {
+        profRotateText.textContent = t('prof_btn_rotate_bot');
+      } else {
+        profRotateBtn.textContent = t('prof_btn_rotate_bot');
+      }
+    }
+  }
+}
+
+rotateTrackBtn?.addEventListener('click', handleManualBotRotation);
+profRotateBtn?.addEventListener('click', () => {
+  handleManualBotRotation();
+  stationProfileModal?.classList.add('hidden');
 });
 
 // --- Share Frequency Link ---
@@ -2930,6 +3063,14 @@ function openStationProfile(pub) {
     const isMuted = mutedStations.has(pub);
     profMuteToggleBtn.textContent = isMuted ? t('profile_btn_unmute') : t('profile_btn_mute');
     profMuteToggleBtn.className = isMuted ? 'bracket-btn btn-success' : 'bracket-btn btn-danger';
+  }
+
+  if (profRotateBtn) {
+    const isBot = SEED_BOTS.some(b => b.username === station.author);
+    profRotateBtn.classList.toggle('hidden', !isBot);
+    if (profRotateText) {
+      profRotateText.textContent = t('prof_btn_rotate_bot');
+    }
   }
 
   stationProfileModal?.classList.remove('hidden');
@@ -3711,6 +3852,18 @@ function setupCanvasMode() {
       if (!isInput && !isModalOpen) {
         e.preventDefault();
         toggleCanvasMode();
+      }
+    }
+
+    // 'r' or 'R': manual dynamic rotation of bot tracks
+    if ((e.key === 'r' || e.key === 'R') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const activeEl = document.activeElement;
+      const tag = activeEl ? activeEl.tagName.toLowerCase() : '';
+      const isInput = tag === 'input' || tag === 'textarea' || activeEl?.isContentEditable;
+      const isModalOpen = document.querySelector('.modal-overlay:not(.hidden)');
+      if (!isInput && !isModalOpen) {
+        e.preventDefault();
+        handleManualBotRotation();
       }
     }
   });

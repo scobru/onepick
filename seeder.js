@@ -1049,9 +1049,46 @@ export function startAutonomousSeeder(zen, ZEN, options = {}) {
   return {
     checkAndSeedOnPageEntry,
     performRotation,
+    rotateStation: (botIdentifier, currentUrl) => rotateBotStation(zen, ZEN, botIdentifier, currentUrl),
     stop: () => {
       isRunning = false;
       if (intervalHandle) clearInterval(intervalHandle);
     }
   };
+}
+
+/**
+ * Manually or programmatically triggers an immediate dynamic rotation for a bot station.
+ * Fetches a fresh live track from its dynamic provider and broadcasts it to Zen mesh.
+ */
+export async function rotateBotStation(zen, ZEN, botIdentifier, currentUrl = null) {
+  if (!zen) throw new Error('Zen client non inizializzato');
+
+  let targetBot = null;
+  if (typeof botIdentifier === 'string') {
+    targetBot = SEED_BOTS.find(b => b.username === botIdentifier || b.id === botIdentifier);
+    if (!targetBot) {
+      for (const b of SEED_BOTS) {
+        const p = await deriveBotPair(b.username, b.passphrase, ZEN);
+        if (p.pub === botIdentifier) {
+          targetBot = b;
+          break;
+        }
+      }
+    }
+  } else if (botIdentifier && botIdentifier.username) {
+    targetBot = botIdentifier;
+  }
+
+  if (!targetBot) {
+    targetBot = SEED_BOTS[Math.floor(Math.random() * SEED_BOTS.length)];
+  }
+
+  const newTrack = await getTrackForBot(targetBot, currentUrl);
+  if (!newTrack || !newTrack.url) {
+    throw new Error(`Nessuna traccia live disponibile al momento per @${targetBot.username}`);
+  }
+
+  const res = await broadcastSeedSlot(zen, targetBot, newTrack, ZEN);
+  return res;
 }

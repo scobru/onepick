@@ -782,6 +782,12 @@ h2 {
   background-color: transparent;
 }
 
+#rotate-track-btn:hover:not(:disabled),
+#prof-rotate-btn:hover:not(:disabled) {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
 /* Positive Friction Box */
 .friction-box {
   padding: 12px 16px;

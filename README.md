@@ -77,6 +77,7 @@ Il meccanismo opera in due modalità:
    * All'apertura della pagina, controlla se l'etere è vuoto o se l'ultima stazione ha più di 5 minuti.
    * In caso positivo, irradia automaticamente un nuovo brano interrogando il provider della stazione.
    * Un timer a 5 minuti mantiene viva la rotazione durante la sessione (con lock `localStorage` contro duplicati tra tab).
+   * **Rotazione Manuale su Richiesta**: Pulsante dedicato `[ ⟳ Nuova Traccia ]` nella scheda radio o scorciatoia da tastiera <kbd>R</kbd> per richiedere istantaneamente un nuovo brano live dal provider e sintonizzarlo subito in onda.
 2. **Script CLI Standalone (`bot.js`)**:
    * Eseguibile 24/7 su VPS o terminale locale:
      ```bash
