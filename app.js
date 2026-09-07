@@ -3647,11 +3647,16 @@ function initZen() {
     // Subscribe to Network Frequencies Directory
     subscribeToNetworkFrequencies();
 
-    // Launch Autonomous Background Seeder (15-min rotation + cold-start ether population)
+    // Launch Autonomous Background Seeder.
+    // There is no server: every visitor landing on the page keeps the ether alive,
+    // seeding missing stations and rotating the ones that went stale.
     setTimeout(() => {
       try {
         const seeder = startAutonomousSeeder(zen, ZEN, {
           intervalMs: 5 * 60 * 1000,
+          staleMs: 5 * 60 * 1000,
+          maxRotationsPerVisit: 2,
+          getStations: () => stationsMap,
           onBroadcast: (res) => {
             if (res) {
               console.log(`[onepick seeder] Rotated @${res.bot} on FM ${res.freq.toFixed(2)}: ${res.track.title}`);
@@ -3660,7 +3665,7 @@ function initZen() {
         });
         window.onepickSeeder = seeder;
 
-        // Check network on page entry: auto-seed missing bots or rotate stale stations (>5 min)
+        // Check the network on page entry: seed missing bots, rotate stale stations (>5 min)
         setTimeout(() => {
           seeder.checkAndSeedOnPageEntry(stationsMap);
         }, 3000);
