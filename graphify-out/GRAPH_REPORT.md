@@ -1,16 +1,16 @@
 # Graph Report - onepick  (2026-09-07)
 
 ## Corpus Check
-- 6 files · ~24,378 words
+- 6 files · ~24,468 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 373 nodes · 853 edges · 19 communities (11 shown, 8 thin omitted)
+- 375 nodes · 856 edges · 19 communities (11 shown, 8 thin omitted)
 - Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 104 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `23f48da7`
+- Built from commit: `546ef2ad`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -37,7 +37,7 @@
 
 ## God Nodes (most connected - your core abstractions)
 1. `t` - 37 edges
-2. `t()` - 32 edges
+2. `t()` - 33 edges
 3. `o()` - 32 edges
 4. `A()` - 24 edges
 5. `e()` - 23 edges
@@ -66,7 +66,7 @@
 
 ### Community 0 - "app.js"
 Cohesion: 0.02
-Nodes (127): audiusTrackCache, authAlert, authCancelBtn, authControls, authForm, authModal, authorBadge, authorSigilDisplay (+119 more)
+Nodes (129): audiusTrackCache, authAlert, authCancelBtn, authControls, authForm, authModal, authorBadge, authorSigilDisplay (+121 more)
 
 ### Community 1 - "zen.min.js"
 Cohesion: 0.12
@@ -88,10 +88,6 @@ Nodes (14): ✦ Architettura Tecnica, 🤖 Autopopolamento Autonomo & Background
 Cohesion: 0.15
 Nodes (10): ARCHIVEORG_FALLBACK_TRACKS, ArchiveOrgProvider, AUDIUS_FALLBACK_TRACKS, BANDCAMP_FALLBACK_TRACKS, botPairsCache, MIXCLOUD_FALLBACK_TRACKS, SOMAFM_FALLBACK_TRACKS, TUNECAMP_FALLBACK_TRACKS (+2 more)
 
-### Community 6 - "BaseProvider"
-Cohesion: 0.17
-Nodes (4): BandcampProvider, BaseProvider, fetchLiveTuneCampTracks(), SomaFMProvider
-
 ### Community 7 - "package.json"
 Cohesion: 0.17
 Nodes (11): author, description, keywords, license, name, scripts, bot, bot:once (+3 more)
@@ -100,16 +96,20 @@ Nodes (11): author, description, keywords, license, name, scripts, bot, bot:once
 Cohesion: 0.22
 Nodes (11): getJammingStaticBuffer(), getTuningStaticBuffer(), initAudioContext(), playJammingStatic(), playTuningStatic(), renderStationMedia(), resolveAudiusTrackId(), resolveTuneCampMetadata() (+3 more)
 
+### Community 9 - "ProviderRegistry"
+Cohesion: 0.20
+Nodes (3): BandcampProvider, fetchLiveTuneCampTracks(), ProviderRegistry
+
 ### Community 10 - "setupAuthUI"
-Cohesion: 0.67
-Nodes (3): derivePair(), setupAuthUI(), zen
+Cohesion: 0.40
+Nodes (4): derivePair(), setupAuthUI(), zen, deriveBotPair()
 
 ### Community 11 - "hasSentNod"
 Cohesion: 0.67
 Nodes (3): getSentNods(), hasSentNod(), recordSentNod()
 
 ## Knowledge Gaps
-- **161 isolated node(s):** `stationsMap`, `mutedStations`, `stationReportsMap`, `jammedOverrides`, `powerToggleBtn` (+156 more)
+- **163 isolated node(s):** `stationsMap`, `mutedStations`, `stationReportsMap`, `jammedOverrides`, `powerToggleBtn` (+158 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -117,10 +117,10 @@ Nodes (3): getSentNods(), hasSentNod(), recordSentNod()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `r()` connect `zen.min.js` to `app.js`, `bot.js`?**
-  _High betweenness centrality (0.084) - this node is a cross-community bridge._
+  _High betweenness centrality (0.083) - this node is a cross-community bridge._
 - **Why does `t` connect `zen.min.js` to `setupAuthUI`?**
   _High betweenness centrality (0.074) - this node is a cross-community bridge._
-- **Why does `ProviderRegistry` connect `ProviderRegistry` to `bot.js`, `seeder.js`?**
+- **Why does `ProviderRegistry` connect `ProviderRegistry` to `setupAuthUI`, `bot.js`, `seeder.js`?**
   _High betweenness centrality (0.023) - this node is a cross-community bridge._
 - **Are the 8 inferred relationships involving `t` (e.g. with `f()` and `g()`) actually correct?**
   _`t` has 8 INFERRED edges - model-reasoned connections that need verification._

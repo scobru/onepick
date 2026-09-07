@@ -45,6 +45,8 @@ const langToggleBtn = document.getElementById('lang-toggle');
 const langText = document.getElementById('lang-text');
 const tutorialTrigger = document.getElementById('tutorial-trigger');
 const tutorialModal = document.getElementById('tutorial-modal');
+const tutorialLangBtn = document.getElementById('tutorial-lang-btn');
+const tutorialLangText = document.getElementById('tutorial-lang-text');
 const closeTutorialBtn = document.getElementById('close-tutorial-btn');
 const tutorialStepBadge = document.getElementById('tutorial-step-badge');
 const tutorialDots = document.getElementById('tutorial-dots');
@@ -721,8 +723,14 @@ function setLanguage(lang) {
   if (langText) {
     langText.textContent = lang === 'it' ? 'EN' : 'IT';
   }
+  if (tutorialLangText) {
+    tutorialLangText.textContent = lang === 'it' ? 'EN' : 'IT';
+  }
   if (langToggleBtn) {
     langToggleBtn.title = t('lang_btn_title');
+  }
+  if (tutorialLangBtn) {
+    tutorialLangBtn.title = t('lang_btn_title');
   }
 
   // Update all [data-i18n] elements
@@ -890,6 +898,12 @@ function renderTutorialStep(step) {
 
 function openTutorialModal(step = 1) {
   renderTutorialStep(step);
+  if (tutorialLangText) {
+    tutorialLangText.textContent = currentLang === 'it' ? 'EN' : 'IT';
+  }
+  if (tutorialLangBtn) {
+    tutorialLangBtn.title = t('lang_btn_title');
+  }
   if (tutorialDontShowCheckbox) {
     tutorialDontShowCheckbox.checked = localStorage.getItem('onepick_tutorial_dont_show') === 'true';
   }
@@ -922,6 +936,12 @@ function prevTutorialStep() {
 
 function setupLanguageAndTutorial() {
   langToggleBtn?.addEventListener('click', () => {
+    const nextLang = currentLang === 'it' ? 'en' : 'it';
+    setLanguage(nextLang);
+    showToast(t('toast_lang_switched'));
+  });
+
+  tutorialLangBtn?.addEventListener('click', () => {
     const nextLang = currentLang === 'it' ? 'en' : 'it';
     setLanguage(nextLang);
     showToast(t('toast_lang_switched'));

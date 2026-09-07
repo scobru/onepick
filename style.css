@@ -1016,10 +1016,18 @@ textarea:focus {
 .modal-header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   margin-bottom: 20px;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 10px;
+  gap: 12px;
+}
+
+.modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .modal-header h3 {
@@ -1095,7 +1103,7 @@ textarea:focus {
   transform: translateY(120%);
   opacity: 0;
   transition: transform 0.25s ease, opacity 0.25s ease;
-  z-index: 2000;
+  z-index: 2500;
   pointer-events: none;
 }
 

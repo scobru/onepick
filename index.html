@@ -607,7 +607,19 @@
         <div class="modal-content tutorial-modal-content">
           <div class="modal-header">
             <h3 id="tutorial-modal-title" data-i18n="tutorial_modal_title">Guida Introduttiva · Come Funziona onepick</h3>
-            <button id="close-tutorial-btn" class="bracket-btn" type="button"><span data-i18n="btn_close">chiudi ✕</span></button>
+            <div class="modal-header-actions">
+              <button
+                id="tutorial-lang-btn"
+                class="bracket-btn"
+                type="button"
+                aria-label="Cambia lingua / Switch language"
+                title="Passa a Inglese / Switch to English"
+                data-i18n-title="lang_btn_title"
+              >
+                🌐 <span id="tutorial-lang-text">EN</span>
+              </button>
+              <button id="close-tutorial-btn" class="bracket-btn" type="button"><span data-i18n="btn_close">chiudi ✕</span></button>
+            </div>
           </div>
 
           <div class="tutorial-stepper-header">

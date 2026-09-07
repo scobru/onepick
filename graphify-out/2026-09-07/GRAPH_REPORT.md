@@ -1,16 +1,16 @@
 # Graph Report - onepick  (2026-09-07)
 
 ## Corpus Check
-- 6 files · ~24,322 words
+- 6 files · ~24,378 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 373 nodes · 852 edges · 19 communities (11 shown, 8 thin omitted)
-- Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 105 edges (avg confidence: 0.53)
+- 373 nodes · 853 edges · 19 communities (11 shown, 8 thin omitted)
+- Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 104 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `eb2e1468`
+- Built from commit: `23f48da7`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
