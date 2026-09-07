@@ -51,26 +51,32 @@ Riconoscimento e streaming diretto in-page per:
   * Scorciatoie da tastiera: <kbd>Esc</kbd> per uscire, <kbd>C</kbd> per alternare la vista.
 
 ### 🤖 Autopopolamento Autonomo & Background Bot (Timer 5 min)
-Per garantire che la radio non sia mai silenziosa ("cold start" al lancio), è integrato un motore di seeding con **10 trasmettitori deterministici** alimentati da un'architettura modulare a **Provider Dinamici** (`ProviderRegistry`):
-* **`@radio-obscura`** (FM 105.04 MHz) — Frequenze dimenticate e registrazioni d'archivio (`#obscureweb` • Provider: Internet Archive).
-* **`@sound-transit`** (FM 95.17 MHz) — Flussi radio continui, drone, downtempo e ambient (`#sound` • Provider: SomaFM Internet Radio).
-* **`@ambient-zero`** (FM 96.88 MHz) — Sintesi modulare generativa e quiete presente (`#art` • Provider: YouTube Live Feeds).
-* **`@tunecamp-relay`** (FM 104.74 MHz) — Musica indipendente dal network federato (`#sound` • Provider: TuneCamp Federation).
-* **`@retro-cyber`** (FM 93.42 MHz) — Demoscene MOD tracker, chiptune e keygen music (`#code` • Provider: Internet Archive).
-* **`@tape-echo`** (FM 97.87 MHz) — Approfondimenti editoriali, recensioni e guide d'ascolto (`#read` • Provider: Bandcamp Network).
-* **`@archive-echo`** (FM 107.08 MHz) — Archivi radiofonici storici e letture liriche (`#read` • Provider: Internet Archive).
-* **`@mystic-whispers`** (FM 96.98 MHz) — Album indipendenti in evidenza e perle sommerse (`#sound` • Provider: Bandcamp Network).
-* **`@neon-drift`** (FM 97.23 MHz) — Synthwave e sonorità retro-futuristiche (`#sound` • Provider: Audius Web3).
-* **`@void-pulse`** (FM 94.66 MHz) — DJ set ipnotici, cloudcast long-form e soundscape ambient (`#sound` • Provider: Mixcloud Live Cloudcasts).
+Per garantire che la radio non sia mai silenziosa ("cold start" al lancio), è integrato un motore di seeding con **10 trasmettitori deterministici** alimentati da un'architettura modulare a **Provider Dinamici** (`ProviderRegistry`).
+
+Ogni stazione ha un **provider di firma** (quello che ne definisce il carattere) ma pesca da un **pool di più sorgenti** (`providers` in `SEED_BOTS`): la rotazione alterna tra reti diverse invece di ripetere sempre lo stesso feed.
+* **`@radio-obscura`** (FM 105.04 MHz) — Frequenze dimenticate e registrazioni d'archivio (`#obscureweb` • Pool: Internet Archive + Open Web RSS + YouTube).
+* **`@sound-transit`** (FM 95.17 MHz) — Flussi radio continui, drone, downtempo e ambient (`#sound` • Pool: SomaFM + Radio Browser + Audius).
+* **`@ambient-zero`** (FM 96.88 MHz) — Sintesi modulare generativa e quiete presente (`#art` • Pool: YouTube Live Feeds + Open Web RSS + Internet Archive).
+* **`@tunecamp-relay`** (FM 104.74 MHz) — Musica indipendente dal network federato (`#sound` • Pool: TuneCamp Federation + Bandcamp + Audius).
+* **`@retro-cyber`** (FM 93.42 MHz) — Demoscene MOD tracker, chiptune e keygen music (`#code` • Pool: Internet Archive + YouTube + Open Web RSS).
+* **`@tape-echo`** (FM 97.87 MHz) — Approfondimenti editoriali, recensioni e guide d'ascolto (`#read` • Pool: Bandcamp + Open Web RSS + Internet Archive).
+* **`@archive-echo`** (FM 107.08 MHz) — Archivi radiofonici storici e letture liriche (`#read` • Pool: Internet Archive + Open Web RSS + YouTube).
+* **`@mystic-whispers`** (FM 96.98 MHz) — Album indipendenti in evidenza e perle sommerse (`#sound` • Pool: Bandcamp + TuneCamp + Audius).
+* **`@neon-drift`** (FM 97.23 MHz) — Synthwave e sonorità retro-futuristiche (`#sound` • Pool: Audius + YouTube + Mixcloud).
+* **`@void-pulse`** (FM 94.66 MHz) — DJ set ipnotici, cloudcast long-form e soundscape ambient (`#sound` • Pool: Mixcloud + SomaFM + Radio Browser).
 
 #### Provider Dinamici Supportati (100% Live, Zero Tracce Hardcodate)
 1. **TuneCamp Federation**: Interroga in tempo reale tutte le istanze del network federato TuneCamp (SudoRecords, SubTerra Label, FDA Labs e nodi scoperti dinamicamente via gossip `/api/community/peers` e `/api/community/sites`) aggregando ed alternando a rotazione le release indipendenti.
-2. **Internet Archive Search API**: Ricerca e seleziona tracce audio, nastri storici e demoscene tracker in base al tag (`#read`, `#sound`, `#obscureweb`, `#code`).
-3. **Audius Web3**: Recupera i flussi musicali trending ed elettronici direttamente dai nodi aperti Audius Discovery.
-4. **YouTube Live Feeds**: Interroga i feed RSS XML aperti di canali iconici (State Azure per sintesi modulare, Lofi Girl, Cercle per live set panoramici, KEXP) senza alcuna API key.
-5. **Bandcamp Network**: Risolve in tempo reale gli album audio riproducibili (`https://*.bandcamp.com/album/*`) per `#sound` e le guide di ascolto/articoli per `#read`.
-6. **Mixcloud Live Cloudcasts**: Interroga in tempo reale le selezioni popolari di DJ set e cloudcast long-form (ambient, chillout, downtempo, techno) con widget player dedicato.
+2. **Internet Archive Search API**: Pool di query multiple per ogni tag (`#read`, `#sound`, `#obscureweb`, `#code`, `#art`) — LibriVox, poesia, radiodrammi, shortwave, numbers station, demoscene, chiptune, SID, musique concrète, netlabels, 78rpm — con ordinamento e pagina estratti a caso ad ogni refresh.
+3. **Audius Web3**: Combina trending globale, trending per genere (16 generi: ambient, techno, house, drum & bass, experimental, lo-fi, jazz…), underground e classifica mensile, ruotando su più nodi Discovery aperti.
+4. **YouTube Live Feeds**: Roster di **44 canali** su tutti i tag (live session e label per `#sound`: Boiler Room, COLORS, NPR Music, Audiotree, La Blogothèque, Ninja Tune, Warp, Stones Throw, Dekmantel, The Lot Radio…; sintesi e arte per `#art`: State Azure, Hainbach, Look Mum No Computer, mylarmelodies, Tate, MoMA; `#code`: Computerphile, The Coding Train, Sebastian Lague, suckerpinch; `#read`: Nerdwriter1, Royal Institution, Gresham College, Aeon Video; `#obscureweb`: LEMMiNO, Fredrik Knudsen, Internet Historian, Ahoy). Ogni refresh campiona **4 canali** e interlaccia i feed RSS XML pubblici, senza alcuna API key. I canali possono essere elencati con l'handle `@nome`: l'ID viene risolto al volo e messo in cache, e le voci non risolvibili vengono semplicemente saltate.
+5. **Bandcamp Network**: Risolve in tempo reale gli album audio riproducibili (`https://*.bandcamp.com/album/*`) per `#sound` — ora su una finestra di 12 articoli, 6 dei quali visitati a caso, fino a 3 album ciascuno — e le guide di ascolto/articoli per `#read`.
+6. **Mixcloud Live Cloudcasts**: 22 tag musicali (ambient, dub, jazz, krautrock, IDM, library music, field recordings, balearic…) di cui 3 campionati ad ogni refresh, alternando selezioni `popular` e `latest`.
 7. **SomaFM Internet Radio Streams**: 46+ canali radiofonici indipendenti senza pubblicità con stream diretti 128kbps MP3 (Drone Zone, Groove Salad, Deep Space One, DEF CON Radio) e riproduzione con visualizer analogico nativo.
+8. **Radio Browser Live Stations**: Catalogo community di decine di migliaia di stazioni radio mondiali (22 tag: ambient, jazz, classical, dub, krautrock, trip hop, shoegaze…). Vengono tenuti solo gli stream `https` direttamente riproducibili in-page (niente HLS/playlist, niente mixed content).
+9. **Open Web RSS Sources**: **26 feed** per i tag non-audio — `#read` (Aeon, Longreads, The Marginalian, Literary Hub, The Quietus, Open Culture, Public Domain Review, Internet Archive Blog), `#obscureweb` (Waxy, kottke.org, MetaFilter, Tedium, 404 Media, Low-tech Magazine), `#art` (Hyperallergic, Colossal, CreativeApplications, Rhizome, Artnet, Dezeen), `#code` (Hackaday, Lobsters, Hacker News, Phoronix, Rust Blog, Simon Willison). Parser RSS 2.0 + Atom, 3 feed campionati per refresh.
+
+> Gli slot `#sound` restano sempre riproducibili: un link editoriale (RSS, articolo) non viene mai pubblicato su una frequenza `#sound`, nemmeno come fallback.
 
 Il meccanismo opera in due modalità:
 1. **Nel Browser (Serverless Zero-Config)**:
@@ -84,7 +90,9 @@ Il meccanismo opera in due modalità:
      npm run bot         # Rotazione continua ogni 5 minuti
      npm run bot:once    # Singola trasmissione ed uscita
      npm run bot:seed    # Popola immediatamente tutte e 10 le stazioni
+     npm run bot:check   # Audit sorgenti: canali YouTube, feed RSS e pick per stazione (non trasmette)
      ```
+   * `npm run bot:check` (`node bot.js --check-sources`) è il modo più rapido per verificare le sorgenti dopo aver aggiunto un canale o un feed: stampa quali handle YouTube si risolvono, quali feed rispondono e cosa sceglierebbe adesso ogni stazione.
 
 ### 🛡️ Moderazione Decentralizzata & Community Jamming
 * **Silenziamento Locale**: nasconde istantaneamente qualsiasi frequenza dal tuo ricevitore personale.
@@ -136,6 +144,11 @@ Apri `http://localhost:3000` nel browser.
 Per avviare il bot di autopopolamento in locale:
 ```bash
 npm run bot
+```
+
+Per aggiungere sorgenti basta estendere gli array in `seeder.js` (`YOUTUBE_CHANNELS`, `RSS_SOURCES`, `RADIO_BROWSER_TAGS`, `TUNECAMP_DEFAULT_INSTANCES`) o il pool `providers` di una stazione in `SEED_BOTS`, poi verificare con:
+```bash
+npm run bot:check
 ```
 
 ---

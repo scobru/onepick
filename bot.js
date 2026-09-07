@@ -10,15 +10,19 @@
  *   node bot.js                 # Runs 24/7 with 5 min timer
  *   node bot.js --once          # Seeds the 3 accounts once and exits
  *   node bot.js --interval 5    # Custom interval in minutes (e.g. 5 minutes)
+ *   node bot.js --check-sources # Audits every source (YouTube roster, RSS feeds, providers) and exits
  */
 
 import ZEN from './zen.min.js';
 import {
   SEED_BOTS,
+  RSS_SOURCES,
+  YOUTUBE_CHANNELS,
   broadcastSeedSlot,
   deriveBotPair,
   getFrequencyForPub,
   getTrackForBot,
+  resolveYouTubeChannelId,
   verifyMediaUrlAvailable,
   providerRegistry
 } from './seeder.js';
@@ -29,6 +33,7 @@ const RELAY_URL = 'https://delay.scobrudot.dev/zen';
 const args = process.argv.slice(2);
 const isOnce = args.includes('--once');
 const isSeedAll = args.includes('--seed-all');
+const isCheckSources = args.includes('--check-sources');
 const intervalArgIndex = args.indexOf('--interval');
 const intervalMinutes = intervalArgIndex !== -1 && args[intervalArgIndex + 1]
   ? parseFloat(args[intervalArgIndex + 1])
@@ -36,7 +41,7 @@ const intervalMinutes = intervalArgIndex !== -1 && args[intervalArgIndex + 1]
 const INTERVAL_MS = Math.max(1, intervalMinutes) * 60 * 1000;
 
 console.log('='.repeat(64));
-console.log('  onepick / Zen P2P Autonomous Radio Seeder Bot (10 Channels)');
+console.log(`  onepick / Zen P2P Autonomous Radio Seeder Bot (${SEED_BOTS.length} Channels)`);
 console.log('='.repeat(64));
 console.log(`[+] Relay:     ${RELAY_URL}`);
 console.log(`[+] Interval:  ${intervalMinutes} minutes (${INTERVAL_MS / 1000}s)`);
@@ -108,6 +113,85 @@ async function broadcastOne() {
   }
 }
 
+/**
+ * Runs `fn` over `items` with a small concurrency cap, preserving input order.
+ */
+async function mapWithConcurrency(items, limit, fn) {
+  const results = new Array(items.length);
+  let cursor = 0;
+  const workers = new Array(Math.min(limit, items.length)).fill(null).map(async () => {
+    while (cursor < items.length) {
+      const index = cursor++;
+      results[index] = await fn(items[index], index);
+    }
+  });
+  await Promise.all(workers);
+  return results;
+}
+
+/**
+ * Audits every configured source: which YouTube channels resolve, which RSS
+ * feeds answer, and what each station would pick right now.
+ * Handy after adding entries to the rosters — nothing is broadcast.
+ */
+async function checkSources() {
+  let okCount = 0;
+  let failCount = 0;
+
+  console.log(`\n[*] YouTube roster (${YOUTUBE_CHANNELS.length} channels)`);
+  const ytProvider = providerRegistry.get('youtube');
+  const ytRows = await mapWithConcurrency(YOUTUBE_CHANNELS, 6, async (channel) => {
+    const channelId = await resolveYouTubeChannelId(channel);
+    if (!channelId) return { channel, status: 'unresolved' };
+    const tracks = await ytProvider.fetchChannelTracks({ ...channel, id: channelId });
+    return { channel, status: tracks.length > 0 ? 'ok' : 'empty', count: tracks.length, channelId };
+  });
+  for (const row of ytRows) {
+    const label = `${row.channel.name} (@${row.channel.handle || row.channel.id})`.padEnd(46);
+    if (row.status === 'ok') {
+      okCount++;
+      console.log(`    ✓ ${label} #${row.channel.tag.padEnd(10)} ${row.count} videos  [${row.channelId}]`);
+    } else {
+      failCount++;
+      console.log(`    ✕ ${label} #${row.channel.tag.padEnd(10)} ${row.status === 'unresolved' ? 'channel id not resolvable' : 'empty feed'}`);
+    }
+  }
+
+  console.log(`\n[*] RSS sources (${RSS_SOURCES.length} feeds)`);
+  const rssProvider = providerRegistry.get('rssfeeds');
+  const rssRows = await mapWithConcurrency(RSS_SOURCES, 6, async (source) => {
+    const items = await rssProvider.fetchSource(source);
+    return { source, count: items.length };
+  });
+  for (const row of rssRows) {
+    const label = `${row.source.name}`.padEnd(30);
+    if (row.count > 0) {
+      okCount++;
+      console.log(`    ✓ ${label} #${row.source.tag.padEnd(10)} ${row.count} items   ${row.source.url}`);
+    } else {
+      failCount++;
+      console.log(`    ✕ ${label} #${row.source.tag.padEnd(10)} no items  ${row.source.url}`);
+    }
+  }
+
+  console.log(`\n[*] Station picks (${SEED_BOTS.length} transmitters)`);
+  for (const bot of SEED_BOTS) {
+    const track = await getTrackForBot(bot);
+    const pool = (bot.providers || [bot.provider]).join(', ');
+    if (track && track.url) {
+      okCount++;
+      console.log(`    ✓ @${bot.username.padEnd(16)} #${bot.tag.padEnd(10)} [${pool}]`);
+      console.log(`        ${track.title}`);
+      console.log(`        ${track.url}`);
+    } else {
+      failCount++;
+      console.log(`    ✕ @${bot.username.padEnd(16)} #${bot.tag.padEnd(10)} no track available  [${pool}]`);
+    }
+  }
+
+  console.log(`\n[+] Sources reachable: ${okCount} · unreachable: ${failCount}\n`);
+}
+
 async function seedAllBots() {
   console.log(`[*] Seeding all ${SEED_BOTS.length} transmitter accounts immediately with verified tracks...`);
   for (let i = 0; i < SEED_BOTS.length; i++) {
@@ -131,6 +215,11 @@ async function seedAllBots() {
 }
 
 async function main() {
+  if (isCheckSources) {
+    await checkSources();
+    process.exit(0);
+  }
+
   await logBotIdentities();
 
   // Wait 1.5s for WebSocket connection handshake
