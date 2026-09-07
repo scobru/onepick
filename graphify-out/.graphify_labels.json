@@ -15,6 +15,8 @@
   "13": "ArchiveOrgProvider",
   "14": "MixcloudProvider",
   "15": "TuneCampProvider",
+  "16": "ArchiveOrgProvider",
   "17": "initTheme",
-  "18": "BandcampDailyProvider"
+  "18": "BandcampDailyProvider",
+  "19": "playJammingStatic"
 }
