@@ -79,12 +79,15 @@ Ogni stazione ha un **provider di firma** (quello che ne definisce il carattere)
 > Gli slot `#sound` restano sempre riproducibili: un link editoriale (RSS, articolo) non viene mai pubblicato su una frequenza `#sound`, nemmeno come fallback.
 
 Il meccanismo opera in due modalità:
-1. **Nel Browser (Serverless Zero-Config)**:
-   * All'apertura della pagina, controlla se l'etere è vuoto o se l'ultima stazione ha più di 5 minuti.
-   * In caso positivo, irradia automaticamente un nuovo brano interrogando il provider della stazione.
-   * Un timer a 5 minuti mantiene viva la rotazione durante la sessione (con lock `localStorage` contro duplicati tra tab).
+1. **Nel Browser (Serverless Zero-Config)** — *è la modalità principale: non serve alcun server o VPS, sono i visitatori a tenere vivo l'etere*:
+   * All'ingresso in pagina il seeder aspetta che la mesh consegni le stazioni già in onda (grace period), poi confronta il roster dei bot con quanto trovato.
+   * **Stazioni mancanti** → vengono seminate tutte (cold start dell'etere).
+   * **Stazioni stantie** (ultimo pick più vecchio di 5 minuti) → ne vengono ruotate fino a 2 per visita, dalla più vecchia, con broadcast scaglionati.
+   * La freschezza si legge dal timestamp della stazione **sulla mesh**, quindi due visitatori contemporanei non si sovrascrivono a vicenda: chi trova la stazione già aggiornata la salta. In più un lock `localStorage` evita doppioni tra le tab dello stesso browser.
+   * Finché la tab resta aperta, un timer a 5 minuti ruota **la stazione più stantia** (non a turno cieco), e una tab tornata in primo piano recupera subito i giri persi (`visibilitychange`).
    * **Rotazione Manuale su Richiesta**: Pulsante dedicato `[ ⟳ Nuova Traccia ]` nella scheda radio o scorciatoia da tastiera <kbd>R</kbd> per richiedere istantaneamente un nuovo brano live dal provider e sintonizzarlo subito in onda.
-2. **Script CLI Standalone (`bot.js`)**:
+   * Diagnostica da console: `window.onepickSeeder.surveyStations()` mostra quali stazioni risultano mancanti o stantie, `window.onepickSeeder.performRotation()` forza un giro.
+2. **Script CLI Standalone (`bot.js`)** — *opzionale*, utile se vuoi che la radio ruoti anche a traffico zero:
    * Eseguibile 24/7 su VPS o terminale locale:
      ```bash
      npm run bot         # Rotazione continua ogni 5 minuti

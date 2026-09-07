@@ -1504,142 +1504,202 @@ export async function broadcastSeedSlot(zen, bot, track, ZEN) {
  * Interval: 5 minutes (300,000 ms) by default
  */
 export function startAutonomousSeeder(zen, ZEN, options = {}) {
-  const intervalMs = options.intervalMs || 5 * 60 * 1000; // 5 min default
-  let rotationIndex = 0;
+  const intervalMs = options.intervalMs || 5 * 60 * 1000;        // rotation cadence while a tab is open
+  const staleMs = options.staleMs || intervalMs;                 // a station older than this is up for rotation
+  const maxPerVisit = options.maxRotationsPerVisit || 2;         // stale stations refreshed by a single visit
+  const syncGraceMs = options.syncGraceMs || 12000;              // wait for the mesh before calling a station missing
+  const getStations = typeof options.getStations === 'function' ? options.getStations : () => null;
+  const LOCK_KEY = 'onepick_seeder_last_ts';
+
   let isRunning = true;
   let intervalHandle = null;
+  let rotationIndex = 0;
+  let inFlight = false; // one seeding pass at a time in this tab
 
-  async function performRotation() {
-    if (!isRunning || !zen) return null;
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+  const jitter = (baseMs) => baseMs + Math.floor(Math.random() * baseMs);
 
-    // Check multi-tab lock in browser (prevent duplicate blasts across tabs)
-    if (typeof localStorage !== 'undefined') {
-      const lastTs = parseInt(localStorage.getItem('onepick_seeder_last_ts') || '0', 10);
-      const now = Date.now();
-      if (now - lastTs < intervalMs - 5000) {
-        // Another tab or run already seeded recently
-        return null;
-      }
-      localStorage.setItem('onepick_seeder_last_ts', now.toString());
+  function readLock() {
+    if (typeof localStorage === 'undefined') return 0;
+    try {
+      return parseInt(localStorage.getItem(LOCK_KEY) || '0', 10) || 0;
+    } catch (e) {
+      return 0;
     }
+  }
 
-    const bot = SEED_BOTS[rotationIndex % SEED_BOTS.length];
-    rotationIndex++;
+  function writeLock(ts) {
+    if (typeof localStorage === 'undefined') return;
+    try {
+      localStorage.setItem(LOCK_KEY, String(ts));
+    } catch (e) {}
+  }
 
-    // Pick track for this bot
-    const track = await getTrackForBot(bot);
+  /** Cross-tab guard: true when this tab is allowed to start a seeding pass. */
+  function acquireLock(cooldownMs) {
+    const ts = Date.now();
+    if (ts - readLock() < cooldownMs) return false;
+    writeLock(ts);
+    return true;
+  }
 
+  /**
+   * Splits the bot roster into stations missing from the ether and stations gone stale,
+   * reading the live station map the page keeps in sync with the mesh.
+   */
+  function surveyStations(stationsMap) {
+    const known = new Map(); // username -> { bot, station, ts }
+    if (stationsMap) {
+      for (const station of stationsMap.values()) {
+        if (!station || !station.author) continue;
+        const bot = SEED_BOTS.find(b => b.username === station.author);
+        if (!bot) continue;
+        const prev = known.get(bot.username);
+        const ts = station.ts || 0;
+        if (!prev || ts > prev.ts) known.set(bot.username, { bot, station, ts });
+      }
+    }
+    const now = Date.now();
+    return {
+      known,
+      missing: SEED_BOTS.filter(b => !known.has(b.username)),
+      stale: Array.from(known.values())
+        .filter(entry => now - entry.ts >= staleMs)
+        .sort((a, b) => a.ts - b.ts)
+    };
+  }
+
+  /** False when another visitor refreshed this station while we were working. */
+  function stillNeedsRotation(username) {
+    const map = getStations();
+    if (!map) return true;
+    const entry = surveyStations(map).known.get(username);
+    if (!entry) return true;
+    return Date.now() - entry.ts >= staleMs;
+  }
+
+  /**
+   * The mesh needs a moment to deliver the stations that are already on air.
+   * Without this wait a fresh visitor would consider every station missing and
+   * overwrite the whole ether on arrival.
+   */
+  async function waitForMeshSync(stationsMap) {
+    const map = stationsMap || getStations();
+    if (!map) return map;
+    const deadline = Date.now() + syncGraceMs;
+    while (isRunning && Date.now() < deadline && surveyStations(map).known.size === 0) {
+      await sleep(1000);
+    }
+    return map;
+  }
+
+  async function broadcastFor(bot, currentUrl = null) {
+    const track = await getTrackForBot(bot, currentUrl);
+    if (!track || !track.url) return null;
     try {
       const res = await broadcastSeedSlot(zen, bot, track, ZEN);
-      if (options.onBroadcast) {
-        options.onBroadcast(res);
-      }
+      writeLock(Date.now());
+      if (options.onBroadcast) options.onBroadcast(res);
       return res;
     } catch (e) {
-      console.warn('[Seeder] Error broadcasting seed slot:', e);
+      console.warn('[onepick seeder] Errore broadcast slot:', e);
       return null;
     }
   }
 
   /**
-   * Called on page load:
-   * 1. Seeds any missing bot stations immediately.
-   * 2. If all bots exist but the oldest is >= 5 minutes old, rotates it to a fresh track!
+   * Runs when someone lands on the page (and whenever a tab returns to the foreground).
+   * Visitors are what keep the ether alive with no server: missing stations are seeded,
+   * then the stalest ones are rotated a couple at a time.
    */
   async function checkAndSeedOnPageEntry(stationsMap) {
-    if (!zen) return;
+    if (!zen || !isRunning || inFlight) return;
+    inFlight = true;
+    try {
+      const map = await waitForMeshSync(stationsMap);
+      const { missing, stale } = surveyStations(map);
+      if (missing.length === 0 && stale.length === 0) return;
 
-    const now = Date.now();
+      // Cross-tab cooldown. A cold ether (missing stations) is always worth the work.
+      const cooldownMs = missing.length > 0 ? 15000 : Math.min(60000, intervalMs);
+      if (!acquireLock(cooldownMs)) return;
 
-    // Fast check: if another tab or seeder already ran recently, skip entirely
-    if (typeof localStorage !== 'undefined') {
-      const lastTs = parseInt(localStorage.getItem('onepick_seeder_last_ts') || '0', 10);
-      if (now - lastTs < intervalMs - 10000) {
-        return; // Don't freeze browser UI thread with crypto/API calls if already active
-      }
-    }
+      const queue = [
+        ...missing.map(bot => ({ bot, currentUrl: null })),
+        ...stale.slice(0, maxPerVisit).map(entry => ({ bot: entry.bot, currentUrl: entry.station?.url || null }))
+      ];
 
-    // If stations are already live in the ether, do not block the browser on startup
-    if (stationsMap && stationsMap.size >= 3) {
-      return;
-    }
-
-    const existingBots = new Map(); // username -> station
-
-    if (stationsMap) {
-      for (const [pub, station] of stationsMap.entries()) {
-        const found = SEED_BOTS.find(b => b.username === station.author);
-        if (found) {
-          existingBots.set(found.username, { bot: found, station, ts: station.ts || 0 });
+      for (const item of queue) {
+        if (!isRunning) break;
+        if (!stillNeedsRotation(item.bot.username)) continue;
+        const res = await broadcastFor(item.bot, item.currentUrl);
+        if (res) {
+          console.log(`[onepick auto-seeder] @${item.bot.username} -> ${res.track.title}`);
         }
+        await sleep(jitter(700)); // stagger writes so concurrent visitors do not collide
       }
-    }
-
-    // 1. Seed any missing bot transmitters
-    let anyMissing = false;
-    for (let i = 0; i < SEED_BOTS.length; i++) {
-      const bot = SEED_BOTS[i];
-      if (!existingBots.has(bot.username)) {
-        anyMissing = true;
-        const track = await getTrackForBot(bot);
-        if (!track || !track.url) continue;
-        try {
-          console.log(`[onepick auto-seeder] Populating missing station: @${bot.username} -> ${track.title}`);
-          const res = await broadcastSeedSlot(zen, bot, track, ZEN);
-          if (options.onBroadcast) options.onBroadcast(res);
-          await new Promise(r => setTimeout(r, 600));
-        } catch (e) {
-          console.warn('[onepick auto-seeder] Seed error:', e);
-        }
-      }
-    }
-
-    if (anyMissing) {
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('onepick_seeder_last_ts', now.toString());
-      }
-      return;
-    }
-
-    // 2. If all exist, check if the oldest is >= 5 minutes old
-    const botList = Array.from(existingBots.values());
-    botList.sort((a, b) => a.ts - b.ts);
-    const oldest = botList[0];
-
-    if (oldest && (now - oldest.ts >= intervalMs)) {
-      // Check multi-tab coordination
-      if (typeof localStorage !== 'undefined') {
-        const lastTs = parseInt(localStorage.getItem('onepick_seeder_last_ts') || '0', 10);
-        if (now - lastTs < 60000) {
-          return; // another tab already rotated less than a minute ago
-        }
-        localStorage.setItem('onepick_seeder_last_ts', now.toString());
-      }
-
-      const newTrack = await getTrackForBot(oldest.bot, oldest.station?.url);
-      if (!newTrack || !newTrack.url) return;
-      console.log(`[onepick auto-seeder] Rotating 5-min stale station: @${oldest.bot.username} -> ${newTrack.title}`);
-      try {
-        const res = await broadcastSeedSlot(zen, oldest.bot, newTrack, ZEN);
-        if (options.onBroadcast) options.onBroadcast(res);
-      } catch (e) {
-        console.warn('[onepick auto-seeder] Rotation error:', e);
-      }
+    } catch (e) {
+      console.warn('[onepick auto-seeder] Errore seeding di ingresso:', e);
+    } finally {
+      inFlight = false;
     }
   }
 
-  // Start 5-minute background interval while user stays on page
+  /** Timer tick while the tab stays open: refresh whichever station is stalest. */
+  async function performRotation() {
+    if (!isRunning || !zen || inFlight) return null;
+    if (!acquireLock(Math.max(intervalMs - 5000, 30000))) return null;
+
+    inFlight = true;
+    try {
+      const map = getStations();
+      const { missing, stale } = surveyStations(map);
+
+      let bot = missing[0] || null;
+      let currentUrl = null;
+      if (!bot && stale.length > 0) {
+        bot = stale[0].bot;
+        currentUrl = stale[0].station?.url || null;
+      }
+      if (!bot && !map) {
+        // No view on the ether (e.g. headless use): fall back to plain round-robin
+        bot = SEED_BOTS[rotationIndex++ % SEED_BOTS.length];
+      }
+      if (!bot) return null;
+
+      return await broadcastFor(bot, currentUrl);
+    } finally {
+      inFlight = false;
+    }
+  }
+
+  // Rotation while the tab is open
   intervalHandle = setInterval(() => {
     performRotation();
   }, intervalMs);
 
+  // A backgrounded tab misses its timers: catch up as soon as it is visible again
+  let onVisibilityChange = null;
+  if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+    onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkAndSeedOnPageEntry(getStations());
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+  }
+
   return {
     checkAndSeedOnPageEntry,
     performRotation,
+    surveyStations: () => surveyStations(getStations()),
     rotateStation: (botIdentifier, currentUrl) => rotateBotStation(zen, ZEN, botIdentifier, currentUrl),
     stop: () => {
       isRunning = false;
       if (intervalHandle) clearInterval(intervalHandle);
+      if (onVisibilityChange && typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+      }
     }
   };
 }
