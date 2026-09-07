@@ -3,20 +3,20 @@
 /**
  * onepick — Background Autopopulate Bot Service
  *
- * Runs autonomously to keep the onepick Zen P2P radio alive with 3 bot accounts
- * rotating and publishing curated YouTube, SoundCloud, Bandcamp, Internet Archive, Audius, Mixcloud, and TuneCamp tracks every 5 minutes.
+ * Runs autonomously to keep the onepick Zen P2P radio alive with 10 bot stations
+ * rotating and publishing music from YouTube, Bandcamp, Internet Archive, Audius,
+ * Mixcloud, SomaFM, Radio Browser, and TuneCamp every 5 minutes.
  *
  * Usage:
  *   node bot.js                 # Runs 24/7 with 5 min timer
  *   node bot.js --once          # Seeds the 3 accounts once and exits
  *   node bot.js --interval 5    # Custom interval in minutes (e.g. 5 minutes)
- *   node bot.js --check-sources # Audits every source (YouTube roster, RSS feeds, providers) and exits
+ *   node bot.js --check-sources # Audits every source (YouTube roster, providers, station picks) and exits
  */
 
 import ZEN from './zen.min.js';
 import {
   SEED_BOTS,
-  RSS_SOURCES,
   YOUTUBE_CHANNELS,
   broadcastSeedSlot,
   deriveBotPair,
@@ -130,9 +130,8 @@ async function mapWithConcurrency(items, limit, fn) {
 }
 
 /**
- * Audits every configured source: which YouTube channels resolve, which RSS
- * feeds answer, and what each station would pick right now.
- * Handy after adding entries to the rosters — nothing is broadcast.
+ * Audits every configured source: which YouTube channels resolve and what each
+ * station would pick right now. Handy after adding entries — nothing is broadcast.
  */
 async function checkSources() {
   let okCount = 0;
@@ -150,27 +149,10 @@ async function checkSources() {
     const label = `${row.channel.name} (@${row.channel.handle || row.channel.id})`.padEnd(46);
     if (row.status === 'ok') {
       okCount++;
-      console.log(`    ✓ ${label} #${row.channel.tag.padEnd(10)} ${row.count} videos  [${row.channelId}]`);
+      console.log(`    ✓ ${label} #${row.channel.tag.padEnd(13)} ${row.count} videos  [${row.channelId}]`);
     } else {
       failCount++;
-      console.log(`    ✕ ${label} #${row.channel.tag.padEnd(10)} ${row.status === 'unresolved' ? 'channel id not resolvable' : 'empty feed'}`);
-    }
-  }
-
-  console.log(`\n[*] RSS sources (${RSS_SOURCES.length} feeds)`);
-  const rssProvider = providerRegistry.get('rssfeeds');
-  const rssRows = await mapWithConcurrency(RSS_SOURCES, 6, async (source) => {
-    const items = await rssProvider.fetchSource(source);
-    return { source, count: items.length };
-  });
-  for (const row of rssRows) {
-    const label = `${row.source.name}`.padEnd(30);
-    if (row.count > 0) {
-      okCount++;
-      console.log(`    ✓ ${label} #${row.source.tag.padEnd(10)} ${row.count} items   ${row.source.url}`);
-    } else {
-      failCount++;
-      console.log(`    ✕ ${label} #${row.source.tag.padEnd(10)} no items  ${row.source.url}`);
+      console.log(`    ✕ ${label} #${row.channel.tag.padEnd(13)} ${row.status === 'unresolved' ? 'channel id not resolvable' : 'empty feed'}`);
     }
   }
 
@@ -180,12 +162,12 @@ async function checkSources() {
     const pool = (bot.providers || [bot.provider]).join(', ');
     if (track && track.url) {
       okCount++;
-      console.log(`    ✓ @${bot.username.padEnd(16)} #${bot.tag.padEnd(10)} [${pool}]`);
+      console.log(`    ✓ @${bot.username.padEnd(16)} #${bot.tag.padEnd(13)} [${pool}]`);
       console.log(`        ${track.title}`);
       console.log(`        ${track.url}`);
     } else {
       failCount++;
-      console.log(`    ✕ @${bot.username.padEnd(16)} #${bot.tag.padEnd(10)} no track available  [${pool}]`);
+      console.log(`    ✕ @${bot.username.padEnd(16)} #${bot.tag.padEnd(13)} no track available  [${pool}]`);
     }
   }
 

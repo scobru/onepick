@@ -7,26 +7,56 @@
 export const SALT_PREFIX = 'onepick:zen:station:';
 
 /**
+ * The seven FM affinities of the dial. Everything on onepick is listenable:
+ * these are musical genres, not topics.
+ */
+export const FM_GENRES = ['ambient', 'electronic', 'dj', 'live', 'lofi', 'radio', 'experimental'];
+
+const GENRE_KEYWORDS = [
+  ['experimental', /demoscene|chiptune|tracker|keygen|8-bit|musique concr|noise|avant|shortwave|numbers station|field recording|tape loop|sound art|drone metal|industrial|glitch|78 ?rpm/i],
+  ['ambient', /ambient|drone|atmospher|meditat|new age|soundscape|space music|modular|generative|slow|calm/i],
+  ['lofi', /lo-?fi|chillhop|chill ?beats|study beats|jazzhop|boom bap|beat tape/i],
+  ['dj', /\bdj\b|dj set|mixtape|cloudcast|mix show|b2b|club night|boiler room|residency/i],
+  ['live', /live session|live set|live at|concert|acoustic|unplugged|take away show|tiny desk|in session|festival/i],
+  ['radio', /radio (?:show|station|program|hour)|internet radio|shortwave|broadcast|live stream|\bfm\b/i],
+  ['electronic', /electronic|techno|house|electro|idm|synth|edm|trance|dubstep|drum ?& ?bass|drum and bass|breakbeat|minimal|dub\b|bass music|garage|jungle/i]
+];
+
+/**
+ * Maps free-form provider metadata (genre strings, tags, titles) onto one of the
+ * FM affinities. Falls back to the affinity the caller asked for.
+ */
+export function resolveGenre(text, fallback = 'electronic') {
+  const haystack = String(text || '');
+  if (haystack) {
+    for (const [genre, pattern] of GENRE_KEYWORDS) {
+      if (pattern.test(haystack)) return genre;
+    }
+  }
+  return FM_GENRES.includes(fallback) ? fallback : 'electronic';
+}
+
+/**
  * Deterministic transmitter identities.
- * `provider` is the station's signature source (kept for display and backwards
- * compatibility); `providers` is the wider pool the bot actually rotates across,
- * so every station has several networks to choose from instead of a single feed.
+ * `tag` is the station's musical affinity, `provider` its signature source (kept
+ * for display and backwards compatibility), and `providers` the wider pool the
+ * bot rotates across, so every station has several networks to choose from.
  */
 export const SEED_BOTS = [
   {
     id: 'obscura',
     username: 'radio-obscura',
     passphrase: 'onepick-seed-obscura-2026-ether',
-    tag: 'obscureweb',
+    tag: 'experimental',
     provider: 'archiveorg',
-    providers: ['archiveorg', 'rssfeeds', 'youtube'],
-    desc: 'Forgotten frequencies, lo-fi tape loops, and analog gems from the obscure web.'
+    providers: ['archiveorg', 'youtube', 'bandcamp'],
+    desc: 'Forgotten frequencies, shortwave ghosts, tape loops, and analog debris.'
   },
   {
     id: 'transit',
     username: 'sound-transit',
     passphrase: 'onepick-seed-transit-2026-fm',
-    tag: 'sound',
+    tag: 'radio',
     provider: 'somafm',
     providers: ['somafm', 'radiobrowser', 'audius'],
     desc: 'Continuous radio streams, drone, deep ambient, and transit soundscapes via SomaFM.'
@@ -35,16 +65,16 @@ export const SEED_BOTS = [
     id: 'zero',
     username: 'ambient-zero',
     passphrase: 'onepick-seed-zero-2026-relay',
-    tag: 'art',
+    tag: 'ambient',
     provider: 'youtube',
-    providers: ['youtube', 'rssfeeds', 'archiveorg'],
-    desc: 'Minimal signals, endless tape loops, and present stillness for overstimulated minds.'
+    providers: ['youtube', 'archiveorg', 'audius'],
+    desc: 'Modular synthesis, endless tape loops, and present stillness for overstimulated minds.'
   },
   {
     id: 'tunecamp',
     username: 'tunecamp-relay',
     passphrase: 'onepick-seed-tunecamp-2026-federation',
-    tag: 'sound',
+    tag: 'electronic',
     provider: 'tunecamp',
     providers: ['tunecamp', 'bandcamp', 'audius'],
     desc: 'Independent music and federated releases streaming across all TuneCamp network instances (SudoRecords, SubTerra Label & federated nodes).'
@@ -53,43 +83,43 @@ export const SEED_BOTS = [
     id: 'cyber',
     username: 'retro-cyber',
     passphrase: 'onepick-seed-cyber-2026-matrix',
-    tag: 'code',
+    tag: 'experimental',
     provider: 'archiveorg',
-    providers: ['archiveorg', 'youtube', 'rssfeeds'],
+    providers: ['archiveorg', 'youtube', 'audius'],
     desc: 'Demoscene music, tracker modules, keygen synthesis, and algorithmic soundscapes.'
   },
   {
     id: 'echo',
     username: 'tape-echo',
     passphrase: 'onepick-seed-echo-2026-reverb',
-    tag: 'read',
-    provider: 'bandcamp',
-    providers: ['bandcamp', 'rssfeeds', 'archiveorg'],
-    desc: 'Spoken word archives, literary field trips, slow cinema, and tape echo chambers.'
+    tag: 'live',
+    provider: 'youtube',
+    providers: ['youtube', 'bandcamp', 'archiveorg'],
+    desc: 'Live sessions, take-away shows, and rooms recorded with the reverb left in.'
   },
   {
     id: 'archive-echo',
     username: 'archive-echo',
     passphrase: 'onepick-seed-archive-2026-ether',
-    tag: 'read',
+    tag: 'radio',
     provider: 'archiveorg',
-    providers: ['archiveorg', 'rssfeeds', 'youtube'],
-    desc: 'Historical radio archive, lyrical readings, and period conversations.'
+    providers: ['archiveorg', 'radiobrowser', 'somafm'],
+    desc: 'Historic radio broadcasts, 78rpm shellac, and voices from the shortwave era.'
   },
   {
     id: 'mystic',
     username: 'mystic-whispers',
     passphrase: 'onepick-seed-mystic-2026-ether',
-    tag: 'sound',
+    tag: 'lofi',
     provider: 'bandcamp',
-    providers: ['bandcamp', 'tunecamp', 'audius'],
-    desc: 'Independent releases, featured albums, and hidden sonic gems from Bandcamp.'
+    providers: ['bandcamp', 'youtube', 'audius'],
+    desc: 'Dusty beats, jazzy loops, and hidden gems for the long hours.'
   },
   {
     id: 'neon',
     username: 'neon-drift',
     passphrase: 'onepick-seed-neon-2026-fm',
-    tag: 'sound',
+    tag: 'electronic',
     provider: 'audius',
     providers: ['audius', 'youtube', 'mixcloud'],
     desc: 'Synthwave odyssey through neon-lit digital landscapes and retro-futuristic ambience.'
@@ -98,10 +128,10 @@ export const SEED_BOTS = [
     id: 'void',
     username: 'void-pulse',
     passphrase: 'onepick-seed-void-2026-art',
-    tag: 'sound',
+    tag: 'dj',
     provider: 'mixcloud',
-    providers: ['mixcloud', 'somafm', 'radiobrowser'],
-    desc: 'Hypnotic DJ sets, ambient sessions, and long-form radio broadcasts on Mixcloud.'
+    providers: ['mixcloud', 'youtube', 'radiobrowser'],
+    desc: 'Hypnotic DJ sets, club recordings, and long-form mixes.'
   }
 ];
 
@@ -412,7 +442,8 @@ export class TuneCampProvider extends BaseProvider {
             url: `${normOrigin}/releases/${r.slug}`,
             title: `${r.artist_name || r.artistName || 'TuneCamp'} - ${r.title}`,
             caption: `${r.genre || 'Independent music'} streaming from TuneCamp federated node (${hostname}).`,
-            tag: 'sound',
+            tag: resolveGenre(`${r.genre || ''} ${r.title || ''}`, 'electronic'),
+            source: `TuneCamp ${hostname}`,
             instance: hostname
           }));
       })
@@ -458,42 +489,49 @@ export class ArchiveOrgProvider extends BaseProvider {
   }
 
   /**
-   * Query pools per tag. One is drawn at random on every refresh so the archive
-   * rotation keeps digging into different collections instead of one shelf.
+   * Query pools per FM affinity. One is drawn at random on every refresh so the
+   * archive rotation keeps digging into different shelves.
    */
   queriesForTag(tag) {
     const pools = {
-      read: [
-        'mediatype:(audio) AND collection:(librivoxaudio)',
-        'mediatype:(audio) AND collection:(audio_bookspoetry)',
-        'mediatype:(audio) AND (subject:(poetry) OR subject:(spoken word))',
-        'mediatype:(audio) AND (collection:(oldtimeradio) OR subject:(radio drama))'
+      ambient: [
+        'mediatype:(audio) AND (subject:(ambient) OR subject:(drone))',
+        'mediatype:(audio) AND collection:(netlabels) AND subject:(ambient)',
+        'mediatype:(audio) AND (subject:(generative) OR subject:(modular synth))'
       ],
-      obscureweb: [
-        'mediatype:(audio) AND (collection:(shortwave) OR subject:(shortwave))',
-        'mediatype:(audio) AND (subject:(numbers station) OR subject:(field recording))',
-        'mediatype:(audio) AND (collection:(audio_religion) OR subject:(vaporwave))',
-        'mediatype:(audio) AND (collection:(radioprograms) OR subject:(pirate radio))'
+      electronic: [
+        'mediatype:(audio) AND collection:(netlabels) AND (subject:(electronic) OR subject:(techno))',
+        'mediatype:(audio) AND (subject:(idm) OR subject:(house) OR subject:(dub techno))',
+        'mediatype:(audio) AND (subject:(breakbeat) OR subject:(drum and bass) OR subject:(electro))'
       ],
-      code: [
-        'mediatype:(audio) AND (subject:(demoscene) OR subject:(chiptune) OR subject:(tracker))',
-        'mediatype:(audio) AND (subject:(keygen) OR subject:(module) OR collection:(tucows))',
-        'mediatype:(audio) AND (subject:(amiga) OR subject:(commodore) OR subject:(8-bit))',
-        'mediatype:(audio) AND (subject:(video game music) OR subject:(sid))'
+      dj: [
+        'mediatype:(audio) AND (subject:(dj mix) OR subject:(dj set) OR subject:(mixtape))',
+        'mediatype:(audio) AND (subject:(mix) AND subject:(electronic))',
+        'mediatype:(audio) AND collection:(netlabels) AND subject:(mix)'
       ],
-      art: [
-        'mediatype:(audio) AND (subject:(sound art) OR subject:(musique concrete))',
-        'mediatype:(audio) AND (subject:(experimental) OR subject:(drone))',
-        'mediatype:(audio) AND (collection:(netlabels) AND subject:(ambient))'
+      live: [
+        'collection:(etree)',
+        'collection:(etree) AND subject:(soundboard)',
+        'mediatype:(audio) AND (subject:(live concert) OR subject:(live session))'
       ],
-      sound: [
-        'mediatype:(audio) AND collection:(netlabels)',
+      lofi: [
+        'mediatype:(audio) AND (subject:(lo-fi) OR subject:(beat tape) OR subject:(instrumental hip hop))',
+        'mediatype:(audio) AND collection:(netlabels) AND (subject:(hip hop) OR subject:(downtempo))',
+        'mediatype:(audio) AND (subject:(jazz) AND subject:(instrumental))'
+      ],
+      radio: [
+        'mediatype:(audio) AND (collection:(oldtimeradio) OR collection:(radioprograms))',
         'mediatype:(audio) AND collection:(georgeblood)',
-        'mediatype:(audio) AND (subject:(ambient) OR subject:(jazz) OR subject:(dub))',
-        'mediatype:(audio) AND (collection:(78rpm) OR collection:(audio_music))'
+        'mediatype:(audio) AND (collection:(shortwave) OR subject:(pirate radio))'
+      ],
+      experimental: [
+        'mediatype:(audio) AND (subject:(demoscene) OR subject:(chiptune) OR subject:(tracker))',
+        'mediatype:(audio) AND (subject:(keygen) OR subject:(amiga) OR subject:(sid))',
+        'mediatype:(audio) AND (subject:(musique concrete) OR subject:(noise) OR subject:(sound art))',
+        'mediatype:(audio) AND (collection:(shortwave) OR subject:(field recording))'
       ]
     };
-    return pools[tag] || pools.sound;
+    return pools[tag] || pools.electronic;
   }
 
   async fetchLiveTracks({ tag, signal } = {}) {
@@ -514,12 +552,12 @@ export class ArchiveOrgProvider extends BaseProvider {
         .map(d => {
           let desc = (d.description || '').replace(/<[^>]*>?/gm, '').trim();
           if (desc.length > 120) desc = desc.slice(0, 117) + '...';
-          const author = Array.isArray(d.creator) ? d.creator.join(', ') : (d.creator || (tag === 'code' ? 'Demoscene' : 'Internet Archive'));
+          const author = Array.isArray(d.creator) ? d.creator.join(', ') : (d.creator || 'Internet Archive');
           return {
             url: `https://archive.org/details/${d.identifier}`,
             title: `${author} - ${d.title}`,
-            caption: desc || (tag === 'code' ? 'Demoscene music, tracker modules, and chiptunes preserved on Internet Archive.' : 'Open historical recording from Internet Archive.'),
-            tag: tag || 'sound',
+            caption: desc || 'Open recording preserved on Internet Archive.',
+            tag: resolveGenre(`${d.title} ${desc}`, tag || 'experimental'),
             source: 'Internet Archive'
           };
         });
@@ -543,11 +581,21 @@ export class AudiusProvider extends BaseProvider {
       'https://discoveryprovider2.audius.co',
       'https://discoveryprovider3.audius.co'
     ];
-    this.genres = [
-      'Electronic', 'Ambient', 'Techno', 'House', 'Deep House', 'Downtempo',
-      'Drum & Bass', 'Experimental', 'Lo-Fi', 'Jazz', 'Hip-Hop/Rap', 'Trance',
-      'Dubstep', 'Progressive House', 'Devotional', 'World'
-    ];
+    // Audius genres reachable from each FM affinity
+    this.genresByTag = {
+      ambient: ['Ambient', 'Downtempo', 'Experimental'],
+      electronic: ['Electronic', 'Techno', 'House', 'Deep House', 'Progressive House', 'Drum & Bass', 'Trance', 'Dubstep'],
+      dj: ['Techno', 'House', 'Deep House', 'Disco'],
+      live: ['Jazz', 'Folk', 'Rock', 'Acoustic', 'World'],
+      lofi: ['Lo-Fi', 'Hip-Hop/Rap', 'Downtempo', 'Jazz'],
+      radio: ['Electronic', 'Ambient', 'Downtempo'],
+      experimental: ['Experimental', 'Ambient', 'Electronic']
+    };
+  }
+
+  genreFor(tag) {
+    const pool = this.genresByTag[tag] || this.genresByTag.electronic;
+    return pool[Math.floor(Math.random() * pool.length)];
   }
 
   host() {
@@ -558,8 +606,8 @@ export class AudiusProvider extends BaseProvider {
    * Builds a couple of different endpoints per refresh (global trending,
    * genre-scoped trending, underground) so the pool is never the same top 25.
    */
-  buildEndpoints() {
-    const genre = this.genres[Math.floor(Math.random() * this.genres.length)];
+  buildEndpoints(tag) {
+    const genre = this.genreFor(tag);
     const endpoints = [
       `${this.host()}/v1/tracks/trending?app_name=onepick&limit=30`,
       `${this.host()}/v1/tracks/trending?app_name=onepick&limit=30&genre=${encodeURIComponent(genre)}`,
@@ -569,7 +617,7 @@ export class AudiusProvider extends BaseProvider {
     return sampleList(endpoints, 2);
   }
 
-  mapTracks(items) {
+  mapTracks(items, tag) {
     if (!Array.isArray(items)) return [];
     return items
       .filter(t => t && t.id && t.title && t.is_streamable !== false)
@@ -580,20 +628,20 @@ export class AudiusProvider extends BaseProvider {
           url: `https://audius.co/embed/track/${t.id}`,
           title: `${artist} - ${t.title}`,
           caption: `${genre} streaming decentralized via Audius protocol.`,
-          tag: 'sound',
+          tag: resolveGenre(genre, tag || 'electronic'),
           source: 'Audius'
         };
       });
   }
 
-  async fetchLiveTracks({ signal } = {}) {
-    const endpoints = this.buildEndpoints();
+  async fetchLiveTracks({ tag, signal } = {}) {
+    const endpoints = this.buildEndpoints(tag);
     const results = await Promise.allSettled(
       endpoints.map(async (url) => {
         const res = await fetch(url, { signal });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const body = await res.json();
-        return this.mapTracks(body?.data);
+        return this.mapTracks(body?.data, tag);
       })
     );
 
@@ -607,66 +655,50 @@ export class AudiusProvider extends BaseProvider {
 
 
 /**
- * Curated YouTube source roster.
+ * Curated YouTube source roster — music only, grouped by FM affinity.
  * Each entry carries either a stable `id` (UC... channel id, used as-is) or a
  * `handle` (@name) that is resolved to a channel id on demand and cached.
  * Channels that cannot be resolved are skipped silently, so the roster can grow
  * without risking a dead rotation. Run `node bot.js --check-sources` to audit it.
  */
 export const YOUTUBE_CHANNELS = [
-  // --- #sound: live sessions, labels, radio shows ---
-  { id: 'UCSJ4gkVC6NrvII8umztf0Ow', handle: 'LofiGirl', name: 'Lofi Girl', tag: 'sound', desc: 'Lo-fi ambient beats and peaceful frequencies' },
-  { id: 'UCCycRfTS7V9WOFfWfkNVCSg', handle: 'Cercle', name: 'Cercle', tag: 'sound', desc: 'Unique live electronic performances in scenic locations' },
-  { id: 'UC3I2GFN_F8WudD_2jUZbojA', handle: 'kexp', name: 'KEXP', tag: 'sound', desc: 'Live studio sessions and independent music discoveries' },
-  { id: 'UC6qQOTx9LuKMC5p2dbjmSRg', handle: 'HateLab', name: 'HateLab', tag: 'sound', desc: 'Deep minimal techno and hypnotic resonances' },
-  { handle: 'boilerroom', name: 'Boiler Room', tag: 'sound', desc: 'Underground club sets recorded in rooms around the world' },
-  { handle: 'COLORSxSTUDIOS', name: 'COLORS', tag: 'sound', desc: 'Minimal monochrome stages for emerging global artists' },
-  { handle: 'nprmusic', name: 'NPR Music', tag: 'sound', desc: 'Tiny Desk concerts and intimate acoustic performances' },
-  { handle: 'audiotree', name: 'Audiotree', tag: 'sound', desc: 'Independent live sessions recorded in Chicago' },
-  { handle: 'LaBlogotheque', name: 'La Blogothèque', tag: 'sound', desc: 'Take Away Shows filmed in streets, kitchens and staircases' },
-  { handle: 'sofarsounds', name: 'Sofar Sounds', tag: 'sound', desc: 'Living-room concerts from unexpected cities' },
-  { handle: 'NinjaTune', name: 'Ninja Tune', tag: 'sound', desc: 'Label transmissions across electronica, jazz and bass' },
-  { handle: 'WarpRecords', name: 'Warp Records', tag: 'sound', desc: 'Experimental electronic catalogue and audiovisual works' },
-  { handle: 'stonesthrow', name: 'Stones Throw', tag: 'sound', desc: 'Beat tapes, soul excavations and left-field hip hop' },
-  { handle: 'dekmantel', name: 'Dekmantel', tag: 'sound', desc: 'Festival recordings and deep club selections' },
-  { handle: 'TheLotRadio', name: 'The Lot Radio', tag: 'sound', desc: 'Continuous DJ shows from a shipping container in Brooklyn' },
-  { handle: 'ChillhopMusic', name: 'Chillhop Music', tag: 'sound', desc: 'Jazzy instrumental beats for slow hours' },
-  { handle: 'MahoganySessions', name: 'Mahogany', tag: 'sound', desc: 'Stripped-back sessions and songwriter portraits' },
-  { handle: 'NTSRadio', name: 'NTS Radio', tag: 'sound', desc: 'Wide-spectrum radio shows and archival selections' },
+  // --- #live: sessions recorded in one take ---
+  { id: 'UC3I2GFN_F8WudD_2jUZbojA', handle: 'kexp', name: 'KEXP', tag: 'live', desc: 'Live studio sessions and independent music discoveries' },
+  { handle: 'COLORSxSTUDIOS', name: 'COLORS', tag: 'live', desc: 'Minimal monochrome stages for emerging global artists' },
+  { handle: 'nprmusic', name: 'NPR Music', tag: 'live', desc: 'Tiny Desk concerts and intimate acoustic performances' },
+  { handle: 'audiotree', name: 'Audiotree', tag: 'live', desc: 'Independent live sessions recorded in Chicago' },
+  { handle: 'LaBlogotheque', name: 'La Blogothèque', tag: 'live', desc: 'Take Away Shows filmed in streets, kitchens and staircases' },
+  { handle: 'sofarsounds', name: 'Sofar Sounds', tag: 'live', desc: 'Living-room concerts from unexpected cities' },
+  { handle: 'MahoganySessions', name: 'Mahogany', tag: 'live', desc: 'Stripped-back sessions and songwriter portraits' },
 
-  // --- #art: modular synthesis, generative and gallery signals ---
-  { id: 'UCGSSFkUjSBpDzA1aD4yq1zw', handle: 'StateAzure', name: 'State Azure', tag: 'art', desc: 'Generative modular synthesis and analog soundscapes' },
-  { handle: 'Hainbach', name: 'Hainbach', tag: 'art', desc: 'Test equipment turned into instruments and tape experiments' },
-  { handle: 'LOOKMUMNOCOMPUTER', name: 'Look Mum No Computer', tag: 'art', desc: 'Homebrew synths, sound sculptures and joyful noise' },
-  { handle: 'mylarmelodies', name: 'mylarmelodies', tag: 'art', desc: 'Modular patches and eurorack storytelling' },
-  { handle: 'andrewhuang', name: 'Andrew Huang', tag: 'art', desc: 'Sound design experiments and improbable instruments' },
-  { handle: 'sonicstate', name: 'Sonic State', tag: 'art', desc: 'Synthesizer explorations and studio field reports' },
-  { handle: 'Tate', name: 'Tate', tag: 'art', desc: 'Artist films and gallery essays from the Tate collection' },
-  { handle: 'MoMA', name: 'MoMA', tag: 'art', desc: 'Modern art conversations, archives and artist portraits' },
+  // --- #dj: sets, clubs, long mixes ---
+  { id: 'UCCycRfTS7V9WOFfWfkNVCSg', handle: 'Cercle', name: 'Cercle', tag: 'dj', desc: 'Unique live electronic performances in scenic locations' },
+  { handle: 'boilerroom', name: 'Boiler Room', tag: 'dj', desc: 'Underground club sets recorded in rooms around the world' },
+  { handle: 'dekmantel', name: 'Dekmantel', tag: 'dj', desc: 'Festival recordings and deep club selections' },
 
-  // --- #code: systems, graphics, and computational craft ---
-  { handle: 'Computerphile', name: 'Computerphile', tag: 'code', desc: 'Computer science explained from first principles' },
-  { handle: 'TheCodingTrain', name: 'The Coding Train', tag: 'code', desc: 'Creative coding sketches and generative algorithms' },
-  { handle: 'SebastianLague', name: 'Sebastian Lague', tag: 'code', desc: 'Simulation, graphics and algorithm deep dives' },
-  { handle: 'suckerpinch', name: 'suckerpinch', tag: 'code', desc: 'Absurd computer science experiments taken seriously' },
-  { handle: 'TsodingDaily', name: 'Tsoding Daily', tag: 'code', desc: 'Live low-level programming sessions' },
-  { handle: 'Acerola_t', name: 'Acerola', tag: 'code', desc: 'Shader craft and rendering techniques dissected' },
+  // --- #electronic ---
+  { id: 'UC6qQOTx9LuKMC5p2dbjmSRg', handle: 'HateLab', name: 'HateLab', tag: 'electronic', desc: 'Deep minimal techno and hypnotic resonances' },
+  { handle: 'NinjaTune', name: 'Ninja Tune', tag: 'electronic', desc: 'Label transmissions across electronica, jazz and bass' },
+  { handle: 'WarpRecords', name: 'Warp Records', tag: 'electronic', desc: 'Experimental electronic catalogue and audiovisual works' },
 
-  // --- #read: essays, lectures and spoken word ---
-  { handle: 'Nerdwriter1', name: 'Nerdwriter1', tag: 'read', desc: 'Visual essays on art, film and language' },
-  { handle: 'theschooloflife', name: 'The School of Life', tag: 'read', desc: 'Short philosophical readings on everyday life' },
-  { handle: 'TheRoyalInstitution', name: 'The Royal Institution', tag: 'read', desc: 'Public lectures on science and ideas' },
-  { handle: 'GreshamCollege', name: 'Gresham College', tag: 'read', desc: 'Free public lectures since 1597' },
-  { handle: 'aeonvideo', name: 'Aeon Video', tag: 'read', desc: 'Documentary shorts and essayistic films' },
-  { handle: 'JacobGeller', name: 'Jacob Geller', tag: 'read', desc: 'Long-form essays on art, games and architecture' },
+  // --- #lofi ---
+  { id: 'UCSJ4gkVC6NrvII8umztf0Ow', handle: 'LofiGirl', name: 'Lofi Girl', tag: 'lofi', desc: 'Lo-fi ambient beats and peaceful frequencies' },
+  { handle: 'ChillhopMusic', name: 'Chillhop Music', tag: 'lofi', desc: 'Jazzy instrumental beats for slow hours' },
+  { handle: 'stonesthrow', name: 'Stones Throw', tag: 'lofi', desc: 'Beat tapes, soul excavations and left-field hip hop' },
 
-  // --- #obscureweb: lost corners of the network ---
-  { handle: 'LEMMiNO', name: 'LEMMiNO', tag: 'obscureweb', desc: 'Meticulous documentaries on unsolved internet lore' },
-  { handle: 'FredrikKnudsen', name: 'Fredrik Knudsen', tag: 'obscureweb', desc: 'Down the Rabbit Hole: forgotten online subcultures' },
-  { handle: 'InternetHistorian', name: 'Internet Historian', tag: 'obscureweb', desc: 'Chronicles of internet events and digital folklore' },
-  { handle: 'Nexpo', name: 'Nexpo', tag: 'obscureweb', desc: 'Investigations into unsettling corners of the web' },
-  { handle: 'XboxAhoy', name: 'Ahoy', tag: 'obscureweb', desc: 'Archaeology of software, hardware and lost media' },
-  { handle: 'BarelySociable', name: 'Barely Sociable', tag: 'obscureweb', desc: 'Cold cases and cryptic online mysteries' }
+  // --- #radio: continuous shows ---
+  { handle: 'NTSRadio', name: 'NTS Radio', tag: 'radio', desc: 'Wide-spectrum radio shows and archival selections' },
+  { handle: 'TheLotRadio', name: 'The Lot Radio', tag: 'radio', desc: 'Continuous DJ shows from a shipping container in Brooklyn' },
+
+  // --- #ambient: modular synthesis and stillness ---
+  { id: 'UCGSSFkUjSBpDzA1aD4yq1zw', handle: 'StateAzure', name: 'State Azure', tag: 'ambient', desc: 'Generative modular synthesis and analog soundscapes' },
+  { handle: 'mylarmelodies', name: 'mylarmelodies', tag: 'ambient', desc: 'Modular patches and eurorack storytelling' },
+  { handle: 'sonicstate', name: 'Sonic State', tag: 'ambient', desc: 'Synthesizer explorations and studio field reports' },
+
+  // --- #experimental: instruments that should not exist ---
+  { handle: 'Hainbach', name: 'Hainbach', tag: 'experimental', desc: 'Test equipment turned into instruments and tape experiments' },
+  { handle: 'LOOKMUMNOCOMPUTER', name: 'Look Mum No Computer', tag: 'experimental', desc: 'Homebrew synths, sound sculptures and joyful noise' },
+  { handle: 'andrewhuang', name: 'Andrew Huang', tag: 'experimental', desc: 'Sound design experiments and improbable instruments' }
 ];
 
 const YT_CHANNEL_ID_RE = /^UC[A-Za-z0-9_-]{22}$/;
@@ -769,7 +801,7 @@ export class YouTubeFeedProvider extends BaseProvider {
           url: `https://www.youtube.com/watch?v=${vid}`,
           title: `${author} - ${rawTitle}`,
           caption: `${channel.desc} via live YouTube feed.`,
-          tag: channel.tag || 'sound',
+          tag: channel.tag || 'electronic',
           source: channel.name
         });
       }
@@ -816,45 +848,9 @@ export class BandcampProvider extends BaseProvider {
       name: 'Bandcamp Network',
       ttlMs: 30 * 60 * 1000
     });
-    this.cachedAlbums = [];
-    this.cachedArticles = [];
-    this.lastAlbumFetch = 0;
-    this.lastArticleFetch = 0;
     this.articleWindow = 12;      // how many feed items are considered
     this.articlesPerFetch = 6;    // how many of them are actually crawled
     this.albumsPerArticle = 3;    // playable albums extracted per article
-  }
-
-  async getTracks(context = {}) {
-    const isRead = context.tag === 'read';
-    const now = Date.now();
-    const last = isRead ? this.lastArticleFetch : this.lastAlbumFetch;
-    const cache = isRead ? this.cachedArticles : this.cachedAlbums;
-
-    if (now - last < this.ttlMs && cache.length > 0) {
-      return cache;
-    }
-
-    try {
-      const timeoutSignal = typeof AbortSignal !== 'undefined' && AbortSignal.timeout
-        ? AbortSignal.timeout(12000)
-        : undefined;
-      const live = await this.fetchLiveTracks({ ...context, signal: timeoutSignal });
-      if (Array.isArray(live) && live.length > 0) {
-        if (isRead) {
-          this.cachedArticles = live;
-          this.lastArticleFetch = now;
-        } else {
-          this.cachedAlbums = live;
-          this.lastAlbumFetch = now;
-        }
-        return live;
-      }
-    } catch (e) {
-      console.warn('[BandcampProvider] Live fetch notice:', e.message || e);
-    }
-
-    return cache;
   }
 
   async fetchLiveTracks({ tag, signal } = {}) {
@@ -868,31 +864,8 @@ export class BandcampProvider extends BaseProvider {
 
     const items = xml.split('<item>');
 
-    // If request is specifically for #read, return editorial article links
-    if (tag === 'read') {
-      const articles = [];
-      for (let i = 1; i < items.length; i++) {
-        const chunk = items[i];
-        const titleMatch = chunk.match(/<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/);
-        const linkMatch = chunk.match(/<link>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/link>/);
-        const descMatch = chunk.match(/<description>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/description>/s);
-        if (titleMatch && linkMatch) {
-          let cleanDesc = descMatch ? descMatch[1].replace(/<[^>]*>?/gm, '').trim() : '';
-          if (cleanDesc.length > 120) cleanDesc = cleanDesc.slice(0, 117) + '...';
-          articles.push({
-            url: linkMatch[1].trim(),
-            title: `Bandcamp Daily: ${titleMatch[1].trim()}`,
-            caption: cleanDesc || 'Musical deep-dive and review from Bandcamp Daily.',
-            tag: 'read',
-            source: 'Bandcamp Daily'
-          });
-        }
-      }
-      return articles;
-    }
-
-    // For #sound (audio player): crawl the latest articles and extract real playable Bandcamp album links.
-    // Sampling a wider window of articles (and several albums per article) keeps the pool varied.
+    // Crawl the latest articles and extract real playable Bandcamp album links.
+    // Sampling a wider window of articles (and several albums each) keeps the pool varied.
     const articleUrls = [];
     for (let i = 1; i < Math.min(items.length, this.articleWindow + 1); i++) {
       const linkMatch = items[i].match(/<link>(https:\/\/daily\.bandcamp\.com\/[^\/]+\/[^<]+)<\/link>/);
@@ -913,26 +886,21 @@ export class BandcampProvider extends BaseProvider {
 
         const title = artHtml.match(/<meta property="og:title" content="([^"]+)"/)?.[1] || '';
         const desc = artHtml.match(/<meta property="og:description" content="([^"]+)"/)?.[1] || '';
-        const cleanTitle = title.replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
-        const cleanDesc = desc.replace(/<[^>]*>?/gm, '').replace(/&#39;/g, "'").slice(0, 120);
+        const cleanTitle = decodeXmlEntities(title);
+        const cleanDesc = decodeXmlEntities(desc).replace(/<[^>]*>?/gm, '').slice(0, 120);
 
         return albumLinks.slice(0, this.albumsPerArticle).map(url => ({
           url,
           title: cleanTitle || 'Bandcamp Featured Release',
           caption: cleanDesc || 'Independent album streaming from Bandcamp.',
-          tag: 'sound',
+          tag: resolveGenre(`${cleanTitle} ${cleanDesc}`, tag || 'electronic'),
           source: 'Bandcamp Daily'
         }));
       } catch (e) {}
       return [];
     });
 
-    const resolvedAlbums = dedupeTracks((await Promise.all(albumPromises)).flat());
-    if (resolvedAlbums.length > 0) {
-      return resolvedAlbums;
-    }
-
-    return [];
+    return dedupeTracks((await Promise.all(albumPromises)).flat());
   }
 }
 export const BandcampDailyProvider = BandcampProvider;
@@ -947,15 +915,23 @@ export class MixcloudProvider extends BaseProvider {
       name: 'Mixcloud Live Cloudcasts',
       ttlMs: 30 * 60 * 1000
     });
-    this.tags = [
-      'ambient', 'chillout', 'electronic', 'downtempo', 'deep-techno', 'dub',
-      'jazz', 'house', 'minimal', 'krautrock', 'psychedelic', 'library-music',
-      'field-recordings', 'drone', 'idm', 'breakbeat', 'afrobeat', 'balearic',
-      'lo-fi', 'soundtrack'
-    ];
+    // Mixcloud tags reachable from each FM affinity
+    this.tagsByGenre = {
+      ambient: ['ambient', 'drone', 'chillout', 'downtempo', 'soundtrack'],
+      electronic: ['electronic', 'techno', 'house', 'minimal', 'idm', 'breakbeat', 'dub'],
+      dj: ['house', 'techno', 'disco', 'balearic', 'afrobeat', 'breakbeat'],
+      live: ['jazz', 'soul', 'funk', 'afrobeat', 'psychedelic'],
+      lofi: ['lo-fi', 'hip-hop', 'jazz', 'chillout', 'downtempo'],
+      radio: ['ambient', 'chillout', 'electronic', 'soundtrack'],
+      experimental: ['experimental', 'krautrock', 'psychedelic', 'library-music', 'field-recordings', 'drone']
+    };
   }
 
-  async fetchTagTracks(tag, order, { signal } = {}) {
+  tagsFor(genre) {
+    return this.tagsByGenre[genre] || this.tagsByGenre.dj;
+  }
+
+  async fetchTagTracks(tag, order, genre, { signal } = {}) {
     const url = `https://api.mixcloud.com/tag/${tag}/${order}/?limit=25`;
     let data = null;
     try {
@@ -976,20 +952,22 @@ export class MixcloudProvider extends BaseProvider {
           url: item.url,
           title: `${user} - ${cleanName}`,
           caption: `DJ set & long-form cloudcast streaming on Mixcloud (#${tag}).`,
-          tag: 'sound',
+          tag: genre,
           source: `Mixcloud #${tag}`
         };
       });
   }
 
-  async fetchLiveTracks({ signal } = {}) {
-    const selectedTags = sampleList(this.tags, 3);
+  async fetchLiveTracks({ tag, signal } = {}) {
+    const genre = FM_GENRES.includes(tag) ? tag : 'dj';
+    const selectedTags = sampleList(this.tagsFor(genre), 3);
     const orders = ['popular', 'latest'];
 
     const results = await Promise.allSettled(
-      selectedTags.map(tag => this.fetchTagTracks(
-        tag,
+      selectedTags.map(mcTag => this.fetchTagTracks(
+        mcTag,
         orders[Math.floor(Math.random() * orders.length)],
+        genre,
         { signal }
       ))
     );
@@ -1036,7 +1014,7 @@ export class SomaFMProvider extends BaseProvider {
             url: `https://ice1.somafm.com/${c.id}-128-mp3`,
             title: `SomaFM: ${c.title}`,
             caption: desc || `Independent commercial-free continuous radio stream from SomaFM${genre ? ` (${genre})` : ''}.`,
-            tag: 'sound',
+            tag: resolveGenre(genre, 'radio'),
             source: 'SomaFM'
           };
         });
@@ -1055,12 +1033,15 @@ export const RADIO_BROWSER_MIRRORS = [
   'https://at1.api.radio-browser.info'
 ];
 
-export const RADIO_BROWSER_TAGS = [
-  'ambient', 'jazz', 'classical', 'electronic', 'experimental', 'dub',
-  'downtempo', 'techno', 'lounge', 'psychedelic', 'folk', 'soul', 'drone',
-  'minimal', 'chillout', 'world music', 'shoegaze', 'post rock', 'reggae',
-  'blues', 'trip hop', 'krautrock'
-];
+export const RADIO_BROWSER_TAGS = {
+  ambient: ['ambient', 'drone', 'chillout', 'meditation', 'new age'],
+  electronic: ['electronic', 'techno', 'house', 'dance', 'trance', 'dub'],
+  dj: ['dance', 'club', 'house', 'techno', 'disco'],
+  live: ['jazz', 'blues', 'folk', 'acoustic', 'indie'],
+  lofi: ['lofi', 'chillhop', 'hip hop', 'chillout', 'downtempo'],
+  radio: ['eclectic', 'alternative', 'indie', 'classical', 'world music'],
+  experimental: ['experimental', 'avantgarde', 'psychedelic', 'noise', 'krautrock']
+};
 
 export class RadioBrowserProvider extends BaseProvider {
   constructor() {
@@ -1075,7 +1056,7 @@ export class RadioBrowserProvider extends BaseProvider {
     return RADIO_BROWSER_MIRRORS[Math.floor(Math.random() * RADIO_BROWSER_MIRRORS.length)];
   }
 
-  async fetchTagStations(tag, { signal } = {}) {
+  async fetchTagStations(tag, genre, { signal } = {}) {
     const url = `${this.mirror()}/json/stations/search?limit=80&hidebroken=true&order=clickcount&reverse=true&codec=MP3&tag=${encodeURIComponent(tag)}`;
     let stations = null;
     try {
@@ -1101,136 +1082,18 @@ export class RadioBrowserProvider extends BaseProvider {
           url: streamUrl,
           title: `Radio: ${name}`,
           caption: `Live ${stationTags || tag} radio stream${place ? ` from ${place}` : ''}.`,
-          tag: 'sound',
+          tag: genre,
           source: `Radio Browser #${tag}`
         };
       })
       .filter(t => t && isDirectAudioStreamUrl(t.url));
   }
 
-  async fetchLiveTracks({ signal } = {}) {
-    const selected = sampleList(RADIO_BROWSER_TAGS, 3);
-    const results = await Promise.allSettled(
-      selected.map(tag => this.fetchTagStations(tag, { signal }))
-    );
-
-    const buckets = results
-      .filter(r => r.status === 'fulfilled' && r.value.length > 0)
-      .map(r => r.value);
-
-    return dedupeTracks(interleaveBuckets(buckets));
-  }
-}
-
-/**
- * Open-web RSS sources for the non-audio affinities (#read, #art, #code, #obscureweb).
- * These are plain links, so they are never offered to a #sound slot.
- */
-export const RSS_SOURCES = [
-  // --- #read ---
-  { url: 'https://aeon.co/feed.rss', name: 'Aeon', tag: 'read', desc: 'Long-form essays on philosophy, science and culture' },
-  { url: 'https://longreads.com/feed/', name: 'Longreads', tag: 'read', desc: 'Curated long-form journalism and narrative writing' },
-  { url: 'https://www.themarginalian.org/feed/', name: 'The Marginalian', tag: 'read', desc: 'Readings across art, science and the examined life' },
-  { url: 'https://lithub.com/feed/', name: 'Literary Hub', tag: 'read', desc: 'Literary essays, interviews and book culture' },
-  { url: 'https://thequietus.com/feed', name: 'The Quietus', tag: 'read', desc: 'Independent music writing and cultural criticism' },
-  { url: 'https://www.openculture.com/feed', name: 'Open Culture', tag: 'read', desc: 'Free cultural and educational media from the open web' },
-  { url: 'https://blog.archive.org/feed/', name: 'Internet Archive Blog', tag: 'read', desc: 'Dispatches from the world largest open library' },
-  { url: 'https://publicdomainreview.org/rss.xml', name: 'The Public Domain Review', tag: 'read', desc: 'Curiosities and artefacts from the public domain' },
-
-  // --- #obscureweb ---
-  { url: 'https://waxy.org/feed/', name: 'Waxy.org', tag: 'obscureweb', desc: 'Links from the stranger corners of the internet' },
-  { url: 'https://feeds.kottke.org/main', name: 'kottke.org', tag: 'obscureweb', desc: 'Liberal arts blogging since 1998' },
-  { url: 'https://www.metafilter.com/rss.xml', name: 'MetaFilter', tag: 'obscureweb', desc: 'Community weblog of the best of the web' },
-  { url: 'https://tedium.co/feed/', name: 'Tedium', tag: 'obscureweb', desc: 'The dull side of the internet, explored in depth' },
-  { url: 'https://www.404media.co/rss/', name: '404 Media', tag: 'obscureweb', desc: 'Reporting on the underside of technology' },
-  { url: 'https://solar.lowtechmagazine.com/feeds/all-en.rss.xml', name: 'Low-tech Magazine', tag: 'obscureweb', desc: 'A solar-powered website on low technology' },
-
-  // --- #art ---
-  { url: 'https://hyperallergic.com/feed/', name: 'Hyperallergic', tag: 'art', desc: 'Perspectives on art and its discontents' },
-  { url: 'https://www.thisiscolossal.com/feed/', name: 'Colossal', tag: 'art', desc: 'Visual art, craft and material experiments' },
-  { url: 'https://www.creativeapplications.net/feed/', name: 'CreativeApplications.Net', tag: 'art', desc: 'Code-driven art, installations and digital objects' },
-  { url: 'https://rhizome.org/blog/feed/rss/', name: 'Rhizome', tag: 'art', desc: 'Born-digital art and internet culture' },
-  { url: 'https://news.artnet.com/feed', name: 'Artnet News', tag: 'art', desc: 'Reports from museums, galleries and the art market' },
-  { url: 'https://www.dezeen.com/feed/', name: 'Dezeen', tag: 'art', desc: 'Architecture and design from around the world' },
-
-  // --- #code ---
-  { url: 'https://hackaday.com/feed/', name: 'Hackaday', tag: 'code', desc: 'Hardware hacks and homebrew engineering' },
-  { url: 'https://lobste.rs/rss', name: 'Lobsters', tag: 'code', desc: 'Computing-focused community link aggregator' },
-  { url: 'https://news.ycombinator.com/rss', name: 'Hacker News', tag: 'code', desc: 'What the software world is reading right now' },
-  { url: 'https://www.phoronix.com/rss.php', name: 'Phoronix', tag: 'code', desc: 'Linux hardware, kernels and open source benchmarks' },
-  { url: 'https://blog.rust-lang.org/feed.xml', name: 'Rust Blog', tag: 'code', desc: 'Language releases and systems programming notes' },
-  { url: 'https://simonwillison.net/atom/everything/', name: 'Simon Willison', tag: 'code', desc: 'Notes on tooling, data and language models' }
-];
-
-export class RSSFeedProvider extends BaseProvider {
-  constructor({ feedsPerFetch = 3 } = {}) {
-    super({
-      id: 'rssfeeds',
-      name: 'Open Web RSS Sources',
-      ttlMs: 30 * 60 * 1000
-    });
-    this.feedsPerFetch = feedsPerFetch;
-  }
-
-  sourcesForTag(tag) {
-    if (!tag) return RSS_SOURCES;
-    const filtered = RSS_SOURCES.filter(s => s.tag === tag);
-    return filtered.length > 0 ? filtered : RSS_SOURCES;
-  }
-
-  /**
-   * Minimal RSS 2.0 + Atom reader: enough to lift title, link and summary.
-   */
-  parseFeed(xml, source) {
-    if (!xml) return [];
-    const isAtom = /<feed[\s>]/i.test(xml) && /<entry[\s>]/i.test(xml);
-    const chunks = xml.split(isAtom ? /<entry[\s>]/i : /<item[\s>]/i);
-    const items = [];
-
-    for (let i = 1; i < chunks.length; i++) {
-      const chunk = chunks[i];
-      const titleMatch = chunk.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i);
-      const linkMatch = isAtom
-        ? chunk.match(/<link[^>]*href="([^"]+)"/i)
-        : chunk.match(/<link[^>]*>(?:<!\[CDATA\[)?\s*(https?:[^<\]]+?)\s*(?:\]\]>)?<\/link>/i);
-      if (!titleMatch || !linkMatch) continue;
-
-      const descMatch = chunk.match(/<(?:description|summary)[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/(?:description|summary)>/i);
-      const title = decodeXmlEntities(titleMatch[1]).replace(/\s+/g, ' ').trim();
-      const url = decodeXmlEntities(linkMatch[1]).trim();
-      if (!title || !/^https?:\/\//i.test(url)) continue;
-
-      let desc = descMatch ? decodeXmlEntities(descMatch[1]).replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim() : '';
-      if (desc.length > 120) desc = desc.slice(0, 117) + '...';
-
-      items.push({
-        url,
-        title: `${source.name}: ${title}`,
-        caption: desc || `${source.desc}.`,
-        tag: source.tag,
-        source: source.name
-      });
-    }
-
-    return items;
-  }
-
-  async fetchSource(source, { signal } = {}) {
-    let xml = '';
-    try {
-      xml = await fetchWithCORSProxy(source.url, { signal, asJson: false });
-    } catch (e) {
-      return [];
-    }
-    return this.parseFeed(xml, source);
-  }
-
   async fetchLiveTracks({ tag, signal } = {}) {
-    const pool = this.sourcesForTag(tag);
-    const chosen = sampleList(pool, Math.min(this.feedsPerFetch, pool.length));
-
+    const genre = FM_GENRES.includes(tag) ? tag : 'radio';
+    const selected = sampleList(RADIO_BROWSER_TAGS[genre] || RADIO_BROWSER_TAGS.radio, 3);
     const results = await Promise.allSettled(
-      chosen.map(source => this.fetchSource(source, { signal }))
+      selected.map(rbTag => this.fetchTagStations(rbTag, genre, { signal }))
     );
 
     const buckets = results
@@ -1292,13 +1155,11 @@ export class ProviderRegistry {
   }
 
   /**
-   * A #sound slot must stay playable in-page, so plain links (RSS articles,
-   * editorial pieces) are never accepted for that affinity.
+   * onepick is a radio: every slot must be playable in-page, whatever the affinity.
    */
   acceptsTrack(bot, track) {
     if (!track || !track.url) return false;
-    if ((bot?.tag || track.tag) === 'sound') return isPlayableAudioUrl(track.url);
-    return true;
+    return isPlayableAudioUrl(track.url);
   }
 
   async getTrackForBot(bot, currentUrl = null) {
@@ -1348,7 +1209,6 @@ providerRegistry.register(new BandcampDailyProvider());
 providerRegistry.register(new MixcloudProvider());
 providerRegistry.register(new SomaFMProvider());
 providerRegistry.register(new RadioBrowserProvider());
-providerRegistry.register(new RSSFeedProvider());
 
 /**
  * Searches and fetches live releases from the TuneCamp network (/api/releases)
@@ -1458,7 +1318,7 @@ export async function broadcastSeedSlot(zen, bot, track, ZEN) {
   const slotData = {
     url: track.url,
     caption: track.caption,
-    tag: track.tag || bot.tag || 'sound',
+    tag: track.tag || bot.tag || 'radio',
     author: bot.username,
     ts: now,
     authorPub: pair.pub,
