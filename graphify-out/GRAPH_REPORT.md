@@ -1,16 +1,16 @@
 # Graph Report - onepick  (2026-09-07)
 
 ## Corpus Check
-- 6 files · ~24,468 words
+- 6 files · ~25,584 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 375 nodes · 856 edges · 19 communities (11 shown, 8 thin omitted)
-- Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 104 edges (avg confidence: 0.53)
+- 395 nodes · 909 edges · 19 communities (10 shown, 9 thin omitted)
+- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 104 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `546ef2ad`
+- Built from commit: `0a16ddd3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -37,15 +37,15 @@
 
 ## God Nodes (most connected - your core abstractions)
 1. `t` - 37 edges
-2. `t()` - 33 edges
+2. `t()` - 35 edges
 3. `o()` - 32 edges
 4. `A()` - 24 edges
 5. `e()` - 23 edges
 6. `f()` - 22 edges
 7. `l()` - 22 edges
 8. `g()` - 21 edges
-9. `initApp()` - 20 edges
-10. `r()` - 20 edges
+9. `showToast()` - 20 edges
+10. `initApp()` - 20 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `playTuningStatic()` --indirect_call--> `e()`  [INFERRED]
@@ -62,19 +62,19 @@
 ## Import Cycles
 - None detected.
 
-## Communities (19 total, 8 thin omitted)
+## Communities (19 total, 9 thin omitted)
 
 ### Community 0 - "app.js"
-Cohesion: 0.02
-Nodes (129): audiusTrackCache, authAlert, authCancelBtn, authControls, authForm, authModal, authorBadge, authorSigilDisplay (+121 more)
+Cohesion: 0.01
+Nodes (142): audiusTrackCache, authAlert, authCancelBtn, authControls, authForm, authModal, authorBadge, authorSigilDisplay (+134 more)
 
 ### Community 1 - "zen.min.js"
 Cohesion: 0.12
 Nodes (42): _(), A(), B(), b62Decode(), b62Encode(), c(), compactPoint(), concat() (+34 more)
 
 ### Community 2 - "t"
-Cohesion: 0.09
-Nodes (64): checkFrictionStatus(), checkInitialPeerParam(), closeTutorialModal(), detectMedia(), extractCleanMediaUrl(), extractDomain(), formatTimeAgo(), generateSigilSvg() (+56 more)
+Cohesion: 0.08
+Nodes (72): checkFrictionStatus(), checkInitialPeerParam(), closeTutorialModal(), detectMedia(), escapeHtml(), extractCleanMediaUrl(), formatTimeAgo(), generateSigilSvg() (+64 more)
 
 ### Community 3 - "bot.js"
 Cohesion: 0.22
@@ -97,31 +97,27 @@ Cohesion: 0.22
 Nodes (11): getJammingStaticBuffer(), getTuningStaticBuffer(), initAudioContext(), playJammingStatic(), playTuningStatic(), renderStationMedia(), resolveAudiusTrackId(), resolveTuneCampMetadata() (+3 more)
 
 ### Community 9 - "ProviderRegistry"
-Cohesion: 0.20
-Nodes (3): BandcampProvider, fetchLiveTuneCampTracks(), ProviderRegistry
+Cohesion: 0.15
+Nodes (4): BaseProvider, fetchLiveTuneCampTracks(), ProviderRegistry, SomaFMProvider
 
 ### Community 10 - "setupAuthUI"
 Cohesion: 0.40
 Nodes (4): derivePair(), setupAuthUI(), zen, deriveBotPair()
 
-### Community 11 - "hasSentNod"
-Cohesion: 0.67
-Nodes (3): getSentNods(), hasSentNod(), recordSentNod()
-
 ## Knowledge Gaps
-- **163 isolated node(s):** `stationsMap`, `mutedStations`, `stationReportsMap`, `jammedOverrides`, `powerToggleBtn` (+158 more)
+- **174 isolated node(s):** `stationsMap`, `mutedStations`, `stationReportsMap`, `jammedOverrides`, `powerToggleBtn` (+169 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `r()` connect `zen.min.js` to `app.js`, `bot.js`?**
-  _High betweenness centrality (0.083) - this node is a cross-community bridge._
+  _High betweenness centrality (0.081) - this node is a cross-community bridge._
 - **Why does `t` connect `zen.min.js` to `setupAuthUI`?**
-  _High betweenness centrality (0.074) - this node is a cross-community bridge._
+  _High betweenness centrality (0.071) - this node is a cross-community bridge._
 - **Why does `ProviderRegistry` connect `ProviderRegistry` to `setupAuthUI`, `bot.js`, `seeder.js`?**
-  _High betweenness centrality (0.023) - this node is a cross-community bridge._
+  _High betweenness centrality (0.022) - this node is a cross-community bridge._
 - **Are the 8 inferred relationships involving `t` (e.g. with `f()` and `g()`) actually correct?**
   _`t` has 8 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 9 inferred relationships involving `o()` (e.g. with `_()` and `A()`) actually correct?**

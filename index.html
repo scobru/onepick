@@ -264,7 +264,16 @@
                       title="Salva questo pick solo per te nel tuo cassetto privato locale"
                       data-i18n-title="tooltip_save_cassetto"
                     >
-                      ★ Salva
+                      ★ Pick
+                    </button>
+                    <button
+                      id="save-station-btn"
+                      class="bracket-btn"
+                      type="button"
+                      title="Salva questa stazione radio tra i tuoi preferiti nel cassetto"
+                      data-i18n-title="tooltip_save_station"
+                    >
+                      📻 Stazione
                     </button>
                     <button
                       id="silent-nod-btn"
@@ -431,10 +440,21 @@
             Questo è il tuo archivio locale personale. I pick salvati rimangono solo in questo browser: nessun like pubblico, nessun contatore visibile agli altri.
           </p>
 
+          <div class="cassetto-tab-nav">
+            <button id="tab-btn-picks" class="bracket-btn btn-active" type="button">
+              ★ <span data-i18n="tab_saved_picks">Pick</span> <span id="tab-count-picks">(0)</span>
+            </button>
+            <button id="tab-btn-stations" class="bracket-btn" type="button">
+              📻 <span data-i18n="tab_saved_stations">Stazioni</span> <span id="tab-count-stations">(0)</span>
+            </button>
+            <button id="tab-btn-muted" class="bracket-btn" type="button">
+              🔇 <span data-i18n="tab_muted_stations">Silenziate</span> <span id="tab-count-muted">(0)</span>
+            </button>
+          </div>
+
           <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;">
             <button id="export-cassetto-json" class="bracket-btn" type="button"><span data-i18n="btn_export_json">esporta JSON</span></button>
             <button id="export-cassetto-md" class="bracket-btn" type="button"><span data-i18n="btn_export_md">esporta Markdown</span></button>
-            <button id="toggle-muted-stations-btn" class="bracket-btn" type="button">silenziate (0)</button>
             <button id="clear-cassetto-btn" class="bracket-btn btn-danger" type="button" style="margin-left: auto;"><span data-i18n="btn_clear">svuota</span></button>
           </div>
 
@@ -443,6 +463,13 @@
               <ul id="cassetto-items-list" class="cassetto-list"></ul>
               <div id="cassetto-empty" class="empty-state" data-i18n="cassetto_empty">
                 // Il cassetto è vuoto.<br />Salva un pick ascoltato dalla radio per riporlo qui.
+              </div>
+            </div>
+
+            <div id="cassetto-stations-tab" class="hidden">
+              <ul id="cassetto-stations-list" class="cassetto-list"></ul>
+              <div id="cassetto-stations-empty" class="empty-state" data-i18n="cassetto_stations_empty">
+                // Nessuna stazione preferita salvata.<br />Salva le tue stazioni radio per risintonizzarle al volo.
               </div>
             </div>
 
@@ -547,6 +574,9 @@
           </div>
 
           <div class="profile-actions-row">
+            <button id="prof-save-station-btn" class="bracket-btn" type="button">
+              <span id="prof-save-station-text">★ Salva Stazione</span>
+            </button>
             <button id="prof-mute-toggle-btn" class="bracket-btn btn-danger" type="button">
               Silenzia questa Stazione
             </button>

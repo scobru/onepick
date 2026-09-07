@@ -1036,6 +1036,16 @@ textarea:focus {
   font-size: 1.2rem;
 }
 
+/* Cassetto Tab Navigation */
+.cassetto-tab-nav {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border-muted);
+  padding-bottom: 10px;
+  flex-wrap: wrap;
+}
+
 /* Cassetto Items List */
 .cassetto-list {
   list-style: none;

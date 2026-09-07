@@ -87,6 +87,7 @@ const pickDomainPill = document.getElementById('pick-domain-pill');
 const pickUrlText = document.getElementById('pick-url-text');
 const pickCaptionText = document.getElementById('pick-caption-text');
 const saveCassettoBtn = document.getElementById('save-cassetto-btn');
+const saveStationBtn = document.getElementById('save-station-btn');
 const silentNodBtn = document.getElementById('silent-nod-btn');
 const shareFrequencyBtn = document.getElementById('share-frequency-btn');
 const stationProfileBtn = document.getElementById('station-profile-btn');
@@ -134,14 +135,22 @@ const cassettoTrigger = document.getElementById('cassetto-trigger');
 const cassettoCount = document.getElementById('cassetto-count');
 const cassettoModal = document.getElementById('cassetto-modal');
 const closeCassettoBtn = document.getElementById('close-cassetto-btn');
+const tabBtnPicks = document.getElementById('tab-btn-picks');
+const tabBtnStations = document.getElementById('tab-btn-stations');
+const tabBtnMuted = document.getElementById('tab-btn-muted');
+const tabCountPicks = document.getElementById('tab-count-picks');
+const tabCountStations = document.getElementById('tab-count-stations');
+const tabCountMuted = document.getElementById('tab-count-muted');
+const cassettoPicksTab = document.getElementById('cassetto-picks-tab');
+const cassettoStationsTab = document.getElementById('cassetto-stations-tab');
+const cassettoMutedTab = document.getElementById('cassetto-muted-tab');
 const cassettoItemsList = document.getElementById('cassetto-items-list');
 const cassettoEmpty = document.getElementById('cassetto-empty');
+const cassettoStationsList = document.getElementById('cassetto-stations-list');
+const cassettoStationsEmpty = document.getElementById('cassetto-stations-empty');
 const exportCassettoJsonBtn = document.getElementById('export-cassetto-json');
 const exportCassettoMdBtn = document.getElementById('export-cassetto-md');
 const clearCassettoBtn = document.getElementById('clear-cassetto-btn');
-const toggleMutedStationsBtn = document.getElementById('toggle-muted-stations-btn');
-const cassettoPicksTab = document.getElementById('cassetto-picks-tab');
-const cassettoMutedTab = document.getElementById('cassetto-muted-tab');
 const mutedStationsList = document.getElementById('muted-stations-list');
 const mutedEmpty = document.getElementById('muted-empty');
 
@@ -158,6 +167,8 @@ const profCopyPubBtn = document.getElementById('prof-copy-pub-btn');
 const profTimeText = document.getElementById('prof-time-text');
 const profPermalinkInput = document.getElementById('prof-permalink-input');
 const profCopyLinkBtn = document.getElementById('prof-copy-link-btn');
+const profSaveStationBtn = document.getElementById('prof-save-station-btn');
+const profSaveStationText = document.getElementById('prof-save-station-text');
 const profMuteToggleBtn = document.getElementById('prof-mute-toggle-btn');
 const profReportTriggerBtn = document.getElementById('prof-report-trigger-btn');
 
@@ -220,9 +231,13 @@ const TRANSLATIONS = {
     pick_loading: 'Caricamento frequenza...',
     pick_no_signal: '// Nessun segnale agganciato. Muovi la manopola della radio per sintonizzare una frequenza.',
     pick_no_reflection: '// Nessuna riflessione allegata.',
-    action_save_cassetto: '★ Salva',
-    action_saved_cassetto: '✓ Salvato',
+    action_save_cassetto: '★ Pick',
+    action_saved_cassetto: '✓ Pick',
     tooltip_save_cassetto: 'Salva questo pick solo per te nel tuo cassetto privato locale',
+    action_save_station: '📻 Stazione',
+    action_saved_station: '✓ Stazione',
+    tooltip_save_station: 'Salva questa stazione radio tra i tuoi preferiti nel cassetto',
+    tooltip_saved_station: 'Rimuovi questa stazione dai tuoi preferiti',
     action_silent_nod: '~ Cenno',
     action_nod_sent: '~ Inviato',
     action_own_station: 'Tua Stazione',
@@ -237,7 +252,7 @@ const TRANSLATIONS = {
     transmitter_title: 'Il Tuo Slot Unico',
     slot_inactive: 'inattivo',
     slot_active: 'in onda',
-    friction_locked_text: '<strong>Attrito Positivo attivo:</strong> Per poter aggiornare il tuo pick della giornata, devi prima ascoltare la rete. Salva almeno un pick nel tuo cassetto o invia un cenno silenzioso a una frequenza.',
+    friction_locked_text: '<strong>Attrito Positivo attivo:</strong> Per poter aggiornare il tuo pick della giornata, devi prima ascoltare la rete. Salva almeno un pick o una stazione nel tuo cassetto o invia un cenno silenzioso a una frequenza.',
     friction_unlocked_text: '<strong>Attrito Positivo completato:</strong> Hai ascoltato la rete. Il tuo trasmettitore è sbloccato: irradia la tua frequenza.',
     friction_free_text: '<strong>Rete libera:</strong> Nessun altro nodo è attualmente in onda sulla rete Zen. Sei la prima frequenza attiva! Lo slot è sbloccato per avviare la trasmissione.',
     friction_free_btn_title: 'Pubblica il primo pick sulla rete',
@@ -265,17 +280,26 @@ const TRANSLATIONS = {
 
     // Cassetto Modal
     cassetto_title: 'Il Tuo Cassetto Privato',
-    cassetto_desc: 'Questo è il tuo archivio locale personale. I pick salvati rimangono solo in questo browser: nessun like pubblico, nessun contatore visibile agli altri.',
+    cassetto_desc: 'Questo è il tuo archivio locale personale. I pick e le stazioni salvate rimangono solo in questo browser: nessun like pubblico, nessun contatore visibile agli altri.',
     btn_close: 'chiudi ✕',
     btn_export_json: 'esporta JSON',
     btn_export_md: 'esporta Markdown',
     btn_clear: 'svuota',
     btn_delete: 'elimina',
+    btn_tune_station: '⏵ Sintonizza',
+    tab_saved_picks: 'Pick',
+    tab_saved_stations: 'Stazioni',
+    tab_muted_stations: 'Silenziate',
     cassetto_empty: '// Il cassetto è vuoto.<br />Salva un pick ascoltato dalla radio per riporlo qui.',
+    cassetto_stations_empty: '// Nessuna stazione preferita salvata.<br />Salva le tue frequenze preferite per risintonizzarle al volo.',
     muted_desc: 'Frequenze che hai silenziato dal tuo ricevitore radio:',
     muted_empty: '// Nessuna stazione attualmente silenziata.',
     muted_station_desc: '// Frequenza silenziata.',
     btn_restore: 'ripristina',
+    station_on_air: 'in onda',
+    station_offline: 'offline',
+    prof_save_station: '★ Salva Stazione',
+    prof_saved_station: '✓ Stazione Salvata',
 
     // Auth Modal
     auth_title: 'Nodo Trasmettitore / Login',
@@ -344,6 +368,9 @@ const TRANSLATIONS = {
     toast_pubkey_copied: 'Chiave crittografica copiata negli appunti!',
     toast_saved_cassetto: 'Pick salvato nel tuo cassetto privato!',
     toast_cassetto_removed: 'Rimosso dal cassetto privato.',
+    toast_station_saved: 'Stazione salvata nei preferiti del cassetto!',
+    toast_station_removed: 'Stazione rimossa dai preferiti.',
+    toast_tuned_station: 'Sintonizzato su {station}',
     toast_nod_sent: 'Cenno silenzioso inviato al trasmettitore!',
     toast_nod_sent_private: '✓ Cenno inviato privatamente all\'autore! (Invisibile al pubblico)',
     toast_cannot_nod_self: 'Non puoi inviare un cenno alla tua stessa frequenza.',
@@ -449,9 +476,13 @@ const TRANSLATIONS = {
     pick_loading: 'Loading frequency...',
     pick_no_signal: '// No signal locked. Adjust the radio tuner to pick up a frequency.',
     pick_no_reflection: '// No reflection attached.',
-    action_save_cassetto: '★ Save',
-    action_saved_cassetto: '✓ Saved',
+    action_save_cassetto: '★ Pick',
+    action_saved_cassetto: '✓ Pick',
     tooltip_save_cassetto: 'Save this pick for yourself in your private local drawer',
+    action_save_station: '📻 Station',
+    action_saved_station: '✓ Station',
+    tooltip_save_station: 'Save this station to your favorites in drawer',
+    tooltip_saved_station: 'Remove this station from favorites',
     action_silent_nod: '~ Nod',
     action_nod_sent: '~ Sent',
     action_own_station: 'Your Station',
@@ -466,7 +497,7 @@ const TRANSLATIONS = {
     transmitter_title: 'Your Single Slot',
     slot_inactive: 'inactive',
     slot_active: 'on air',
-    friction_locked_text: '<strong>Positive Friction active:</strong> To update your pick of the day, you must first listen to the network. Save at least one pick to your drawer or send a silent nod to a station.',
+    friction_locked_text: '<strong>Positive Friction active:</strong> To update your pick of the day, you must first listen to the network. Save at least one pick or station to your drawer or send a silent nod to a station.',
     friction_unlocked_text: '<strong>Positive Friction completed:</strong> You listened to the network. Your transmitter is unlocked: broadcast your frequency.',
     friction_free_text: '<strong>Open network:</strong> No other node is currently on air on the Zen mesh. You are the first active frequency! Your slot is unlocked to start broadcasting.',
     friction_free_btn_title: 'Publish the first pick to the network',
@@ -494,17 +525,26 @@ const TRANSLATIONS = {
 
     // Cassetto Modal
     cassetto_title: 'Your Private Drawer',
-    cassetto_desc: 'This is your personal local archive. Saved picks stay only in this browser: no public likes, no vanity counters visible to others.',
+    cassetto_desc: 'This is your personal local archive. Saved picks and stations stay only in this browser: no public likes, no vanity counters visible to others.',
     btn_close: 'close ✕',
     btn_export_json: 'export JSON',
     btn_export_md: 'export Markdown',
     btn_clear: 'clear',
     btn_delete: 'delete',
+    btn_tune_station: '⏵ Tune in',
+    tab_saved_picks: 'Picks',
+    tab_saved_stations: 'Stations',
+    tab_muted_stations: 'Muted',
     cassetto_empty: '// Your drawer is empty.<br />Save a pick heard on the radio to store it here.',
+    cassetto_stations_empty: '// No favorite stations saved.<br />Save your favorite stations to retune them quickly.',
     muted_desc: 'Frequencies you have muted from your radio receiver:',
     muted_empty: '// No stations currently muted.',
     muted_station_desc: '// Muted frequency.',
     btn_restore: 'restore',
+    station_on_air: 'on air',
+    station_offline: 'offline',
+    prof_save_station: '★ Save Station',
+    prof_saved_station: '✓ Station Saved',
 
     // Auth Modal
     auth_title: 'Transmitter Node / Login',
@@ -573,6 +613,9 @@ const TRANSLATIONS = {
     toast_pubkey_copied: 'Cryptographic key copied to clipboard!',
     toast_saved_cassetto: 'Pick saved to your private drawer!',
     toast_cassetto_removed: 'Removed from private drawer.',
+    toast_station_saved: 'Station saved to your drawer favorites!',
+    toast_station_removed: 'Station removed from favorites.',
+    toast_tuned_station: 'Tuned into {station}',
     toast_nod_sent: 'Silent nod sent to transmitter!',
     toast_nod_sent_private: '✓ Silent nod sent privately to the author! (Invisible to the public)',
     toast_cannot_nod_self: 'You cannot send a nod to your own frequency.',
@@ -652,29 +695,29 @@ const TUTORIAL_STEPS = [
     it: {
       badge: 'STEP 02 / 05',
       title: "La Radio & L'Audio Integrato",
-      desc: "Sintonizza le stazioni dei peer P2P ruotando la scala o con i tasti [ prec ], [ succ ] e [ a caso ]. Clicca su [ ACCENDI RADIO ] per sbloccare l'audio nel browser: la musica da Internet Archive, TuneCamp, Spotify, Bandcamp, SoundCloud o YouTube partirà automaticamente in sottofondo con l'equalizzatore analogico.",
-      callout: "// Sintonizzazione FM: 88.00 - 108.00 MHz · zero mock, solo peer P2P reali."
+      desc: "Sintonizza le stazioni dei peer P2P ruotando la scala o con i tasti [ prec ], [ succ ] e [ a caso ]. Salva le stazioni preferite con [ 📻 Stazione ] per risintonizzarle al volo dal Cassetto. Clicca su [ ACCENDI RADIO ] per sbloccare l'audio nel browser con musica da Internet Archive, TuneCamp, Spotify, Bandcamp, SoundCloud o YouTube.",
+      callout: "// Sintonizzazione FM: 88.00 - 108.00 MHz · salva stazioni e riascoltale quando vuoi."
     },
     en: {
       badge: 'STEP 02 / 05',
       title: "The Radio & Integrated Audio",
-      desc: "Tune into P2P peer stations using the FM scale or the [ prev ], [ next ] and [ random ] buttons. Click [ TURN ON RADIO ] to unlock browser audio: music from Internet Archive, TuneCamp, Spotify, Bandcamp, SoundCloud or YouTube plays automatically with an analog equalizer.",
-      callout: "// FM Tuning: 88.00 - 108.00 MHz · zero mocks, only live P2P peers."
+      desc: "Tune into live P2P peer stations using the FM dial or the [ prev ], [ next ] and [ random ] buttons. Bookmark favorite frequencies via [ 📻 Station ] to quickly retune them from your Drawer. Click [ TURN ON RADIO ] to unlock browser audio from Internet Archive, TuneCamp, Spotify, Bandcamp, SoundCloud or YouTube.",
+      callout: "// FM Tuning: 88.00 - 108.00 MHz · bookmark stations and tune back anytime."
     }
   },
   {
     step: 3,
     it: {
       badge: 'STEP 03 / 05',
-      title: "Attrito Positivo (Positive Friction)",
-      desc: "Per poter trasmettere devi prima ascoltare la rete: il trasmettitore si sblocca solo dopo aver salvato un pick nel tuo Cassetto Privato o aver inviato un Cenno Silenzioso (~) a una frequenza. Nessun like pubblico, nessun contatore visibile agli altri, nessuna vanità.",
-      callout: "// Regola d'oro: Ascolta e rifletti prima di trasmettere."
+      title: "Attrito Positivo & Cassetto Privato",
+      desc: "Per poter trasmettere devi prima ascoltare la rete: il trasmettitore si sblocca salvando un pick o una stazione nel tuo Cassetto Privato, oppure inviando un Cenno Silenzioso (~). Nel Cassetto puoi custodire sia singoli pick culturali sia intere stazioni radio preferite da risintonizzare in qualsiasi momento.",
+      callout: "// Regola d'oro: Ascolta e rifletti prima di trasmettere · zero vanità, 100% rispetto."
     },
     en: {
       badge: 'STEP 03 / 05',
-      title: "Positive Friction",
-      desc: "To broadcast your frequency you must first listen to the network: your transmitter unlocks only after saving a pick to your Private Drawer or sending a Silent Nod (~) to a station. No public likes, no vanity metrics, no dopamine loops.",
-      callout: "// Golden rule: Listen and absorb before broadcasting."
+      title: "Positive Friction & Private Drawer",
+      desc: "To broadcast your frequency you must first listen to the network: your transmitter unlocks after saving a pick or station to your Private Drawer, or sending a Silent Nod (~). Your Drawer stores both individual picks and favorite radio stations ready to be re-tuned at will.",
+      callout: "// Golden rule: Listen and absorb before broadcasting · zero vanity, 100% respect."
     }
   },
   {
@@ -2002,6 +2045,12 @@ function renderEmptyRadioState() {
     saveCassettoBtn.title = t('tooltip_save_cassetto');
     saveCassettoBtn.disabled = true;
   }
+  if (saveStationBtn) {
+    saveStationBtn.textContent = t('action_save_station');
+    saveStationBtn.title = t('tooltip_save_station');
+    saveStationBtn.disabled = true;
+    saveStationBtn.classList.remove('btn-active');
+  }
   if (silentNodBtn) {
     silentNodBtn.textContent = t('action_silent_nod');
     silentNodBtn.title = t('tooltip_silent_nod');
@@ -2062,6 +2111,14 @@ function refreshStationCardUI(station) {
     const isSaved = isPickInCassetto(station.url);
     saveCassettoBtn.textContent = isSaved ? t('action_saved_cassetto') : t('action_save_cassetto');
     saveCassettoBtn.title = t('tooltip_save_cassetto');
+  }
+
+  if (saveStationBtn) {
+    saveStationBtn.disabled = false;
+    const isStationFav = isStationSaved(station.pub);
+    saveStationBtn.textContent = isStationFav ? t('action_saved_station') : t('action_save_station');
+    saveStationBtn.title = isStationFav ? t('tooltip_saved_station') : t('tooltip_save_station');
+    saveStationBtn.classList.toggle('btn-active', isStationFav);
   }
 
   if (silentNodBtn) {
@@ -2293,7 +2350,18 @@ shareFrequencyBtn?.addEventListener('click', () => {
   });
 });
 
-// --- Cassetto Privato (Local Storage) ---
+// --- Helper Escape HTML ---
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// --- Cassetto Privato (Local Storage: Picks & Favorite Stations) ---
 
 function getCassettoItems() {
   try {
@@ -2309,16 +2377,42 @@ function saveCassettoItems(items) {
   updateCassettoBadge();
 }
 
-function updateCassettoBadge() {
+function isPickInCassetto(url) {
+  if (!url) return false;
   const items = getCassettoItems();
-  if (cassettoCount) {
-    cassettoCount.textContent = `(${items.length})`;
+  return items.some(it => it.url === url);
+}
+
+function getSavedStations() {
+  try {
+    const raw = localStorage.getItem('onepick_saved_stations');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
   }
 }
 
-function isPickInCassetto(url) {
-  const items = getCassettoItems();
-  return items.some(it => it.url === url);
+function saveSavedStations(stations) {
+  localStorage.setItem('onepick_saved_stations', JSON.stringify(stations));
+  updateCassettoBadge();
+}
+
+function isStationSaved(pub) {
+  if (!pub) return false;
+  const stations = getSavedStations();
+  return stations.some(s => s.pub === pub);
+}
+
+function updateCassettoBadge() {
+  const picks = getCassettoItems();
+  const stations = getSavedStations();
+  const total = picks.length + stations.length;
+  if (cassettoCount) {
+    cassettoCount.textContent = `(${total})`;
+  }
+  if (tabCountPicks) tabCountPicks.textContent = `(${picks.length})`;
+  if (tabCountStations) tabCountStations.textContent = `(${stations.length})`;
+  if (tabCountMuted) tabCountMuted.textContent = `(${mutedStations ? mutedStations.size : 0})`;
 }
 
 function toggleSaveCurrentPick() {
@@ -2350,9 +2444,84 @@ function toggleSaveCurrentPick() {
   renderCassettoModal();
 }
 
-saveCassettoBtn?.addEventListener('click', toggleSaveCurrentPick);
+function toggleSaveStation(pub) {
+  if (!pub) return;
+  const stations = getSavedStations();
+  const existingIndex = stations.findIndex(s => s.pub === pub);
 
-function renderCassettoModal() {
+  if (existingIndex !== -1) {
+    stations.splice(existingIndex, 1);
+    saveSavedStations(stations);
+    showToast(t('toast_station_removed'));
+  } else {
+    const live = stationsMap.get(pub);
+    const freq = live ? (live.freq || getFrequencyForPub(pub)) : getFrequencyForPub(pub);
+    const author = live ? live.author : truncateKey(pub);
+    const caption = live ? (live.caption || '') : '';
+    const tag = live ? (live.tag || 'sound') : 'sound';
+    const url = live ? (live.url || '') : '';
+
+    stations.unshift({
+      pub: pub,
+      freq: freq,
+      author: author,
+      caption: caption,
+      tag: tag,
+      url: url,
+      savedAt: Date.now()
+    });
+    saveSavedStations(stations);
+    showToast(t('toast_station_saved'));
+    satisfyPositiveFriction('save');
+  }
+
+  // Update button states
+  if (activeStationPub === pub) {
+    const isSaved = isStationSaved(pub);
+    if (saveStationBtn) {
+      saveStationBtn.textContent = isSaved ? t('action_saved_station') : t('action_save_station');
+      saveStationBtn.title = isSaved ? t('tooltip_saved_station') : t('tooltip_save_station');
+      saveStationBtn.classList.toggle('btn-active', isSaved);
+    }
+    if (profSaveStationBtn) {
+      profSaveStationBtn.textContent = isSaved ? t('prof_saved_station') : t('prof_save_station');
+      profSaveStationBtn.className = isSaved ? 'bracket-btn btn-active' : 'bracket-btn';
+    }
+  }
+
+  renderCassettoModal();
+}
+
+saveCassettoBtn?.addEventListener('click', toggleSaveCurrentPick);
+saveStationBtn?.addEventListener('click', () => {
+  if (activeStationPub) {
+    toggleSaveStation(activeStationPub);
+  }
+});
+
+let activeCassettoTab = 'picks';
+
+function switchCassettoTab(tab) {
+  activeCassettoTab = tab;
+  [tabBtnPicks, tabBtnStations, tabBtnMuted].forEach(b => b?.classList.remove('btn-active'));
+  [cassettoPicksTab, cassettoStationsTab, cassettoMutedTab].forEach(t => t?.classList.add('hidden'));
+
+  if (tab === 'picks') {
+    tabBtnPicks?.classList.add('btn-active');
+    cassettoPicksTab?.classList.remove('hidden');
+    renderCassettoPicks();
+  } else if (tab === 'stations') {
+    tabBtnStations?.classList.add('btn-active');
+    cassettoStationsTab?.classList.remove('hidden');
+    renderCassettoStations();
+  } else if (tab === 'muted') {
+    tabBtnMuted?.classList.add('btn-active');
+    cassettoMutedTab?.classList.remove('hidden');
+    renderMutedStationsTab();
+  }
+}
+
+function renderCassettoPicks() {
   const items = getCassettoItems();
   if (!cassettoItemsList || !cassettoEmpty) return;
 
@@ -2369,13 +2538,13 @@ function renderCassettoModal() {
     const sigilHtml = item.authorPub ? `<span class="item-sigil-prefix">${generateSigilSvg(item.authorPub, 16)}</span>` : '';
     li.innerHTML = `
       <div class="cassetto-item-header">
-        <span class="cassetto-node-badge">${sigilHtml}#${item.tag || 'sound'} · ${truncateKey(item.authorPub)}</span>
+        <span class="cassetto-node-badge">${sigilHtml}#${escapeHtml(item.tag || 'sound')} · ${truncateKey(item.authorPub)}</span>
         <span>${new Date(item.savedAt).toLocaleDateString()}</span>
       </div>
       <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="cassetto-item-link">
-        ${item.url}
+        ${escapeHtml(item.url)}
       </a>
-      <div class="cassetto-item-caption">${item.caption || ''}</div>
+      <div class="cassetto-item-caption">${escapeHtml(item.caption || '')}</div>
       <div class="cassetto-item-actions">
         <button class="bracket-btn delete-cassetto-item" data-index="${index}" type="button">${t('btn_delete')}</button>
       </div>
@@ -2385,11 +2554,11 @@ function renderCassettoModal() {
 
   cassettoItemsList.querySelectorAll('.delete-cassetto-item').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const idx = parseInt(e.target.getAttribute('data-index'), 10);
+      const idx = parseInt(e.currentTarget.getAttribute('data-index'), 10);
       const currentItems = getCassettoItems();
       currentItems.splice(idx, 1);
       saveCassettoItems(currentItems);
-      renderCassettoModal();
+      renderCassettoPicks();
       if (activeStationPub) {
         const active = stationsMap.get(activeStationPub);
         if (active && saveCassettoBtn) {
@@ -2398,6 +2567,99 @@ function renderCassettoModal() {
       }
     });
   });
+}
+
+function renderCassettoStations() {
+  if (!cassettoStationsList || !cassettoStationsEmpty) return;
+  cassettoStationsList.innerHTML = '';
+  const list = getSavedStations();
+
+  if (list.length === 0) {
+    cassettoStationsEmpty.classList.remove('hidden');
+    return;
+  }
+  cassettoStationsEmpty.classList.add('hidden');
+
+  list.forEach(st => {
+    const pub = st.pub;
+    const isOnline = stationsMap.has(pub);
+    const liveStation = stationsMap.get(pub);
+    const freq = st.freq || (liveStation ? liveStation.freq : getFrequencyForPub(pub));
+    const author = (liveStation && liveStation.author) || st.author || truncateKey(pub);
+    const caption = (liveStation && liveStation.caption) || st.caption || '';
+    const tag = (liveStation && liveStation.tag) || st.tag || '';
+    const url = (liveStation && liveStation.url) || st.url || '';
+
+    const li = document.createElement('li');
+    li.className = 'cassetto-item';
+    const sigilHtml = `<span class="item-sigil-prefix">${generateSigilSvg(pub, 16)}</span>`;
+    const statusHtml = isOnline 
+      ? `<span class="status-badge" style="color: var(--success-color); border-color: var(--success-color); font-size: 0.74rem;">${t('station_on_air')}</span>`
+      : `<span class="status-badge" style="color: var(--desc-color); border-color: var(--border-muted); font-size: 0.74rem;">${t('station_offline')}</span>`;
+
+    li.innerHTML = `
+      <div class="cassetto-item-header">
+        <span class="cassetto-node-badge">${sigilHtml}FM ${freq.toFixed(2)} MHz · ${escapeHtml(author)}</span>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          ${statusHtml}
+          <span>${new Date(st.savedAt).toLocaleDateString()}</span>
+        </div>
+      </div>
+      ${caption ? `<div class="cassetto-item-caption">${escapeHtml(caption)} ${tag ? `<span class="peer-tag-badge">#${escapeHtml(tag)}</span>` : ''}</div>` : ''}
+      ${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="cassetto-item-link">${escapeHtml(url)}</a>` : ''}
+      <div class="cassetto-item-actions">
+        <button class="bracket-btn btn-success tune-saved-station-btn" data-pub="${pub}" type="button">${t('btn_tune_station')}</button>
+        <button class="bracket-btn delete-saved-station-btn" data-pub="${pub}" type="button">${t('btn_delete')}</button>
+      </div>
+    `;
+    cassettoStationsList.appendChild(li);
+  });
+
+  cassettoStationsList.querySelectorAll('.tune-saved-station-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const pub = e.currentTarget.getAttribute('data-pub');
+      tuneSavedStation(pub);
+    });
+  });
+
+  cassettoStationsList.querySelectorAll('.delete-saved-station-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const pub = e.currentTarget.getAttribute('data-pub');
+      toggleSaveStation(pub);
+    });
+  });
+}
+
+function tuneSavedStation(pub) {
+  if (!pub) return;
+  const saved = getSavedStations().find(s => s.pub === pub);
+  if (!stationsMap.has(pub) && saved) {
+    stationsMap.set(pub, {
+      pub: saved.pub,
+      freq: saved.freq,
+      author: saved.author,
+      caption: saved.caption,
+      tag: saved.tag,
+      url: saved.url,
+      ts: saved.savedAt
+    });
+  }
+  tuneToStation(pub);
+  cassettoModal?.classList.add('hidden');
+  const target = stationsMap.get(pub);
+  const freq = target ? (target.freq || getFrequencyForPub(pub)) : getFrequencyForPub(pub);
+  showToast(t('toast_tuned_station').replace('{station}', `FM ${freq.toFixed(2)} MHz`));
+}
+
+function renderCassettoModal() {
+  updateCassettoBadge();
+  if (activeCassettoTab === 'picks') {
+    renderCassettoPicks();
+  } else if (activeCassettoTab === 'stations') {
+    renderCassettoStations();
+  } else if (activeCassettoTab === 'muted') {
+    renderMutedStationsTab();
+  }
 }
 
 cassettoTrigger?.addEventListener('click', () => {
@@ -2411,7 +2673,13 @@ closeCassettoBtn?.addEventListener('click', () => {
 
 exportCassettoJsonBtn?.addEventListener('click', () => {
   const items = getCassettoItems();
-  const blob = new Blob([JSON.stringify(items, null, 2)], { type: 'application/json' });
+  const savedStations = getSavedStations();
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    picks: items,
+    stations: savedStations
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `onepick-cassetto-${new Date().toISOString().slice(0, 10)}.json`;
@@ -2420,16 +2688,34 @@ exportCassettoJsonBtn?.addEventListener('click', () => {
 
 exportCassettoMdBtn?.addEventListener('click', () => {
   const items = getCassettoItems();
+  const savedStations = getSavedStations();
   let md = currentLang === 'it'
     ? '# onepick / Cassetto Privato\n\nArchivio personale esportato da onepick.\n\n'
     : '# onepick / Private Drawer\n\nPersonal archive exported from onepick.\n\n';
-  items.forEach(it => {
-    md += `### [${it.url}](${it.url})\n`;
-    md += `*${it.caption || ''}*\n\n`;
-    md += `- Tag: #${it.tag || 'sound'}\n`;
-    md += `- ${currentLang === 'it' ? 'Nodo' : 'Node'}: \`${it.authorPub || ''}\`\n`;
-    md += `- ${currentLang === 'it' ? 'Salvato il' : 'Saved on'}: ${new Date(it.savedAt).toISOString()}\n\n---\n\n`;
-  });
+
+  if (savedStations.length > 0) {
+    md += currentLang === 'it' ? '## Stazioni Preferite\n\n' : '## Favorite Stations\n\n';
+    savedStations.forEach(st => {
+      md += `### FM ${st.freq ? st.freq.toFixed(2) : '--'} MHz · ${st.author || 'Anonimo'}\n`;
+      md += `- PubKey: \`${st.pub}\`\n`;
+      if (st.caption) md += `- ${currentLang === 'it' ? 'Riflessione' : 'Caption'}: *${st.caption}*\n`;
+      if (st.tag) md += `- Tag: #${st.tag}\n`;
+      if (st.url) md += `- URL: ${st.url}\n`;
+      md += `\n---\n\n`;
+    });
+  }
+
+  if (items.length > 0) {
+    md += currentLang === 'it' ? '## Pick Salvati\n\n' : '## Saved Picks\n\n';
+    items.forEach(it => {
+      md += `### [${it.url}](${it.url})\n`;
+      md += `*${it.caption || ''}*\n\n`;
+      md += `- Tag: #${it.tag || 'sound'}\n`;
+      md += `- ${currentLang === 'it' ? 'Nodo' : 'Node'}: \`${it.authorPub || ''}\`\n`;
+      md += `- ${currentLang === 'it' ? 'Salvato il' : 'Saved on'}: ${new Date(it.savedAt).toISOString()}\n\n---\n\n`;
+    });
+  }
+
   const blob = new Blob([md], { type: 'text/markdown' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -2440,11 +2726,16 @@ exportCassettoMdBtn?.addEventListener('click', () => {
 clearCassettoBtn?.addEventListener('click', () => {
   if (confirm(t('confirm_clear_cassetto'))) {
     saveCassettoItems([]);
+    saveSavedStations([]);
     renderCassettoModal();
     if (activeStationPub) {
       const active = stationsMap.get(activeStationPub);
       if (active && saveCassettoBtn) {
         saveCassettoBtn.textContent = t('action_save_cassetto');
+      }
+      if (saveStationBtn) {
+        saveStationBtn.textContent = t('action_save_station');
+        saveStationBtn.classList.remove('btn-active');
       }
     }
     showToast(t('toast_cassetto_cleared'));
@@ -2493,32 +2784,13 @@ function unmuteStation(pub) {
 }
 
 function updateMutedCountBadge() {
-  if (toggleMutedStationsBtn) {
-    if (showingMutedTab) {
-      const picksCount = getCassettoItems().length;
-      toggleMutedStationsBtn.textContent = t('btn_view_picks').replace('{n}', picksCount);
-    } else {
-      toggleMutedStationsBtn.textContent = t('btn_muted_stations').replace('{n}', mutedStations.size);
-    }
-  }
+  updateCassettoBadge();
 }
 
-let showingMutedTab = false;
-
-function setupCassettoMutedTab() {
-  toggleMutedStationsBtn?.addEventListener('click', () => {
-    showingMutedTab = !showingMutedTab;
-    updateMutedCountBadge();
-    if (showingMutedTab) {
-      cassettoPicksTab?.classList.add('hidden');
-      cassettoMutedTab?.classList.remove('hidden');
-      renderMutedStationsTab();
-    } else {
-      cassettoPicksTab?.classList.remove('hidden');
-      cassettoMutedTab?.classList.add('hidden');
-      renderCassettoModal();
-    }
-  });
+function setupCassettoTabs() {
+  tabBtnPicks?.addEventListener('click', () => switchCassettoTab('picks'));
+  tabBtnStations?.addEventListener('click', () => switchCassettoTab('stations'));
+  tabBtnMuted?.addEventListener('click', () => switchCassettoTab('muted'));
 }
 
 function renderMutedStationsTab() {
@@ -2628,6 +2900,12 @@ function openStationProfile(pub) {
   if (profTimeText) profTimeText.textContent = formatTimeAgo(station.ts);
   if (profPermalinkInput) profPermalinkInput.value = permalink;
 
+  if (profSaveStationBtn) {
+    const isSaved = isStationSaved(pub);
+    profSaveStationBtn.textContent = isSaved ? t('prof_saved_station') : t('prof_save_station');
+    profSaveStationBtn.className = isSaved ? 'bracket-btn btn-active' : 'bracket-btn';
+  }
+
   if (profMuteToggleBtn) {
     const isMuted = mutedStations.has(pub);
     profMuteToggleBtn.textContent = isMuted ? t('profile_btn_unmute') : t('profile_btn_mute');
@@ -2648,6 +2926,13 @@ function setupProfileAndReportUI() {
 
   closeProfileBtn?.addEventListener('click', () => {
     stationProfileModal?.classList.add('hidden');
+  });
+
+  profSaveStationBtn?.addEventListener('click', () => {
+    if (activeStationPub) {
+      toggleSaveStation(activeStationPub);
+      openStationProfile(activeStationPub);
+    }
   });
 
   profCopyPubBtn?.addEventListener('click', () => {
@@ -3626,7 +3911,7 @@ function initApp() {
   initTransmitterForm();
   setupAuthUI();
   setupProfileAndReportUI();
-  setupCassettoMutedTab();
+  setupCassettoTabs();
   initZen();
   restoreStoredAuth();
   initEtherVisualizer();
