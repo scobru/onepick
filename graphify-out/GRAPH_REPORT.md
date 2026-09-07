@@ -1,16 +1,16 @@
 # Graph Report - onepick  (2026-09-07)
 
 ## Corpus Check
-- 6 files · ~26,142 words
+- 6 files · ~25,312 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 398 nodes · 915 edges · 20 communities (11 shown, 9 thin omitted)
-- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 105 edges (avg confidence: 0.53)
+- 395 nodes · 911 edges · 19 communities (12 shown, 7 thin omitted)
+- Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 105 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `225953bb`
+- Built from commit: `e08048a5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -28,7 +28,6 @@
 - [[_COMMUNITY_setupAuthUI|setupAuthUI]]
 - [[_COMMUNITY_hasSentNod|hasSentNod]]
 - [[_COMMUNITY_AudiusProvider|AudiusProvider]]
-- [[_COMMUNITY_CuratedProvider|CuratedProvider]]
 - [[_COMMUNITY_MixcloudProvider|MixcloudProvider]]
 - [[_COMMUNITY_TuneCampProvider|TuneCampProvider]]
 - [[_COMMUNITY_YouTubeFeedProvider|YouTubeFeedProvider]]
@@ -63,7 +62,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (20 total, 9 thin omitted)
+## Communities (19 total, 7 thin omitted)
 
 ### Community 0 - "app.js"
 Cohesion: 0.01
@@ -74,12 +73,12 @@ Cohesion: 0.12
 Nodes (42): _(), A(), B(), b62Decode(), b62Encode(), c(), compactPoint(), concat() (+34 more)
 
 ### Community 2 - "t"
-Cohesion: 0.09
-Nodes (70): checkFrictionStatus(), checkInitialPeerParam(), closeTutorialModal(), detectMedia(), escapeHtml(), extractCleanMediaUrl(), extractDomain(), formatTimeAgo() (+62 more)
+Cohesion: 0.08
+Nodes (72): checkFrictionStatus(), checkInitialPeerParam(), closeTutorialModal(), detectMedia(), escapeHtml(), extractCleanMediaUrl(), extractDomain(), formatTimeAgo() (+64 more)
 
 ### Community 3 - "bot.js"
-Cohesion: 0.22
-Nodes (15): args, broadcastOne(), getNextTrack(), intervalArgIndex, isOnce, isSeedAll, logBotIdentities(), main() (+7 more)
+Cohesion: 0.24
+Nodes (14): args, broadcastOne(), getNextTrack(), intervalArgIndex, isOnce, isSeedAll, logBotIdentities(), main() (+6 more)
 
 ### Community 4 - "✦ Caratteristiche Principali"
 Cohesion: 0.13
@@ -87,7 +86,11 @@ Nodes (14): ✦ Architettura Tecnica, 🤖 Autopopolamento Autonomo & Background
 
 ### Community 5 - "seeder.js"
 Cohesion: 0.17
-Nodes (11): ARCHIVEORG_FALLBACK_TRACKS, AUDIUS_FALLBACK_TRACKS, BANDCAMP_FALLBACK_TRACKS, botPairsCache, MIXCLOUD_FALLBACK_TRACKS, SOMAFM_FALLBACK_TRACKS, startAutonomousSeeder(), TUNECAMP_DEFAULT_INSTANCES (+3 more)
+Nodes (11): ARCHIVEORG_FALLBACK_TRACKS, AUDIUS_FALLBACK_TRACKS, BANDCAMP_FALLBACK_TRACKS, botPairsCache, MIXCLOUD_FALLBACK_TRACKS, SEED_TRACKS, SOMAFM_FALLBACK_TRACKS, TUNECAMP_DEFAULT_INSTANCES (+3 more)
+
+### Community 6 - "BaseProvider"
+Cohesion: 0.29
+Nodes (3): deriveBotPair(), fetchLiveTuneCampTracks(), ProviderRegistry
 
 ### Community 7 - "package.json"
 Cohesion: 0.17
@@ -99,7 +102,7 @@ Nodes (11): getJammingStaticBuffer(), getTuningStaticBuffer(), initAudioContext(
 
 ### Community 9 - "ProviderRegistry"
 Cohesion: 0.17
-Nodes (4): BandcampProvider, BaseProvider, fetchLiveTuneCampTracks(), SomaFMProvider
+Nodes (3): BandcampProvider, BaseProvider, SomaFMProvider
 
 ### Community 10 - "setupAuthUI"
 Cohesion: 0.67
@@ -110,9 +113,9 @@ Cohesion: 0.50
 Nodes (5): getSentNods(), getTrackHash(), hasSentNod(), recordSentNod(), sendSilentNod()
 
 ## Knowledge Gaps
-- **175 isolated node(s):** `stationsMap`, `mutedStations`, `stationReportsMap`, `jammedOverrides`, `powerToggleBtn` (+170 more)
+- **176 isolated node(s):** `stationsMap`, `mutedStations`, `stationReportsMap`, `jammedOverrides`, `powerToggleBtn` (+171 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -120,8 +123,8 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `r()` connect `zen.min.js` to `app.js`, `bot.js`?**
   _High betweenness centrality (0.080) - this node is a cross-community bridge._
 - **Why does `t` connect `zen.min.js` to `setupAuthUI`?**
-  _High betweenness centrality (0.070) - this node is a cross-community bridge._
-- **Why does `ProviderRegistry` connect `BaseProvider` to `bot.js`, `seeder.js`?**
+  _High betweenness centrality (0.071) - this node is a cross-community bridge._
+- **Why does `ProviderRegistry` connect `BaseProvider` to `ProviderRegistry`, `bot.js`, `seeder.js`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
 - **Are the 8 inferred relationships involving `t` (e.g. with `f()` and `g()`) actually correct?**
   _`t` has 8 INFERRED edges - model-reasoned connections that need verification._

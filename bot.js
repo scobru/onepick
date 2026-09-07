@@ -15,7 +15,6 @@
 import ZEN from './zen.min.js';
 import {
   SEED_BOTS,
-  SEED_TRACKS,
   broadcastSeedSlot,
   deriveBotPair,
   getFrequencyForPub,
@@ -86,6 +85,11 @@ async function broadcastOne() {
   const track = await getNextTrack(bot);
   const timeStr = new Date().toLocaleTimeString();
 
+  if (!track || !track.url) {
+    console.warn(`[${timeStr}] [SKIP] Nessuna traccia dinamica disponibile per @${bot.username}`);
+    return;
+  }
+
   console.log(`[${timeStr}] [TRANSMITTING] @${bot.username} broadcasting...`);
   console.log(`  - Title:   ${track.title}`);
   console.log(`  - URL:     ${track.url}`);
@@ -110,6 +114,10 @@ async function seedAllBots() {
     const bot = SEED_BOTS[i];
     const track = await getNextTrack(bot);
     const timeStr = new Date().toLocaleTimeString();
+    if (!track || !track.url) {
+      console.warn(`[${timeStr}] ✕ Nessuna traccia dinamica per @${bot.username}, salto.`);
+      continue;
+    }
     console.log(`[${timeStr}] Seeding @${bot.username} -> ${track.title}`);
     try {
       const res = await broadcastSeedSlot(zen, bot, track, ZEN);

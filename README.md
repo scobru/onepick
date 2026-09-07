@@ -63,15 +63,14 @@ Per garantire che la radio non sia mai silenziosa ("cold start" al lancio), è i
 * **`@neon-drift`** (FM 97.23 MHz) — Synthwave e sonorità retro-futuristiche (`#sound` • Provider: Audius Web3).
 * **`@void-pulse`** (FM 94.66 MHz) — DJ set ipnotici, cloudcast long-form e soundscape ambient (`#sound` • Provider: Mixcloud Live Cloudcasts).
 
-#### Provider Dinamici Supportati
-1. **TuneCamp Federation**: Interroga in tempo reale tutte le istanze del network federato TuneCamp (SudoRecords, SubTerra Label, FDA Labs e nodi scoperti dinamicamente via gossip `/api/community/peers` e `/api/community/sites`) aggregando ed alternando a rotazione le release indipendenti con fallback resiliente.
+#### Provider Dinamici Supportati (100% Live, Zero Tracce Hardcodate)
+1. **TuneCamp Federation**: Interroga in tempo reale tutte le istanze del network federato TuneCamp (SudoRecords, SubTerra Label, FDA Labs e nodi scoperti dinamicamente via gossip `/api/community/peers` e `/api/community/sites`) aggregando ed alternando a rotazione le release indipendenti.
 2. **Internet Archive Search API**: Ricerca e seleziona tracce audio, nastri storici e demoscene tracker in base al tag (`#read`, `#sound`, `#obscureweb`, `#code`).
 3. **Audius Web3**: Recupera i flussi musicali trending ed elettronici direttamente dai nodi aperti Audius Discovery.
 4. **YouTube Live Feeds**: Interroga i feed RSS XML aperti di canali iconici (State Azure per sintesi modulare, Lofi Girl, Cercle per live set panoramici, KEXP) senza alcuna API key.
 5. **Bandcamp Network**: Risolve in tempo reale gli album audio riproducibili (`https://*.bandcamp.com/album/*`) per `#sound` e le guide di ascolto/articoli per `#read`.
 6. **Mixcloud Live Cloudcasts**: Interroga in tempo reale le selezioni popolari di DJ set e cloudcast long-form (ambient, chillout, downtempo, techno) con widget player dedicato.
 7. **SomaFM Internet Radio Streams**: 46+ canali radiofonici indipendenti senza pubblicità con stream diretti 128kbps MP3 (Drone Zone, Groove Salad, Deep Space One, DEF CON Radio) e riproduzione con visualizer analogico nativo.
-8. **Curated Ether**: Pool unificato di riserva per operatività offline resiliente.
 
 Il meccanismo opera in due modalità:
 1. **Nel Browser (Serverless Zero-Config)**:

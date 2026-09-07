@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8812c308`
+- Built from commit: `225953bb`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -83,7 +83,7 @@ Nodes (15): args, broadcastOne(), getNextTrack(), intervalArgIndex, isOnce, isSe
 
 ### Community 4 - "✦ Caratteristiche Principali"
 Cohesion: 0.13
-Nodes (14): ✦ Architettura Tecnica, 🤖 Autopopolamento Autonomo & Background Bot (Timer 15 min), ✦ Autore & Licenza, ✦ Avvio Locale & Sviluppo, 🌐 Bilinguismo Completo (IT / EN), ✦ Caratteristiche Principali, Derivazione Crittografica Deterministica, ✦ Filosofia (+6 more)
+Nodes (14): ✦ Architettura Tecnica, 🤖 Autopopolamento Autonomo & Background Bot (Timer 5 min), ✦ Autore & Licenza, ✦ Avvio Locale & Sviluppo, 🌐 Bilinguismo Completo (IT / EN), ✦ Caratteristiche Principali, Derivazione Crittografica Deterministica, ✦ Filosofia (+6 more)
 
 ### Community 5 - "seeder.js"
 Cohesion: 0.17

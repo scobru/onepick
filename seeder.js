@@ -96,241 +96,25 @@ export const TUNECAMP_DEFAULT_INSTANCES = [
   'https://tunecamp.fdalabs.net'
 ];
 
-export const TUNECAMP_FALLBACK_TRACKS = [
-  {
-    url: 'https://sudorecords.scobrudot.dev/releases/120-punk',
-    title: 'Homologo - 120 PUNK',
-    caption: 'Independent bouncy techno directly from the TuneCamp federation on SudoRecords.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://tunecamp.subterralabel.com/releases/la-guerra-delle-formiche',
-    title: 'La Guerra delle Formiche - La Guerra delle Formiche',
-    caption: 'Progressive, alt-rock, and indie rock from SubTerra Label on TuneCamp.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://sudorecords.scobrudot.dev/releases/waterflow',
-    title: 'Homologo - Waterflow',
-    caption: 'Indie dance and luminous grooves streaming decentralized from the TuneCamp network.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://tunecamp.subterralabel.com/releases/kali-yuga',
-    title: 'Eva Milan - Kali Yuga',
-    caption: 'Alternative Rock, Post-Punk, and grunge from SubTerra Label on the federated TuneCamp network.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://sudorecords.scobrudot.dev/releases/ragazzi-in-collera',
-    title: 'Homologo - Ragazzi in collera',
-    caption: 'Electronic textures and independent productions from the open TuneCamp catalog.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://tunecamp.subterralabel.com/releases/no-word-is-ever-enough',
-    title: 'Humpty Dumpty & La Guerra delle Formiche - No Word Is Ever Enough',
-    caption: 'Indie rock, slow core, and grunge copyleft music on TuneCamp.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://sudorecords.scobrudot.dev/releases/la-prima-2',
-    title: 'Homologo - La Prima - live set',
-    caption: 'Minimal techno live session and club frequencies recorded live on TuneCamp.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://tunecamp.subterralabel.com/releases/gibellina-song',
-    title: 'Humpty Dumpty, La Guerra delle Formiche, Sumire - Gibellina Song',
-    caption: 'Indie pop and experimental acoustics streaming from SubTerra Label on TuneCamp.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://sudorecords.scobrudot.dev/releases/compleanno-1',
-    title: 'Homologo - Compleanno',
-    caption: 'Electropop and vibrant synthesizers from the SudoRecords / TuneCamp federated node.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://sudorecords.scobrudot.dev/releases/fantasie-1',
-    title: 'Homologo - Fantasie',
-    caption: 'Warm electronics and synthetic melodies listening P2P on TuneCamp.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://sudorecords.scobrudot.dev/releases/ordine-ovviamente-2',
-    title: 'Homologo - Ordine Ovviamente',
-    caption: 'Contemporary electronic rhythms distributed across the federated network.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://sudorecords.scobrudot.dev/releases/amorevole-crollo-1',
-    title: 'Homologo - Amorevole Crollo',
-    caption: 'Electropop and intimate harmonies released on the TuneCamp federated network.',
-    tag: 'sound'
-  }
-];
-
-// --- Fallback Catalogs for Dynamic Providers ---
-export const ARCHIVEORG_FALLBACK_TRACKS = [
-  {
-    url: 'https://archive.org/details/ird059',
-    title: 'The Conet Project - Shortwave Numbers Stations',
-    caption: 'Mysterious shortwave numbers station transmissions and spectral analog ether frequencies.',
-    tag: 'obscureweb'
-  },
-  {
-    url: 'https://archive.org/details/ca015_va_cs',
-    title: 'Clinical Sounds Vol. 1 - Netlabel Ambient Drone',
-    caption: 'Subaquatic soundscapes and minimalist drone from historic netlabel open archives.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://archive.org/details/78_chop-suey-mambo_alfredito-and-his-orchestra-al-lang_gbia0001871a',
-    title: 'Alfredito - Chop Suey Mambo (1954 Vintage 78rpm)',
-    caption: 'George Blood 78rpm historical archive: warm surface noise, 78rpm shellac, and vintage mambo.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://archive.org/details/Apollo11Audio',
-    title: 'NASA - Apollo 11 Mission Audio Transmissions',
-    caption: 'Original Earth-Moon communications and deep space telemetry preserved on Internet Archive.',
-    tag: 'code'
-  },
-  {
-    url: 'https://archive.org/details/italo-calvino-citta-invisibili',
-    title: 'Italo Calvino - Le Città Invisibili (Lettura Radiofonica)',
-    caption: 'Historical radio archive: Marco Polo and Kublai Khan navigating imagined cities and memory.',
-    tag: 'read'
-  },
-  {
-    url: 'https://archive.org/details/william-burroughs-cutups',
-    title: 'William S. Burroughs - Break Through In Grey Room (Cut-Ups)',
-    caption: 'Historical tape experiments, cut-up sounds, and clandestine radio broadcasts.',
-    tag: 'read'
-  },
-  {
-    url: 'https://archive.org/details/alan-watts-consciousness',
-    title: 'Alan Watts - The Nature of Consciousness',
-    caption: 'Reflections on mind, presence, and the illusion of self preserved in open audio archives.',
-    tag: 'read'
-  }
-];
-
-export const AUDIUS_FALLBACK_TRACKS = [
-  {
-    url: 'https://audius.co/embed/track/Jb3xzj7',
-    title: 'Washed Out - Feel It All Around (Jay Bird Remix)',
-    caption: 'Sunny chillwave and dreamy rhythms streaming decentralized on Audius protocol.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://audius.co/embed/track/K37zL3N',
-    title: 'deadmau5 - Pomegranate (Jay Robinson Remix)',
-    caption: 'Rhythmic electro-house and driving basslines from the decentralized Audius network.',
-    tag: 'sound'
-  }
-];
-
-export const YOUTUBE_FALLBACK_TRACKS = [
-  {
-    url: 'https://www.youtube.com/watch?v=A2zKARkpDW4',
-    title: 'Boards of Canada - Dayvan Cowboy',
-    caption: 'Analog nostalgia, sun-drenched magnetic tapes, and blurred horizons.',
-    tag: 'obscureweb'
-  },
-  {
-    url: 'https://www.youtube.com/watch?v=8GW6sLrK40k',
-    title: 'HOME - Resonance',
-    caption: 'Warm synthwave pulses, luminous waves, and analog glow for late-night transit.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://www.youtube.com/watch?v=mehLx_Fjv_c',
-    title: 'Tycho - A Walk',
-    caption: 'Drifting guitars, solar synthesizers, and organic rhythmic textures in perpetual motion.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://www.youtube.com/watch?v=HhZaHf8RP6g',
-    title: 'Daft Punk - Veridis Quo',
-    caption: 'Baroque synthesis, melancholy vocoders, and timeless mechanical elegance.',
-    tag: 'art'
-  },
-  {
-    url: 'https://www.youtube.com/watch?v=aBkTkxKDduc',
-    title: 'C418 - Sweden',
-    caption: 'Gentle piano chords, ambient warmth, and boundless pixel horizons.',
-    tag: 'sound'
-  }
-];
-
-export const BANDCAMP_FALLBACK_TRACKS = [
-  {
-    url: 'https://loscil.bandcamp.com/album/plume',
-    title: 'Loscil - Plume',
-    caption: 'Subaquatic pulses and patient ambient minimalism by Scott Morgan (Kranky Records).',
-    tag: 'sound'
-  },
-  {
-    url: 'https://timhecker.bandcamp.com/album/ravedeath-1972',
-    title: 'Tim Hecker - Ravedeath, 1972',
-    caption: 'Pipe organ recorded in a Reykjavik church, processed into devastatingly sublime noise.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://c418.bandcamp.com/album/minecraft-volume-alpha',
-    title: 'C418 - Minecraft - Volume Alpha',
-    caption: 'Minimalist piano and subtle electronics. Serene solitude and quiet wonder.',
-    tag: 'sound'
-  }
-];
-
-export const MIXCLOUD_FALLBACK_TRACKS = [
-  {
-    url: 'https://www.mixcloud.com/residentadvisor/ra1026-carl-craig-moodymann-mike-banks/',
-    title: 'Resident Advisor - RA.1026 Moodymann & Carl Craig',
-    caption: 'Detroit techno legends: Carl Craig, Moodymann and Mike Banks live session on Mixcloud.',
-    tag: 'sound'
-  }
-];
-
-export const SOMAFM_FALLBACK_TRACKS = [
-  {
-    url: 'https://ice1.somafm.com/dronezone-128-mp3',
-    title: 'SomaFM - Drone Zone',
-    caption: 'Atmospheric ambient space music and drone soundscapes.',
-    tag: 'sound'
-  },
-  {
-    url: 'https://ice1.somafm.com/groovesalad-128-mp3',
-    title: 'SomaFM - Groove Salad',
-    caption: 'A nicely chilled plate of ambient/downtempo beats and grooves.',
-    tag: 'sound'
-  }
-];
-
-// Unified emergency offline fallback pool
-export const SEED_TRACKS = [
-  ...TUNECAMP_FALLBACK_TRACKS,
-  ...ARCHIVEORG_FALLBACK_TRACKS,
-  ...AUDIUS_FALLBACK_TRACKS,
-  ...YOUTUBE_FALLBACK_TRACKS,
-  ...BANDCAMP_FALLBACK_TRACKS,
-  ...MIXCLOUD_FALLBACK_TRACKS,
-  ...SOMAFM_FALLBACK_TRACKS
-];
+// --- Dynamic-Only Network: Zero Hardcoded Tracks ---
+export const TUNECAMP_FALLBACK_TRACKS = [];
+export const ARCHIVEORG_FALLBACK_TRACKS = [];
+export const AUDIUS_FALLBACK_TRACKS = [];
+export const YOUTUBE_FALLBACK_TRACKS = [];
+export const BANDCAMP_FALLBACK_TRACKS = [];
+export const MIXCLOUD_FALLBACK_TRACKS = [];
+export const SOMAFM_FALLBACK_TRACKS = [];
+export const SEED_TRACKS = [];
 
 /**
  * Base Abstract Provider class
  */
 export class BaseProvider {
-  constructor({ id, name, ttlMs = 5 * 60 * 1000, fallbackTracks = [] }) {
+  constructor({ id, name, ttlMs = 5 * 60 * 1000 }) {
     this.id = id;
     this.name = name;
     this.ttlMs = ttlMs;
-    this.fallbackTracks = fallbackTracks;
-    this.cachedTracks = [...fallbackTracks];
+    this.cachedTracks = [];
     this.lastFetch = 0;
   }
 
@@ -346,7 +130,7 @@ export class BaseProvider {
 
     try {
       const timeoutSignal = typeof AbortSignal !== 'undefined' && AbortSignal.timeout
-        ? AbortSignal.timeout(5000)
+        ? AbortSignal.timeout(8000)
         : undefined;
       const liveTracks = await this.fetchLiveTracks({ ...context, signal: timeoutSignal });
       if (Array.isArray(liveTracks) && liveTracks.length > 0) {
@@ -355,10 +139,10 @@ export class BaseProvider {
         return liveTracks;
       }
     } catch (e) {
-      console.warn(`[Provider: ${this.name}] Fallback a tracce locali:`, e.message || e);
+      console.warn(`[Provider: ${this.name}] Errore recupero tracce live:`, e.message || e);
     }
 
-    return this.cachedTracks.length > 0 ? this.cachedTracks : this.fallbackTracks;
+    return this.cachedTracks;
   }
 
   async getRandomTrack({ currentUrl = null, tag = null, bot = null } = {}) {
@@ -385,8 +169,7 @@ export class TuneCampProvider extends BaseProvider {
     super({
       id: 'tunecamp',
       name: 'TuneCamp Federation',
-      ttlMs: 5 * 60 * 1000,
-      fallbackTracks: TUNECAMP_FALLBACK_TRACKS
+      ttlMs: 5 * 60 * 1000
     });
     this.seedInstances = Array.from(new Set([
       ...TUNECAMP_DEFAULT_INSTANCES,
@@ -506,8 +289,7 @@ export class ArchiveOrgProvider extends BaseProvider {
     super({
       id: 'archiveorg',
       name: 'Internet Archive',
-      ttlMs: 15 * 60 * 1000,
-      fallbackTracks: ARCHIVEORG_FALLBACK_TRACKS
+      ttlMs: 15 * 60 * 1000
     });
   }
 
@@ -553,8 +335,7 @@ export class AudiusProvider extends BaseProvider {
     super({
       id: 'audius',
       name: 'Audius Web3 Network',
-      ttlMs: 10 * 60 * 1000,
-      fallbackTracks: AUDIUS_FALLBACK_TRACKS
+      ttlMs: 10 * 60 * 1000
     });
   }
 
@@ -581,23 +362,6 @@ export class AudiusProvider extends BaseProvider {
   }
 }
 
-/**
- * Curated Ether Provider (Static high-quality YouTube, SC, BC, Mixcloud)
- */
-export class CuratedProvider extends BaseProvider {
-  constructor() {
-    super({
-      id: 'curated',
-      name: 'Curated Ether',
-      ttlMs: Infinity,
-      fallbackTracks: SEED_TRACKS
-    });
-  }
-
-  async fetchLiveTracks() {
-    return SEED_TRACKS;
-  }
-}
 
 export const YOUTUBE_CHANNELS = [
   { id: 'UCGSSFkUjSBpDzA1aD4yq1zw', name: 'State Azure', tag: 'art', desc: 'Generative modular synthesis and analog soundscapes' },
@@ -615,8 +379,7 @@ export class YouTubeFeedProvider extends BaseProvider {
     super({
       id: 'youtube',
       name: 'YouTube Dynamic Feeds',
-      ttlMs: 20 * 60 * 1000,
-      fallbackTracks: YOUTUBE_FALLBACK_TRACKS
+      ttlMs: 20 * 60 * 1000
     });
   }
 
@@ -681,8 +444,7 @@ export class BandcampProvider extends BaseProvider {
     super({
       id: 'bandcamp',
       name: 'Bandcamp Network',
-      ttlMs: 30 * 60 * 1000,
-      fallbackTracks: BANDCAMP_FALLBACK_TRACKS
+      ttlMs: 30 * 60 * 1000
     });
     this.cachedAlbums = [];
     this.cachedArticles = [];
@@ -719,7 +481,7 @@ export class BandcampProvider extends BaseProvider {
       console.warn('[BandcampProvider] Fallback a tracce locali:', e.message || e);
     }
 
-    return cache.length > 0 ? cache : this.fallbackTracks;
+    return cache;
   }
 
   async fetchLiveTracks({ tag, signal } = {}) {
@@ -819,7 +581,7 @@ export class BandcampProvider extends BaseProvider {
       return resolvedAlbums;
     }
 
-    return BANDCAMP_FALLBACK_TRACKS;
+    return [];
   }
 }
 export const BandcampDailyProvider = BandcampProvider;
@@ -832,8 +594,7 @@ export class MixcloudProvider extends BaseProvider {
     super({
       id: 'mixcloud',
       name: 'Mixcloud Live Cloudcasts',
-      ttlMs: 30 * 60 * 1000,
-      fallbackTracks: MIXCLOUD_FALLBACK_TRACKS
+      ttlMs: 30 * 60 * 1000
     });
   }
 
@@ -887,8 +648,7 @@ export class SomaFMProvider extends BaseProvider {
     super({
       id: 'somafm',
       name: 'SomaFM Internet Radio',
-      ttlMs: 60 * 60 * 1000,
-      fallbackTracks: SOMAFM_FALLBACK_TRACKS
+      ttlMs: 60 * 60 * 1000
     });
   }
 
@@ -965,37 +725,35 @@ export class ProviderRegistry {
   }
 
   async getTrackForBot(bot, currentUrl = null) {
-    // 1. If bot has an explicit provider registered, query it first
+    // 1. Primary: query the bot's designated dynamic provider
     if (bot && bot.provider) {
       const provider = this.get(bot.provider);
       if (provider) {
         const track = await provider.getRandomTrack({ currentUrl, tag: bot.tag, bot });
-        if (track) return track;
+        if (track && track.url) return track;
       }
     }
 
-    // 2. Tag-based dynamic provider selection
-    if (bot && bot.tag === 'read') {
-      const archiveProvider = this.get('archiveorg');
-      if (archiveProvider) {
-        const track = await archiveProvider.getRandomTrack({ currentUrl, tag: 'read', bot });
-        if (track) return track;
-      }
+    // 2. Secondary: query other dynamic providers matching the bot's tag
+    const allProviders = Array.from(this.providers.values()).filter(p => p.id !== bot?.provider);
+    const shuffled = allProviders.sort(() => Math.random() - 0.5);
+
+    for (const provider of shuffled) {
+      const track = await provider.getRandomTrack({ currentUrl, tag: bot?.tag, bot });
+      if (track && track.url) return track;
     }
 
-    // 3. Fallback to CuratedProvider
-    const curated = this.get('curated');
-    if (curated) {
-      const track = await curated.getRandomTrack({ currentUrl, tag: bot?.tag, bot });
-      if (track) return track;
+    // 3. Final fallback: any live dynamic provider without tag constraints
+    for (const provider of shuffled) {
+      const track = await provider.getRandomTrack({ currentUrl });
+      if (track && track.url) return track;
     }
 
-    // 4. Default global fallback
-    return SEED_TRACKS[Math.floor(Math.random() * SEED_TRACKS.length)];
+    return null;
   }
 }
 
-// Global default provider registry instance
+// Global default provider registry instance (pure dynamic live networks only)
 export const providerRegistry = new ProviderRegistry();
 providerRegistry.register(new TuneCampProvider());
 providerRegistry.register(new ArchiveOrgProvider());
@@ -1004,7 +762,6 @@ providerRegistry.register(new YouTubeFeedProvider());
 providerRegistry.register(new BandcampDailyProvider());
 providerRegistry.register(new MixcloudProvider());
 providerRegistry.register(new SomaFMProvider());
-providerRegistry.register(new CuratedProvider());
 
 /**
  * Searches and fetches live releases from the TuneCamp network (/api/releases)
@@ -1013,7 +770,7 @@ providerRegistry.register(new CuratedProvider());
  */
 export async function fetchLiveTuneCampTracks() {
   const provider = providerRegistry.get('tunecamp');
-  return provider ? await provider.getTracks() : TUNECAMP_FALLBACK_TRACKS;
+  return provider ? await provider.getTracks() : [];
 }
 
 /**
@@ -1238,6 +995,7 @@ export function startAutonomousSeeder(zen, ZEN, options = {}) {
       if (!existingBots.has(bot.username)) {
         anyMissing = true;
         const track = await getTrackForBot(bot);
+        if (!track || !track.url) continue;
         try {
           console.log(`[onepick auto-seeder] Populating missing station: @${bot.username} -> ${track.title}`);
           const res = await broadcastSeedSlot(zen, bot, track, ZEN);
@@ -1272,6 +1030,7 @@ export function startAutonomousSeeder(zen, ZEN, options = {}) {
       }
 
       const newTrack = await getTrackForBot(oldest.bot, oldest.station?.url);
+      if (!newTrack || !newTrack.url) return;
       console.log(`[onepick auto-seeder] Rotating 5-min stale station: @${oldest.bot.username} -> ${newTrack.title}`);
       try {
         const res = await broadcastSeedSlot(zen, oldest.bot, newTrack, ZEN);
