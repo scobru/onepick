@@ -6,7 +6,8 @@
   "scripts": {
     "bot": "node bot.js",
     "bot:once": "node bot.js --once",
-    "bot:seed": "node bot.js --once --seed-all"
+    "bot:seed": "node bot.js --once --seed-all",
+    "bot:check": "node bot.js --check-sources"
   },
   "keywords": ["radio", "p2p", "zen", "music", "lo-fi", "ambient"],
   "author": "scobru",

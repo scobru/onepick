@@ -6,6 +6,12 @@
 
 export const SALT_PREFIX = 'onepick:zen:station:';
 
+/**
+ * Deterministic transmitter identities.
+ * `provider` is the station's signature source (kept for display and backwards
+ * compatibility); `providers` is the wider pool the bot actually rotates across,
+ * so every station has several networks to choose from instead of a single feed.
+ */
 export const SEED_BOTS = [
   {
     id: 'obscura',
@@ -13,6 +19,7 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-obscura-2026-ether',
     tag: 'obscureweb',
     provider: 'archiveorg',
+    providers: ['archiveorg', 'rssfeeds', 'youtube'],
     desc: 'Forgotten frequencies, lo-fi tape loops, and analog gems from the obscure web.'
   },
   {
@@ -21,6 +28,7 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-transit-2026-fm',
     tag: 'sound',
     provider: 'somafm',
+    providers: ['somafm', 'radiobrowser', 'audius'],
     desc: 'Continuous radio streams, drone, deep ambient, and transit soundscapes via SomaFM.'
   },
   {
@@ -29,6 +37,7 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-zero-2026-relay',
     tag: 'art',
     provider: 'youtube',
+    providers: ['youtube', 'rssfeeds', 'archiveorg'],
     desc: 'Minimal signals, endless tape loops, and present stillness for overstimulated minds.'
   },
   {
@@ -37,6 +46,7 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-tunecamp-2026-federation',
     tag: 'sound',
     provider: 'tunecamp',
+    providers: ['tunecamp', 'bandcamp', 'audius'],
     desc: 'Independent music and federated releases streaming across all TuneCamp network instances (SudoRecords, SubTerra Label & federated nodes).'
   },
   {
@@ -45,6 +55,7 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-cyber-2026-matrix',
     tag: 'code',
     provider: 'archiveorg',
+    providers: ['archiveorg', 'youtube', 'rssfeeds'],
     desc: 'Demoscene music, tracker modules, keygen synthesis, and algorithmic soundscapes.'
   },
   {
@@ -53,6 +64,7 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-echo-2026-reverb',
     tag: 'read',
     provider: 'bandcamp',
+    providers: ['bandcamp', 'rssfeeds', 'archiveorg'],
     desc: 'Spoken word archives, literary field trips, slow cinema, and tape echo chambers.'
   },
   {
@@ -61,6 +73,7 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-archive-2026-ether',
     tag: 'read',
     provider: 'archiveorg',
+    providers: ['archiveorg', 'rssfeeds', 'youtube'],
     desc: 'Historical radio archive, lyrical readings, and period conversations.'
   },
   {
@@ -69,6 +82,7 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-mystic-2026-ether',
     tag: 'sound',
     provider: 'bandcamp',
+    providers: ['bandcamp', 'tunecamp', 'audius'],
     desc: 'Independent releases, featured albums, and hidden sonic gems from Bandcamp.'
   },
   {
@@ -77,6 +91,7 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-neon-2026-fm',
     tag: 'sound',
     provider: 'audius',
+    providers: ['audius', 'youtube', 'mixcloud'],
     desc: 'Synthwave odyssey through neon-lit digital landscapes and retro-futuristic ambience.'
   },
   {
@@ -85,6 +100,7 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-void-2026-art',
     tag: 'sound',
     provider: 'mixcloud',
+    providers: ['mixcloud', 'somafm', 'radiobrowser'],
     desc: 'Hypnotic DJ sets, ambient sessions, and long-form radio broadcasts on Mixcloud.'
   }
 ];
@@ -111,10 +127,12 @@ export const SEED_TRACKS = [];
  * In browser: uses /api/proxy (Vercel Serverless) with edge-caching first,
  * then falls back to direct fetch, and finally public CORS proxies.
  */
-export async function fetchWithCORSProxy(url, { signal, asJson = false } = {}) {
+export async function fetchWithCORSProxy(url, { signal, asJson = false, headers = null } = {}) {
+  const fetchOpts = headers ? { signal, headers } : { signal };
+
   // 1. Node.js environment (bot CLI service) -> direct fetch
   if (typeof window === 'undefined') {
-    const res = await fetch(url, { signal });
+    const res = await fetch(url, fetchOpts);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return asJson ? await res.json() : await res.text();
   }
@@ -132,7 +150,7 @@ export async function fetchWithCORSProxy(url, { signal, asJson = false } = {}) {
 
   // 3. Direct browser fetch (for CORS-enabled APIs like SomaFM, Archive.org, Mixcloud)
   try {
-    const directRes = await fetch(url, { signal });
+    const directRes = await fetch(url, fetchOpts);
     if (directRes.ok) {
       return asJson ? await directRes.json() : await directRes.text();
     }
@@ -148,6 +166,108 @@ export async function fetchWithCORSProxy(url, { signal, asJson = false } = {}) {
   } catch (e) {}
 
   throw new Error(`Impossibile recuperare dati da ${url}`);
+}
+
+/**
+ * Returns a new shuffled copy of the given list (Fisher-Yates).
+ */
+export function shuffleList(list) {
+  const out = Array.isArray(list) ? list.slice() : [];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+/**
+ * Picks up to `count` distinct entries at random from a list.
+ */
+export function sampleList(list, count) {
+  return shuffleList(list).slice(0, Math.max(0, count));
+}
+
+/**
+ * Interleaves several buckets of tracks so rotation alternates fairly across sources.
+ */
+export function interleaveBuckets(buckets) {
+  const valid = (buckets || []).filter(b => Array.isArray(b) && b.length > 0);
+  if (valid.length === 0) return [];
+  const out = [];
+  const maxLen = Math.max(...valid.map(b => b.length));
+  for (let i = 0; i < maxLen; i++) {
+    for (const bucket of valid) {
+      if (i < bucket.length) out.push(bucket[i]);
+    }
+  }
+  return out;
+}
+
+/**
+ * Decodes the handful of XML entities that show up in RSS/Atom payloads.
+ */
+export function decodeXmlEntities(text) {
+  if (!text) return '';
+  return text
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&#x27;/gi, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&');
+}
+
+/**
+ * Removes duplicate tracks sharing the same URL, keeping the first occurrence.
+ */
+export function dedupeTracks(tracks) {
+  const seen = new Set();
+  const out = [];
+  for (const t of tracks || []) {
+    if (!t || !t.url || seen.has(t.url)) continue;
+    seen.add(t.url);
+    out.push(t);
+  }
+  return out;
+}
+
+/**
+ * Mirrors the direct-stream detection used by the in-page player (app.js detectMedia).
+ * Keeps radio streams published by the bots actually playable in the browser.
+ */
+export function isDirectAudioStreamUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  if (!/^https:\/\//i.test(url)) return false; // mixed content is blocked on the https app
+  if (/\.(m3u8|m3u|pls|asx|xspf)(\?.*)?$/i.test(url)) return false; // not playable by <audio>
+  return /(?:https?:\/\/)?(?:[a-z0-9\-_]+\.)?somafm\.com/i.test(url)
+    || /\.(mp3|ogg|wav|m4a|aac|flac)(\?.*)?$/i.test(url)
+    || /-(?:128|64|32|256|320)?-?(?:mp3|aac|ogg)(\?.*)?$/i.test(url)
+    || url.includes('/stream')
+    || url.includes('/live')
+    || url.includes('/icecast')
+    || url.includes('/shoutcast')
+    || /(?::(?:8000|8443|8080)\/)/.test(url);
+}
+
+/**
+ * True when the URL is playable in-page, i.e. accepted by the #sound tag rules.
+ */
+export function isPlayableAudioUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  const embeddable = [
+    /youtube\.com\/watch\?v=|youtu\.be\//i,
+    /soundcloud\.com\//i,
+    /bandcamp\.com/i,
+    /archive\.org\/(?:details|embed)\//i,
+    /audius\.co\//i,
+    /mixcloud\.com\//i,
+    /spotify\.com\/(?:embed\/)?(?:track|album|playlist|episode|show)\//i,
+    /\/(?:releases?|albums?|tracks?|share)\/[^\/?#]+/i // TuneCamp federated nodes
+  ];
+  if (embeddable.some(re => re.test(url))) return true;
+  return isDirectAudioStreamUrl(url);
 }
 
 /**
@@ -189,9 +309,9 @@ export class BaseProvider {
     return this.cachedTracks;
   }
 
-  async getRandomTrack({ currentUrl = null, tag = null, bot = null } = {}) {
+  async getRandomTrack({ currentUrl = null, tag = null, bot = null, filter = null } = {}) {
     const all = await this.getTracks({ tag, bot });
-    let pool = all;
+    let pool = typeof filter === 'function' ? all.filter(t => filter(t)) : all;
     if (tag) {
       const byTag = pool.filter(t => t.tag === tag);
       if (byTag.length > 0) pool = byTag;
@@ -337,17 +457,53 @@ export class ArchiveOrgProvider extends BaseProvider {
     });
   }
 
-  async fetchLiveTracks({ tag, signal } = {}) {
-    let query = 'mediatype:(audio) AND (collection:(netlabels) OR collection:(georgeblood))';
-    if (tag === 'read') {
-      query = 'mediatype:(audio) AND (collection:(audio_bookspoetry) OR collection:(librivoxaudio))';
-    } else if (tag === 'obscureweb') {
-      query = 'mediatype:(audio) AND (collection:(shortwave) OR subject:(shortwave) OR collection:(audio_music))';
-    } else if (tag === 'code') {
-      query = 'mediatype:(audio) AND (subject:(demoscene) OR subject:(chiptune) OR subject:(tracker) OR subject:(keygen) OR collection:(tucows))';
-    }
+  /**
+   * Query pools per tag. One is drawn at random on every refresh so the archive
+   * rotation keeps digging into different collections instead of one shelf.
+   */
+  queriesForTag(tag) {
+    const pools = {
+      read: [
+        'mediatype:(audio) AND collection:(librivoxaudio)',
+        'mediatype:(audio) AND collection:(audio_bookspoetry)',
+        'mediatype:(audio) AND (subject:(poetry) OR subject:(spoken word))',
+        'mediatype:(audio) AND (collection:(oldtimeradio) OR subject:(radio drama))'
+      ],
+      obscureweb: [
+        'mediatype:(audio) AND (collection:(shortwave) OR subject:(shortwave))',
+        'mediatype:(audio) AND (subject:(numbers station) OR subject:(field recording))',
+        'mediatype:(audio) AND (collection:(audio_religion) OR subject:(vaporwave))',
+        'mediatype:(audio) AND (collection:(radioprograms) OR subject:(pirate radio))'
+      ],
+      code: [
+        'mediatype:(audio) AND (subject:(demoscene) OR subject:(chiptune) OR subject:(tracker))',
+        'mediatype:(audio) AND (subject:(keygen) OR subject:(module) OR collection:(tucows))',
+        'mediatype:(audio) AND (subject:(amiga) OR subject:(commodore) OR subject:(8-bit))',
+        'mediatype:(audio) AND (subject:(video game music) OR subject:(sid))'
+      ],
+      art: [
+        'mediatype:(audio) AND (subject:(sound art) OR subject:(musique concrete))',
+        'mediatype:(audio) AND (subject:(experimental) OR subject:(drone))',
+        'mediatype:(audio) AND (collection:(netlabels) AND subject:(ambient))'
+      ],
+      sound: [
+        'mediatype:(audio) AND collection:(netlabels)',
+        'mediatype:(audio) AND collection:(georgeblood)',
+        'mediatype:(audio) AND (subject:(ambient) OR subject:(jazz) OR subject:(dub))',
+        'mediatype:(audio) AND (collection:(78rpm) OR collection:(audio_music))'
+      ]
+    };
+    return pools[tag] || pools.sound;
+  }
 
-    const url = `https://archive.org/advancedsearch.php?q=${encodeURIComponent(query)}&fl[]=identifier,title,creator,description,year&sort[]=downloads+desc&rows=30&page=1&output=json`;
+  async fetchLiveTracks({ tag, signal } = {}) {
+    const queries = this.queriesForTag(tag);
+    const query = queries[Math.floor(Math.random() * queries.length)];
+    const sorts = ['downloads desc', 'week desc', 'publicdate desc', 'avg_rating desc'];
+    const sort = sorts[Math.floor(Math.random() * sorts.length)];
+    const page = 1 + Math.floor(Math.random() * 3);
+
+    const url = `https://archive.org/advancedsearch.php?q=${encodeURIComponent(query)}&fl[]=identifier,title,creator,description,year&sort[]=${encodeURIComponent(sort)}&rows=50&page=${page}&output=json`;
     const res = await fetch(url, { signal });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
@@ -363,7 +519,8 @@ export class ArchiveOrgProvider extends BaseProvider {
             url: `https://archive.org/details/${d.identifier}`,
             title: `${author} - ${d.title}`,
             caption: desc || (tag === 'code' ? 'Demoscene music, tracker modules, and chiptunes preserved on Internet Archive.' : 'Open historical recording from Internet Archive.'),
-            tag: tag || 'sound'
+            tag: tag || 'sound',
+            source: 'Internet Archive'
           };
         });
     }
@@ -381,68 +538,221 @@ export class AudiusProvider extends BaseProvider {
       name: 'Audius Web3 Network',
       ttlMs: 10 * 60 * 1000
     });
+    this.hosts = [
+      'https://discoveryprovider.audius.co',
+      'https://discoveryprovider2.audius.co',
+      'https://discoveryprovider3.audius.co'
+    ];
+    this.genres = [
+      'Electronic', 'Ambient', 'Techno', 'House', 'Deep House', 'Downtempo',
+      'Drum & Bass', 'Experimental', 'Lo-Fi', 'Jazz', 'Hip-Hop/Rap', 'Trance',
+      'Dubstep', 'Progressive House', 'Devotional', 'World'
+    ];
+  }
+
+  host() {
+    return this.hosts[Math.floor(Math.random() * this.hosts.length)];
+  }
+
+  /**
+   * Builds a couple of different endpoints per refresh (global trending,
+   * genre-scoped trending, underground) so the pool is never the same top 25.
+   */
+  buildEndpoints() {
+    const genre = this.genres[Math.floor(Math.random() * this.genres.length)];
+    const endpoints = [
+      `${this.host()}/v1/tracks/trending?app_name=onepick&limit=30`,
+      `${this.host()}/v1/tracks/trending?app_name=onepick&limit=30&genre=${encodeURIComponent(genre)}`,
+      `${this.host()}/v1/tracks/trending/underground?app_name=onepick&limit=30`,
+      `${this.host()}/v1/tracks/trending?app_name=onepick&limit=30&time=month`
+    ];
+    return sampleList(endpoints, 2);
+  }
+
+  mapTracks(items) {
+    if (!Array.isArray(items)) return [];
+    return items
+      .filter(t => t && t.id && t.title && t.is_streamable !== false)
+      .map(t => {
+        const artist = t.user?.name || t.user?.handle || 'Audius Artist';
+        const genre = t.genre || 'Electronic';
+        return {
+          url: `https://audius.co/embed/track/${t.id}`,
+          title: `${artist} - ${t.title}`,
+          caption: `${genre} streaming decentralized via Audius protocol.`,
+          tag: 'sound',
+          source: 'Audius'
+        };
+      });
   }
 
   async fetchLiveTracks({ signal } = {}) {
-    const res = await fetch('https://discoveryprovider.audius.co/v1/tracks/trending?app_name=onepick&limit=25', { signal });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const body = await res.json();
-    const items = body?.data;
-    if (Array.isArray(items) && items.length > 0) {
-      return items
-        .filter(t => t.id && t.title)
-        .map(t => {
-          const artist = t.user?.name || t.user?.handle || 'Audius Artist';
-          const genre = t.genre || 'Electronic';
-          return {
-            url: `https://audius.co/embed/track/${t.id}`,
-            title: `${artist} - ${t.title}`,
-            caption: `${genre} streaming decentralized via Audius protocol.`,
-            tag: 'sound'
-          };
-        });
-    }
-    return [];
+    const endpoints = this.buildEndpoints();
+    const results = await Promise.allSettled(
+      endpoints.map(async (url) => {
+        const res = await fetch(url, { signal });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const body = await res.json();
+        return this.mapTracks(body?.data);
+      })
+    );
+
+    const buckets = results
+      .filter(r => r.status === 'fulfilled' && r.value.length > 0)
+      .map(r => r.value);
+
+    return dedupeTracks(interleaveBuckets(buckets));
   }
 }
 
 
+/**
+ * Curated YouTube source roster.
+ * Each entry carries either a stable `id` (UC... channel id, used as-is) or a
+ * `handle` (@name) that is resolved to a channel id on demand and cached.
+ * Channels that cannot be resolved are skipped silently, so the roster can grow
+ * without risking a dead rotation. Run `node bot.js --check-sources` to audit it.
+ */
 export const YOUTUBE_CHANNELS = [
-  { id: 'UCGSSFkUjSBpDzA1aD4yq1zw', name: 'State Azure', tag: 'art', desc: 'Generative modular synthesis and analog soundscapes' },
-  { id: 'UCSJ4gkVC6NrvII8umztf0Ow', name: 'Lofi Girl', tag: 'sound', desc: 'Lo-fi ambient beats and peaceful frequencies' },
-  { id: 'UCCycRfTS7V9WOFfWfkNVCSg', name: 'Cercle', tag: 'sound', desc: 'Unique live electronic performances in scenic locations' },
-  { id: 'UC3I2GFN_F8WudD_2jUZbojA', name: 'KEXP', tag: 'sound', desc: 'Live studio sessions and independent music discoveries' },
-  { id: 'UC6qQOTx9LuKMC5p2dbjmSRg', name: 'HateLab', tag: 'sound', desc: 'Deep minimal techno and hypnotic resonances' }
+  // --- #sound: live sessions, labels, radio shows ---
+  { id: 'UCSJ4gkVC6NrvII8umztf0Ow', handle: 'LofiGirl', name: 'Lofi Girl', tag: 'sound', desc: 'Lo-fi ambient beats and peaceful frequencies' },
+  { id: 'UCCycRfTS7V9WOFfWfkNVCSg', handle: 'Cercle', name: 'Cercle', tag: 'sound', desc: 'Unique live electronic performances in scenic locations' },
+  { id: 'UC3I2GFN_F8WudD_2jUZbojA', handle: 'kexp', name: 'KEXP', tag: 'sound', desc: 'Live studio sessions and independent music discoveries' },
+  { id: 'UC6qQOTx9LuKMC5p2dbjmSRg', handle: 'HateLab', name: 'HateLab', tag: 'sound', desc: 'Deep minimal techno and hypnotic resonances' },
+  { handle: 'boilerroom', name: 'Boiler Room', tag: 'sound', desc: 'Underground club sets recorded in rooms around the world' },
+  { handle: 'COLORSxSTUDIOS', name: 'COLORS', tag: 'sound', desc: 'Minimal monochrome stages for emerging global artists' },
+  { handle: 'nprmusic', name: 'NPR Music', tag: 'sound', desc: 'Tiny Desk concerts and intimate acoustic performances' },
+  { handle: 'audiotree', name: 'Audiotree', tag: 'sound', desc: 'Independent live sessions recorded in Chicago' },
+  { handle: 'LaBlogotheque', name: 'La Blogothèque', tag: 'sound', desc: 'Take Away Shows filmed in streets, kitchens and staircases' },
+  { handle: 'sofarsounds', name: 'Sofar Sounds', tag: 'sound', desc: 'Living-room concerts from unexpected cities' },
+  { handle: 'NinjaTune', name: 'Ninja Tune', tag: 'sound', desc: 'Label transmissions across electronica, jazz and bass' },
+  { handle: 'WarpRecords', name: 'Warp Records', tag: 'sound', desc: 'Experimental electronic catalogue and audiovisual works' },
+  { handle: 'stonesthrow', name: 'Stones Throw', tag: 'sound', desc: 'Beat tapes, soul excavations and left-field hip hop' },
+  { handle: 'dekmantel', name: 'Dekmantel', tag: 'sound', desc: 'Festival recordings and deep club selections' },
+  { handle: 'TheLotRadio', name: 'The Lot Radio', tag: 'sound', desc: 'Continuous DJ shows from a shipping container in Brooklyn' },
+  { handle: 'ChillhopMusic', name: 'Chillhop Music', tag: 'sound', desc: 'Jazzy instrumental beats for slow hours' },
+  { handle: 'MahoganySessions', name: 'Mahogany', tag: 'sound', desc: 'Stripped-back sessions and songwriter portraits' },
+  { handle: 'NTSRadio', name: 'NTS Radio', tag: 'sound', desc: 'Wide-spectrum radio shows and archival selections' },
+
+  // --- #art: modular synthesis, generative and gallery signals ---
+  { id: 'UCGSSFkUjSBpDzA1aD4yq1zw', handle: 'StateAzure', name: 'State Azure', tag: 'art', desc: 'Generative modular synthesis and analog soundscapes' },
+  { handle: 'Hainbach', name: 'Hainbach', tag: 'art', desc: 'Test equipment turned into instruments and tape experiments' },
+  { handle: 'LOOKMUMNOCOMPUTER', name: 'Look Mum No Computer', tag: 'art', desc: 'Homebrew synths, sound sculptures and joyful noise' },
+  { handle: 'mylarmelodies', name: 'mylarmelodies', tag: 'art', desc: 'Modular patches and eurorack storytelling' },
+  { handle: 'andrewhuang', name: 'Andrew Huang', tag: 'art', desc: 'Sound design experiments and improbable instruments' },
+  { handle: 'sonicstate', name: 'Sonic State', tag: 'art', desc: 'Synthesizer explorations and studio field reports' },
+  { handle: 'Tate', name: 'Tate', tag: 'art', desc: 'Artist films and gallery essays from the Tate collection' },
+  { handle: 'MoMA', name: 'MoMA', tag: 'art', desc: 'Modern art conversations, archives and artist portraits' },
+
+  // --- #code: systems, graphics, and computational craft ---
+  { handle: 'Computerphile', name: 'Computerphile', tag: 'code', desc: 'Computer science explained from first principles' },
+  { handle: 'TheCodingTrain', name: 'The Coding Train', tag: 'code', desc: 'Creative coding sketches and generative algorithms' },
+  { handle: 'SebastianLague', name: 'Sebastian Lague', tag: 'code', desc: 'Simulation, graphics and algorithm deep dives' },
+  { handle: 'suckerpinch', name: 'suckerpinch', tag: 'code', desc: 'Absurd computer science experiments taken seriously' },
+  { handle: 'TsodingDaily', name: 'Tsoding Daily', tag: 'code', desc: 'Live low-level programming sessions' },
+  { handle: 'Acerola_t', name: 'Acerola', tag: 'code', desc: 'Shader craft and rendering techniques dissected' },
+
+  // --- #read: essays, lectures and spoken word ---
+  { handle: 'Nerdwriter1', name: 'Nerdwriter1', tag: 'read', desc: 'Visual essays on art, film and language' },
+  { handle: 'theschooloflife', name: 'The School of Life', tag: 'read', desc: 'Short philosophical readings on everyday life' },
+  { handle: 'TheRoyalInstitution', name: 'The Royal Institution', tag: 'read', desc: 'Public lectures on science and ideas' },
+  { handle: 'GreshamCollege', name: 'Gresham College', tag: 'read', desc: 'Free public lectures since 1597' },
+  { handle: 'aeonvideo', name: 'Aeon Video', tag: 'read', desc: 'Documentary shorts and essayistic films' },
+  { handle: 'JacobGeller', name: 'Jacob Geller', tag: 'read', desc: 'Long-form essays on art, games and architecture' },
+
+  // --- #obscureweb: lost corners of the network ---
+  { handle: 'LEMMiNO', name: 'LEMMiNO', tag: 'obscureweb', desc: 'Meticulous documentaries on unsolved internet lore' },
+  { handle: 'FredrikKnudsen', name: 'Fredrik Knudsen', tag: 'obscureweb', desc: 'Down the Rabbit Hole: forgotten online subcultures' },
+  { handle: 'InternetHistorian', name: 'Internet Historian', tag: 'obscureweb', desc: 'Chronicles of internet events and digital folklore' },
+  { handle: 'Nexpo', name: 'Nexpo', tag: 'obscureweb', desc: 'Investigations into unsettling corners of the web' },
+  { handle: 'XboxAhoy', name: 'Ahoy', tag: 'obscureweb', desc: 'Archaeology of software, hardware and lost media' },
+  { handle: 'BarelySociable', name: 'Barely Sociable', tag: 'obscureweb', desc: 'Cold cases and cryptic online mysteries' }
 ];
+
+const YT_CHANNEL_ID_RE = /^UC[A-Za-z0-9_-]{22}$/;
+const YT_ID_CACHE_KEY = 'onepick_yt_channel_ids';
+
+// handle -> channel id ('' means "resolution failed", so we stop retrying it)
+const youtubeIdCache = new Map();
+let youtubeIdCacheLoaded = false;
+
+function loadYouTubeIdCache() {
+  if (youtubeIdCacheLoaded) return;
+  youtubeIdCacheLoaded = true;
+  if (typeof localStorage === 'undefined') return;
+  try {
+    const raw = JSON.parse(localStorage.getItem(YT_ID_CACHE_KEY) || '{}');
+    for (const [handle, id] of Object.entries(raw)) {
+      if (typeof id === 'string') youtubeIdCache.set(handle, id);
+    }
+  } catch (e) {}
+}
+
+function persistYouTubeIdCache() {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(YT_ID_CACHE_KEY, JSON.stringify(Object.fromEntries(youtubeIdCache)));
+  } catch (e) {}
+}
+
+/**
+ * Resolves a channel entry to a YouTube channel id.
+ * Entries with a hardcoded id resolve instantly; handle-only entries are looked
+ * up once by scraping the public channel page (no API key), then cached.
+ */
+export async function resolveYouTubeChannelId(channel, { signal } = {}) {
+  if (!channel) return null;
+  if (channel.id && YT_CHANNEL_ID_RE.test(channel.id)) return channel.id;
+
+  const handle = (channel.handle || '').replace(/^@/, '').trim();
+  if (!handle) return null;
+
+  loadYouTubeIdCache();
+  if (youtubeIdCache.has(handle)) {
+    return youtubeIdCache.get(handle) || null;
+  }
+
+  let html = '';
+  try {
+    html = await fetchWithCORSProxy(`https://www.youtube.com/@${handle}`, { signal, asJson: false });
+  } catch (e) {
+    return null; // transient network issue: do not poison the cache
+  }
+
+  const match = html.match(/"(?:externalId|channelId)"\s*:\s*"(UC[A-Za-z0-9_-]{22})"/)
+    || html.match(/channel_id=(UC[A-Za-z0-9_-]{22})/);
+  const resolved = match ? match[1] : '';
+  youtubeIdCache.set(handle, resolved);
+  persistYouTubeIdCache();
+
+  if (!resolved) {
+    console.warn(`[YouTubeFeedProvider] Canale non risolvibile: @${handle} (saltato)`);
+  }
+  return resolved || null;
+}
 
 /**
  * YouTube Live RSS Feed Provider (Zero API Key, Public Channels)
+ * Every refresh samples several channels from the roster and interleaves their
+ * feeds, so consecutive rotations rarely come from the same place.
  */
 export class YouTubeFeedProvider extends BaseProvider {
-  constructor() {
+  constructor({ channelsPerFetch = 4 } = {}) {
     super({
       id: 'youtube',
       name: 'YouTube Dynamic Feeds',
       ttlMs: 20 * 60 * 1000
     });
+    this.channelsPerFetch = channelsPerFetch;
   }
 
-  async fetchLiveTracks({ tag, signal } = {}) {
-    let targetChannels = YOUTUBE_CHANNELS;
-    if (tag) {
-      const filtered = YOUTUBE_CHANNELS.filter(c => c.tag === tag);
-      if (filtered.length > 0) targetChannels = filtered;
-    }
-    const chosenChannel = targetChannels[Math.floor(Math.random() * targetChannels.length)];
-    const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${chosenChannel.id}`;
-    let xml = '';
+  channelsForTag(tag) {
+    if (!tag) return YOUTUBE_CHANNELS;
+    const filtered = YOUTUBE_CHANNELS.filter(c => c.tag === tag);
+    return filtered.length > 0 ? filtered : YOUTUBE_CHANNELS;
+  }
 
-    try {
-      xml = await fetchWithCORSProxy(feedUrl, { signal, asJson: false });
-    } catch (e) {
-      return [];
-    }
-
+  parseFeed(xml, channel) {
     const entries = xml.split('<entry>');
     const tracks = [];
     for (let i = 1; i < entries.length; i++) {
@@ -454,17 +764,45 @@ export class YouTubeFeedProvider extends BaseProvider {
         const vid = idMatch[1];
         const rawTitle = titleMatch[1].replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
         if (rawTitle.toLowerCase().includes('#shorts')) continue;
-        const author = authorMatch ? authorMatch[1] : chosenChannel.name;
+        const author = authorMatch ? authorMatch[1] : channel.name;
         tracks.push({
           url: `https://www.youtube.com/watch?v=${vid}`,
           title: `${author} - ${rawTitle}`,
-          caption: `${chosenChannel.desc} via live YouTube feed.`,
-          tag: chosenChannel.tag || tag || 'sound'
+          caption: `${channel.desc} via live YouTube feed.`,
+          tag: channel.tag || 'sound',
+          source: channel.name
         });
       }
     }
-
     return tracks;
+  }
+
+  async fetchChannelTracks(channel, { signal } = {}) {
+    const channelId = await resolveYouTubeChannelId(channel, { signal });
+    if (!channelId) return [];
+    const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+    let xml = '';
+    try {
+      xml = await fetchWithCORSProxy(feedUrl, { signal, asJson: false });
+    } catch (e) {
+      return [];
+    }
+    return this.parseFeed(xml, channel);
+  }
+
+  async fetchLiveTracks({ tag, signal } = {}) {
+    const pool = this.channelsForTag(tag);
+    const chosen = sampleList(pool, Math.min(this.channelsPerFetch, pool.length));
+
+    const results = await Promise.allSettled(
+      chosen.map(channel => this.fetchChannelTracks(channel, { signal }))
+    );
+
+    const buckets = results
+      .filter(r => r.status === 'fulfilled' && Array.isArray(r.value) && r.value.length > 0)
+      .map(r => r.value);
+
+    return dedupeTracks(interleaveBuckets(buckets));
   }
 }
 
@@ -482,6 +820,9 @@ export class BandcampProvider extends BaseProvider {
     this.cachedArticles = [];
     this.lastAlbumFetch = 0;
     this.lastArticleFetch = 0;
+    this.articleWindow = 12;      // how many feed items are considered
+    this.articlesPerFetch = 6;    // how many of them are actually crawled
+    this.albumsPerArticle = 3;    // playable albums extracted per article
   }
 
   async getTracks(context = {}) {
@@ -542,45 +883,51 @@ export class BandcampProvider extends BaseProvider {
             url: linkMatch[1].trim(),
             title: `Bandcamp Daily: ${titleMatch[1].trim()}`,
             caption: cleanDesc || 'Musical deep-dive and review from Bandcamp Daily.',
-            tag: 'read'
+            tag: 'read',
+            source: 'Bandcamp Daily'
           });
         }
       }
       return articles;
     }
 
-    // For #sound (audio player): crawl top 3 latest articles and extract real playable Bandcamp album links
+    // For #sound (audio player): crawl the latest articles and extract real playable Bandcamp album links.
+    // Sampling a wider window of articles (and several albums per article) keeps the pool varied.
     const articleUrls = [];
-    for (let i = 1; i < Math.min(items.length, 4); i++) {
+    for (let i = 1; i < Math.min(items.length, this.articleWindow + 1); i++) {
       const linkMatch = items[i].match(/<link>(https:\/\/daily\.bandcamp\.com\/[^\/]+\/[^<]+)<\/link>/);
       if (linkMatch && linkMatch[1]) {
         articleUrls.push(linkMatch[1].trim());
       }
     }
 
-    const albumPromises = articleUrls.map(async (artUrl) => {
+    const albumPromises = sampleList(articleUrls, this.articlesPerFetch).map(async (artUrl) => {
       try {
         const artHtml = await fetchWithCORSProxy(artUrl, { signal, asJson: false });
-        if (!artHtml) return null;
+        if (!artHtml) return [];
 
-        const albumLinks = [...artHtml.matchAll(/https:\/\/[a-zA-Z0-9_\-]+\.bandcamp\.com\/album\/[a-zA-Z0-9_\-]+/g)].map(m => m[0]);
-        if (albumLinks.length > 0) {
-          const title = artHtml.match(/<meta property="og:title" content="([^"]+)"/)?.[1] || '';
-          const desc = artHtml.match(/<meta property="og:description" content="([^"]+)"/)?.[1] || '';
-          const cleanTitle = title.replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
-          const cleanDesc = desc.replace(/<[^>]*>?/gm, '').replace(/&#39;/g, "'").slice(0, 120);
-          return {
-            url: albumLinks[0],
-            title: cleanTitle || 'Bandcamp Featured Release',
-            caption: cleanDesc || 'Independent album streaming from Bandcamp.',
-            tag: 'sound'
-          };
-        }
+        const albumLinks = [...new Set(
+          [...artHtml.matchAll(/https:\/\/[a-zA-Z0-9_\-]+\.bandcamp\.com\/album\/[a-zA-Z0-9_\-]+/g)].map(m => m[0])
+        )];
+        if (albumLinks.length === 0) return [];
+
+        const title = artHtml.match(/<meta property="og:title" content="([^"]+)"/)?.[1] || '';
+        const desc = artHtml.match(/<meta property="og:description" content="([^"]+)"/)?.[1] || '';
+        const cleanTitle = title.replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
+        const cleanDesc = desc.replace(/<[^>]*>?/gm, '').replace(/&#39;/g, "'").slice(0, 120);
+
+        return albumLinks.slice(0, this.albumsPerArticle).map(url => ({
+          url,
+          title: cleanTitle || 'Bandcamp Featured Release',
+          caption: cleanDesc || 'Independent album streaming from Bandcamp.',
+          tag: 'sound',
+          source: 'Bandcamp Daily'
+        }));
       } catch (e) {}
-      return null;
+      return [];
     });
 
-    const resolvedAlbums = (await Promise.all(albumPromises)).filter(Boolean);
+    const resolvedAlbums = dedupeTracks((await Promise.all(albumPromises)).flat());
     if (resolvedAlbums.length > 0) {
       return resolvedAlbums;
     }
@@ -600,13 +947,16 @@ export class MixcloudProvider extends BaseProvider {
       name: 'Mixcloud Live Cloudcasts',
       ttlMs: 30 * 60 * 1000
     });
+    this.tags = [
+      'ambient', 'chillout', 'electronic', 'downtempo', 'deep-techno', 'dub',
+      'jazz', 'house', 'minimal', 'krautrock', 'psychedelic', 'library-music',
+      'field-recordings', 'drone', 'idm', 'breakbeat', 'afrobeat', 'balearic',
+      'lo-fi', 'soundtrack'
+    ];
   }
 
-  async fetchLiveTracks({ tag, signal } = {}) {
-    const tags = ['ambient', 'chillout', 'electronic', 'downtempo', 'deep-techno'];
-    const selectedTag = tags[Math.floor(Math.random() * tags.length)];
-    const url = `https://api.mixcloud.com/tag/${selectedTag}/popular/?limit=25`;
-
+  async fetchTagTracks(tag, order, { signal } = {}) {
+    const url = `https://api.mixcloud.com/tag/${tag}/${order}/?limit=25`;
     let data = null;
     try {
       data = await fetchWithCORSProxy(url, { signal, asJson: true });
@@ -615,21 +965,40 @@ export class MixcloudProvider extends BaseProvider {
     }
 
     const items = data?.data;
-    if (Array.isArray(items) && items.length > 0) {
-      return items
-        .filter(item => item.url && item.name && !item.is_exclusive)
-        .map(item => {
-          const user = item.user?.name || item.user?.username || 'Mixcloud DJ';
-          const cleanName = item.name.replace(/&amp;/g, '&').replace(/&#39;/g, "'").trim();
-          return {
-            url: item.url,
-            title: `${user} - ${cleanName}`,
-            caption: `DJ set & long-form cloudcast streaming on Mixcloud (#${selectedTag}).`,
-            tag: 'sound'
-          };
-        });
-    }
-    return [];
+    if (!Array.isArray(items)) return [];
+
+    return items
+      .filter(item => item.url && item.name && !item.is_exclusive)
+      .map(item => {
+        const user = item.user?.name || item.user?.username || 'Mixcloud DJ';
+        const cleanName = item.name.replace(/&amp;/g, '&').replace(/&#39;/g, "'").trim();
+        return {
+          url: item.url,
+          title: `${user} - ${cleanName}`,
+          caption: `DJ set & long-form cloudcast streaming on Mixcloud (#${tag}).`,
+          tag: 'sound',
+          source: `Mixcloud #${tag}`
+        };
+      });
+  }
+
+  async fetchLiveTracks({ signal } = {}) {
+    const selectedTags = sampleList(this.tags, 3);
+    const orders = ['popular', 'latest'];
+
+    const results = await Promise.allSettled(
+      selectedTags.map(tag => this.fetchTagTracks(
+        tag,
+        orders[Math.floor(Math.random() * orders.length)],
+        { signal }
+      ))
+    );
+
+    const buckets = results
+      .filter(r => r.status === 'fulfilled' && r.value.length > 0)
+      .map(r => r.value);
+
+    return dedupeTracks(interleaveBuckets(buckets));
   }
 }
 
@@ -662,15 +1031,213 @@ export class SomaFMProvider extends BaseProvider {
         .map(c => {
           let desc = (c.description || '').trim();
           if (desc.length > 120) desc = desc.slice(0, 117) + '...';
+          const genre = (c.genre || '').replace(/\|/g, ', ');
           return {
             url: `https://ice1.somafm.com/${c.id}-128-mp3`,
             title: `SomaFM: ${c.title}`,
-            caption: desc || 'Independent commercial-free continuous radio stream from SomaFM.',
-            tag: 'sound'
+            caption: desc || `Independent commercial-free continuous radio stream from SomaFM${genre ? ` (${genre})` : ''}.`,
+            tag: 'sound',
+            source: 'SomaFM'
           };
         });
     }
     return [];
+  }
+}
+
+/**
+ * Radio Browser Provider — community catalogue of ~50k live radio stations.
+ * Only https direct streams that the in-page player can actually decode are kept.
+ */
+export const RADIO_BROWSER_MIRRORS = [
+  'https://de1.api.radio-browser.info',
+  'https://nl1.api.radio-browser.info',
+  'https://at1.api.radio-browser.info'
+];
+
+export const RADIO_BROWSER_TAGS = [
+  'ambient', 'jazz', 'classical', 'electronic', 'experimental', 'dub',
+  'downtempo', 'techno', 'lounge', 'psychedelic', 'folk', 'soul', 'drone',
+  'minimal', 'chillout', 'world music', 'shoegaze', 'post rock', 'reggae',
+  'blues', 'trip hop', 'krautrock'
+];
+
+export class RadioBrowserProvider extends BaseProvider {
+  constructor() {
+    super({
+      id: 'radiobrowser',
+      name: 'Radio Browser Live Stations',
+      ttlMs: 45 * 60 * 1000
+    });
+  }
+
+  mirror() {
+    return RADIO_BROWSER_MIRRORS[Math.floor(Math.random() * RADIO_BROWSER_MIRRORS.length)];
+  }
+
+  async fetchTagStations(tag, { signal } = {}) {
+    const url = `${this.mirror()}/json/stations/search?limit=80&hidebroken=true&order=clickcount&reverse=true&codec=MP3&tag=${encodeURIComponent(tag)}`;
+    let stations = null;
+    try {
+      stations = await fetchWithCORSProxy(url, {
+        signal,
+        asJson: true,
+        headers: { 'User-Agent': 'onepick/1.0 (+https://onepick-gamma.vercel.app)' }
+      });
+    } catch (e) {
+      return [];
+    }
+
+    if (!Array.isArray(stations)) return [];
+
+    return stations
+      .map(st => {
+        const streamUrl = (st.url_resolved || st.url || '').trim();
+        const name = (st.name || '').replace(/\s+/g, ' ').trim();
+        if (!streamUrl || !name) return null;
+        const place = [st.country, st.state].filter(Boolean).join(' · ');
+        const stationTags = (st.tags || '').split(',').filter(Boolean).slice(0, 3).join(', ');
+        return {
+          url: streamUrl,
+          title: `Radio: ${name}`,
+          caption: `Live ${stationTags || tag} radio stream${place ? ` from ${place}` : ''}.`,
+          tag: 'sound',
+          source: `Radio Browser #${tag}`
+        };
+      })
+      .filter(t => t && isDirectAudioStreamUrl(t.url));
+  }
+
+  async fetchLiveTracks({ signal } = {}) {
+    const selected = sampleList(RADIO_BROWSER_TAGS, 3);
+    const results = await Promise.allSettled(
+      selected.map(tag => this.fetchTagStations(tag, { signal }))
+    );
+
+    const buckets = results
+      .filter(r => r.status === 'fulfilled' && r.value.length > 0)
+      .map(r => r.value);
+
+    return dedupeTracks(interleaveBuckets(buckets));
+  }
+}
+
+/**
+ * Open-web RSS sources for the non-audio affinities (#read, #art, #code, #obscureweb).
+ * These are plain links, so they are never offered to a #sound slot.
+ */
+export const RSS_SOURCES = [
+  // --- #read ---
+  { url: 'https://aeon.co/feed.rss', name: 'Aeon', tag: 'read', desc: 'Long-form essays on philosophy, science and culture' },
+  { url: 'https://longreads.com/feed/', name: 'Longreads', tag: 'read', desc: 'Curated long-form journalism and narrative writing' },
+  { url: 'https://www.themarginalian.org/feed/', name: 'The Marginalian', tag: 'read', desc: 'Readings across art, science and the examined life' },
+  { url: 'https://lithub.com/feed/', name: 'Literary Hub', tag: 'read', desc: 'Literary essays, interviews and book culture' },
+  { url: 'https://thequietus.com/feed', name: 'The Quietus', tag: 'read', desc: 'Independent music writing and cultural criticism' },
+  { url: 'https://www.openculture.com/feed', name: 'Open Culture', tag: 'read', desc: 'Free cultural and educational media from the open web' },
+  { url: 'https://blog.archive.org/feed/', name: 'Internet Archive Blog', tag: 'read', desc: 'Dispatches from the world largest open library' },
+  { url: 'https://publicdomainreview.org/rss.xml', name: 'The Public Domain Review', tag: 'read', desc: 'Curiosities and artefacts from the public domain' },
+
+  // --- #obscureweb ---
+  { url: 'https://waxy.org/feed/', name: 'Waxy.org', tag: 'obscureweb', desc: 'Links from the stranger corners of the internet' },
+  { url: 'https://feeds.kottke.org/main', name: 'kottke.org', tag: 'obscureweb', desc: 'Liberal arts blogging since 1998' },
+  { url: 'https://www.metafilter.com/rss.xml', name: 'MetaFilter', tag: 'obscureweb', desc: 'Community weblog of the best of the web' },
+  { url: 'https://tedium.co/feed/', name: 'Tedium', tag: 'obscureweb', desc: 'The dull side of the internet, explored in depth' },
+  { url: 'https://www.404media.co/rss/', name: '404 Media', tag: 'obscureweb', desc: 'Reporting on the underside of technology' },
+  { url: 'https://solar.lowtechmagazine.com/feeds/all-en.rss.xml', name: 'Low-tech Magazine', tag: 'obscureweb', desc: 'A solar-powered website on low technology' },
+
+  // --- #art ---
+  { url: 'https://hyperallergic.com/feed/', name: 'Hyperallergic', tag: 'art', desc: 'Perspectives on art and its discontents' },
+  { url: 'https://www.thisiscolossal.com/feed/', name: 'Colossal', tag: 'art', desc: 'Visual art, craft and material experiments' },
+  { url: 'https://www.creativeapplications.net/feed/', name: 'CreativeApplications.Net', tag: 'art', desc: 'Code-driven art, installations and digital objects' },
+  { url: 'https://rhizome.org/blog/feed/rss/', name: 'Rhizome', tag: 'art', desc: 'Born-digital art and internet culture' },
+  { url: 'https://news.artnet.com/feed', name: 'Artnet News', tag: 'art', desc: 'Reports from museums, galleries and the art market' },
+  { url: 'https://www.dezeen.com/feed/', name: 'Dezeen', tag: 'art', desc: 'Architecture and design from around the world' },
+
+  // --- #code ---
+  { url: 'https://hackaday.com/feed/', name: 'Hackaday', tag: 'code', desc: 'Hardware hacks and homebrew engineering' },
+  { url: 'https://lobste.rs/rss', name: 'Lobsters', tag: 'code', desc: 'Computing-focused community link aggregator' },
+  { url: 'https://news.ycombinator.com/rss', name: 'Hacker News', tag: 'code', desc: 'What the software world is reading right now' },
+  { url: 'https://www.phoronix.com/rss.php', name: 'Phoronix', tag: 'code', desc: 'Linux hardware, kernels and open source benchmarks' },
+  { url: 'https://blog.rust-lang.org/feed.xml', name: 'Rust Blog', tag: 'code', desc: 'Language releases and systems programming notes' },
+  { url: 'https://simonwillison.net/atom/everything/', name: 'Simon Willison', tag: 'code', desc: 'Notes on tooling, data and language models' }
+];
+
+export class RSSFeedProvider extends BaseProvider {
+  constructor({ feedsPerFetch = 3 } = {}) {
+    super({
+      id: 'rssfeeds',
+      name: 'Open Web RSS Sources',
+      ttlMs: 30 * 60 * 1000
+    });
+    this.feedsPerFetch = feedsPerFetch;
+  }
+
+  sourcesForTag(tag) {
+    if (!tag) return RSS_SOURCES;
+    const filtered = RSS_SOURCES.filter(s => s.tag === tag);
+    return filtered.length > 0 ? filtered : RSS_SOURCES;
+  }
+
+  /**
+   * Minimal RSS 2.0 + Atom reader: enough to lift title, link and summary.
+   */
+  parseFeed(xml, source) {
+    if (!xml) return [];
+    const isAtom = /<feed[\s>]/i.test(xml) && /<entry[\s>]/i.test(xml);
+    const chunks = xml.split(isAtom ? /<entry[\s>]/i : /<item[\s>]/i);
+    const items = [];
+
+    for (let i = 1; i < chunks.length; i++) {
+      const chunk = chunks[i];
+      const titleMatch = chunk.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i);
+      const linkMatch = isAtom
+        ? chunk.match(/<link[^>]*href="([^"]+)"/i)
+        : chunk.match(/<link[^>]*>(?:<!\[CDATA\[)?\s*(https?:[^<\]]+?)\s*(?:\]\]>)?<\/link>/i);
+      if (!titleMatch || !linkMatch) continue;
+
+      const descMatch = chunk.match(/<(?:description|summary)[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/(?:description|summary)>/i);
+      const title = decodeXmlEntities(titleMatch[1]).replace(/\s+/g, ' ').trim();
+      const url = decodeXmlEntities(linkMatch[1]).trim();
+      if (!title || !/^https?:\/\//i.test(url)) continue;
+
+      let desc = descMatch ? decodeXmlEntities(descMatch[1]).replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim() : '';
+      if (desc.length > 120) desc = desc.slice(0, 117) + '...';
+
+      items.push({
+        url,
+        title: `${source.name}: ${title}`,
+        caption: desc || `${source.desc}.`,
+        tag: source.tag,
+        source: source.name
+      });
+    }
+
+    return items;
+  }
+
+  async fetchSource(source, { signal } = {}) {
+    let xml = '';
+    try {
+      xml = await fetchWithCORSProxy(source.url, { signal, asJson: false });
+    } catch (e) {
+      return [];
+    }
+    return this.parseFeed(xml, source);
+  }
+
+  async fetchLiveTracks({ tag, signal } = {}) {
+    const pool = this.sourcesForTag(tag);
+    const chosen = sampleList(pool, Math.min(this.feedsPerFetch, pool.length));
+
+    const results = await Promise.allSettled(
+      chosen.map(source => this.fetchSource(source, { signal }))
+    );
+
+    const buckets = results
+      .filter(r => r.status === 'fulfilled' && r.value.length > 0)
+      .map(r => r.value);
+
+    return dedupeTracks(interleaveBuckets(buckets));
   }
 }
 
@@ -707,28 +1274,63 @@ export class ProviderRegistry {
     }));
   }
 
+  listProviderIds() {
+    return Array.from(this.providers.keys());
+  }
+
+  /**
+   * The provider pool a station rotates across: its signature provider first,
+   * then any extra networks declared on the bot (`providers`).
+   */
+  resolveBotProviderIds(bot) {
+    const ids = [];
+    if (bot?.provider) ids.push(bot.provider);
+    for (const id of bot?.providers || []) {
+      if (!ids.includes(id)) ids.push(id);
+    }
+    return ids.filter(id => this.has(id));
+  }
+
+  /**
+   * A #sound slot must stay playable in-page, so plain links (RSS articles,
+   * editorial pieces) are never accepted for that affinity.
+   */
+  acceptsTrack(bot, track) {
+    if (!track || !track.url) return false;
+    if ((bot?.tag || track.tag) === 'sound') return isPlayableAudioUrl(track.url);
+    return true;
+  }
+
   async getTrackForBot(bot, currentUrl = null) {
-    // 1. Primary: query the bot's designated dynamic provider
-    if (bot && bot.provider) {
-      const provider = this.get(bot.provider);
-      if (provider) {
-        const track = await provider.getRandomTrack({ currentUrl, tag: bot.tag, bot });
-        if (track && track.url) return track;
-      }
+    const filter = (t) => this.acceptsTrack(bot, t);
+
+    // 1. Primary: roam the station's own provider pool. The signature provider
+    //    keeps a head start, but the bot regularly reaches for its other sources.
+    const poolIds = this.resolveBotProviderIds(bot);
+    const orderedIds = poolIds.length > 1 && Math.random() < 0.5
+      ? [poolIds[0], ...shuffleList(poolIds.slice(1))]
+      : shuffleList(poolIds);
+
+    for (const id of orderedIds) {
+      const provider = this.get(id);
+      if (!provider) continue;
+      const track = await provider.getRandomTrack({ currentUrl, tag: bot?.tag, bot, filter });
+      if (track && track.url) return track;
     }
 
-    // 2. Secondary: query other dynamic providers matching the bot's tag
-    const allProviders = Array.from(this.providers.values()).filter(p => p.id !== bot?.provider);
-    const shuffled = allProviders.sort(() => Math.random() - 0.5);
+    // 2. Secondary: query every other dynamic provider matching the bot's tag
+    const shuffled = shuffleList(
+      Array.from(this.providers.values()).filter(p => !poolIds.includes(p.id))
+    );
 
     for (const provider of shuffled) {
-      const track = await provider.getRandomTrack({ currentUrl, tag: bot?.tag, bot });
+      const track = await provider.getRandomTrack({ currentUrl, tag: bot?.tag, bot, filter });
       if (track && track.url) return track;
     }
 
     // 3. Final fallback: any live dynamic provider without tag constraints
     for (const provider of shuffled) {
-      const track = await provider.getRandomTrack({ currentUrl });
+      const track = await provider.getRandomTrack({ currentUrl, filter });
       if (track && track.url) return track;
     }
 
@@ -745,6 +1347,8 @@ providerRegistry.register(new YouTubeFeedProvider());
 providerRegistry.register(new BandcampDailyProvider());
 providerRegistry.register(new MixcloudProvider());
 providerRegistry.register(new SomaFMProvider());
+providerRegistry.register(new RadioBrowserProvider());
+providerRegistry.register(new RSSFeedProvider());
 
 /**
  * Searches and fetches live releases from the TuneCamp network (/api/releases)
