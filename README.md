@@ -145,6 +145,6 @@ npm run bot
 Un progetto creato da **[scobru](https://github.com/scobru)**  
 Sito web: [https://scobrudot.dev](https://scobrudot.dev)  
 Repository: [https://github.com/scobru/onepick](https://github.com/scobru/onepick)  
-✦ *Endorsed by [TuneCamp](https://sudorecords.scobrudot.dev) — Stessa filosofia: musica decentralizzata, etere aperto e ascolto non algoritmico.*
+✦ *Endorsed by [TuneCamp](https://tunecamp.org) — Stessa filosofia: musica decentralizzata, etere aperto e ascolto non algoritmico.*
 
 Rilasciato sotto licenza MIT.
