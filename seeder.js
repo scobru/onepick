@@ -37,7 +37,7 @@ export const SEED_BOTS = [
     passphrase: 'onepick-seed-tunecamp-2026-federation',
     tag: 'sound',
     provider: 'tunecamp',
-    desc: 'Independent music and federated releases directly from the TuneCamp / SudoRecords network.'
+    desc: 'Independent music and federated releases streaming across all TuneCamp network instances (SudoRecords, SubTerra Label & federated nodes).'
   },
   {
     id: 'cyber',
@@ -90,11 +90,23 @@ export const SEED_BOTS = [
 ];
 
 // --- TuneCamp Federation Live Stream Catalog ---
+export const TUNECAMP_DEFAULT_INSTANCES = [
+  'https://sudorecords.scobrudot.dev',
+  'https://tunecamp.subterralabel.com',
+  'https://tunecamp.fdalabs.net'
+];
+
 export const TUNECAMP_FALLBACK_TRACKS = [
   {
     url: 'https://sudorecords.scobrudot.dev/releases/120-punk',
     title: 'Homologo - 120 PUNK',
     caption: 'Independent bouncy techno directly from the TuneCamp federation on SudoRecords.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://tunecamp.subterralabel.com/releases/la-guerra-delle-formiche',
+    title: 'La Guerra delle Formiche - La Guerra delle Formiche',
+    caption: 'Progressive, alt-rock, and indie rock from SubTerra Label on TuneCamp.',
     tag: 'sound'
   },
   {
@@ -104,15 +116,33 @@ export const TUNECAMP_FALLBACK_TRACKS = [
     tag: 'sound'
   },
   {
+    url: 'https://tunecamp.subterralabel.com/releases/kali-yuga',
+    title: 'Eva Milan - Kali Yuga',
+    caption: 'Alternative Rock, Post-Punk, and grunge from SubTerra Label on the federated TuneCamp network.',
+    tag: 'sound'
+  },
+  {
     url: 'https://sudorecords.scobrudot.dev/releases/ragazzi-in-collera',
     title: 'Homologo - Ragazzi in collera',
     caption: 'Electronic textures and independent productions from the open TuneCamp catalog.',
     tag: 'sound'
   },
   {
+    url: 'https://tunecamp.subterralabel.com/releases/no-word-is-ever-enough',
+    title: 'Humpty Dumpty & La Guerra delle Formiche - No Word Is Ever Enough',
+    caption: 'Indie rock, slow core, and grunge copyleft music on TuneCamp.',
+    tag: 'sound'
+  },
+  {
     url: 'https://sudorecords.scobrudot.dev/releases/la-prima-2',
     title: 'Homologo - La Prima - live set',
     caption: 'Minimal techno live session and club frequencies recorded live on TuneCamp.',
+    tag: 'sound'
+  },
+  {
+    url: 'https://tunecamp.subterralabel.com/releases/gibellina-song',
+    title: 'Humpty Dumpty, La Guerra delle Formiche, Sumire - Gibellina Song',
+    caption: 'Indie pop and experimental acoustics streaming from SubTerra Label on TuneCamp.',
     tag: 'sound'
   },
   {
@@ -347,32 +377,124 @@ export class BaseProvider {
 
 /**
  * TuneCamp Federation Provider
+ * Queries the federated TuneCamp network across all known and dynamically discovered instances
+ * (e.g. SudoRecords, SubTerra Label, FDA Labs, and any peer discovered via /api/community/peers or /api/community/sites).
  */
 export class TuneCampProvider extends BaseProvider {
-  constructor() {
+  constructor(customInstances = []) {
     super({
       id: 'tunecamp',
       name: 'TuneCamp Federation',
       ttlMs: 5 * 60 * 1000,
       fallbackTracks: TUNECAMP_FALLBACK_TRACKS
     });
+    this.seedInstances = Array.from(new Set([
+      ...TUNECAMP_DEFAULT_INSTANCES,
+      ...customInstances
+    ]));
+  }
+
+  /**
+   * Dynamically discovers reachable peer instances from known seed nodes
+   */
+  async discoverPeers(signal) {
+    const discoveredOrigins = new Set(this.seedInstances.map(s => s.replace(/\/$/, '')));
+
+    await Promise.allSettled(
+      this.seedInstances.map(async (seed) => {
+        const base = seed.replace(/\/$/, '');
+        // Check /api/community/peers
+        try {
+          const peerRes = await fetch(`${base}/api/community/peers`, { signal });
+          if (peerRes.ok) {
+            const peers = await peerRes.json();
+            if (Array.isArray(peers)) {
+              for (const p of peers) {
+                if (typeof p === 'string' && p.startsWith('http')) {
+                  discoveredOrigins.add(p.replace(/\/$/, ''));
+                }
+              }
+            }
+          }
+        } catch (e) {}
+
+        // Check /api/community/sites
+        try {
+          const sitesRes = await fetch(`${base}/api/community/sites`, { signal });
+          if (sitesRes.ok) {
+            const sites = await sitesRes.json();
+            if (Array.isArray(sites)) {
+              for (const s of sites) {
+                if (s && typeof s.url === 'string' && s.url.startsWith('http')) {
+                  discoveredOrigins.add(s.url.replace(/\/$/, ''));
+                }
+              }
+            }
+          }
+        } catch (e) {}
+      })
+    );
+
+    return Array.from(discoveredOrigins);
   }
 
   async fetchLiveTracks({ signal } = {}) {
-    const res = await fetch('https://sudorecords.scobrudot.dev/api/releases', { signal });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const releases = await res.json();
-    if (Array.isArray(releases) && releases.length > 0) {
-      return releases
-        .filter(r => r.slug && r.is_public !== false)
-        .map(r => ({
-          url: `https://sudorecords.scobrudot.dev/releases/${r.slug}`,
-          title: `${r.artist_name || r.artistName || 'TuneCamp'} - ${r.title}`,
-          caption: `${r.genre || 'Independent music'} streaming from the TuneCamp federated network.`,
-          tag: 'sound'
-        }));
+    // 1. Discover all active federated instances
+    let origins = this.seedInstances;
+    try {
+      origins = await this.discoverPeers(signal);
+    } catch (e) {
+      origins = this.seedInstances;
     }
-    return [];
+
+    // 2. Query /api/releases across all instances concurrently
+    const results = await Promise.allSettled(
+      origins.map(async (origin) => {
+        const normOrigin = origin.replace(/\/$/, '');
+        const res = await fetch(`${normOrigin}/api/releases`, { signal });
+        if (!res.ok) throw new Error(`HTTP ${res.status} from ${normOrigin}`);
+        const releases = await res.json();
+        if (!Array.isArray(releases) || releases.length === 0) return [];
+
+        let hostname = normOrigin;
+        try { hostname = new URL(normOrigin).hostname; } catch (e) {}
+
+        return releases
+          .filter(r => r.slug && r.is_public !== false)
+          .map(r => ({
+            url: `${normOrigin}/releases/${r.slug}`,
+            title: `${r.artist_name || r.artistName || 'TuneCamp'} - ${r.title}`,
+            caption: `${r.genre || 'Independent music'} streaming from TuneCamp federated node (${hostname}).`,
+            tag: 'sound',
+            instance: hostname
+          }));
+      })
+    );
+
+    // 3. Group by instance
+    const instanceBuckets = [];
+    for (const res of results) {
+      if (res.status === 'fulfilled' && Array.isArray(res.value) && res.value.length > 0) {
+        instanceBuckets.push(res.value);
+      }
+    }
+
+    if (instanceBuckets.length === 0) {
+      return [];
+    }
+
+    // 4. Interleave tracks from all instances so rotation fairly alternates across nodes
+    const interleaved = [];
+    const maxLen = Math.max(...instanceBuckets.map(b => b.length));
+    for (let i = 0; i < maxLen; i++) {
+      for (const bucket of instanceBuckets) {
+        if (i < bucket.length) {
+          interleaved.push(bucket[i]);
+        }
+      }
+    }
+
+    return interleaved;
   }
 }
 

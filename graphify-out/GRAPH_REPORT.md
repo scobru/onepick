@@ -1,16 +1,16 @@
 # Graph Report - onepick  (2026-09-07)
 
 ## Corpus Check
-- 6 files · ~25,584 words
+- 6 files · ~26,061 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 395 nodes · 909 edges · 19 communities (10 shown, 9 thin omitted)
-- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 104 edges (avg confidence: 0.53)
+- 397 nodes · 913 edges · 20 communities (11 shown, 9 thin omitted)
+- Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 105 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0a16ddd3`
+- Built from commit: `8ff42b3a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -34,6 +34,7 @@
 - [[_COMMUNITY_YouTubeFeedProvider|YouTubeFeedProvider]]
 - [[_COMMUNITY_initTheme|initTheme]]
 - [[_COMMUNITY_BandcampDailyProvider|BandcampDailyProvider]]
+- [[_COMMUNITY_ArchiveOrgProvider|ArchiveOrgProvider]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `t` - 37 edges
@@ -62,19 +63,19 @@
 ## Import Cycles
 - None detected.
 
-## Communities (19 total, 9 thin omitted)
+## Communities (20 total, 9 thin omitted)
 
 ### Community 0 - "app.js"
 Cohesion: 0.01
-Nodes (142): audiusTrackCache, authAlert, authCancelBtn, authControls, authForm, authModal, authorBadge, authorSigilDisplay (+134 more)
+Nodes (143): audiusTrackCache, authAlert, authCancelBtn, authControls, authForm, authModal, authorBadge, authorSigilDisplay (+135 more)
 
 ### Community 1 - "zen.min.js"
 Cohesion: 0.12
 Nodes (42): _(), A(), B(), b62Decode(), b62Encode(), c(), compactPoint(), concat() (+34 more)
 
 ### Community 2 - "t"
-Cohesion: 0.08
-Nodes (72): checkFrictionStatus(), checkInitialPeerParam(), closeTutorialModal(), detectMedia(), escapeHtml(), extractCleanMediaUrl(), formatTimeAgo(), generateSigilSvg() (+64 more)
+Cohesion: 0.09
+Nodes (67): checkFrictionStatus(), checkInitialPeerParam(), closeTutorialModal(), detectMedia(), escapeHtml(), extractCleanMediaUrl(), formatTimeAgo(), generateSigilSvg() (+59 more)
 
 ### Community 3 - "bot.js"
 Cohesion: 0.22
@@ -85,8 +86,8 @@ Cohesion: 0.13
 Nodes (14): ✦ Architettura Tecnica, 🤖 Autopopolamento Autonomo & Background Bot (Timer 15 min), ✦ Autore & Licenza, ✦ Avvio Locale & Sviluppo, 🌐 Bilinguismo Completo (IT / EN), ✦ Caratteristiche Principali, Derivazione Crittografica Deterministica, ✦ Filosofia (+6 more)
 
 ### Community 5 - "seeder.js"
-Cohesion: 0.15
-Nodes (10): ARCHIVEORG_FALLBACK_TRACKS, ArchiveOrgProvider, AUDIUS_FALLBACK_TRACKS, BANDCAMP_FALLBACK_TRACKS, botPairsCache, MIXCLOUD_FALLBACK_TRACKS, SOMAFM_FALLBACK_TRACKS, TUNECAMP_FALLBACK_TRACKS (+2 more)
+Cohesion: 0.17
+Nodes (11): ARCHIVEORG_FALLBACK_TRACKS, AUDIUS_FALLBACK_TRACKS, BANDCAMP_FALLBACK_TRACKS, botPairsCache, MIXCLOUD_FALLBACK_TRACKS, SOMAFM_FALLBACK_TRACKS, startAutonomousSeeder(), TUNECAMP_DEFAULT_INSTANCES (+3 more)
 
 ### Community 7 - "package.json"
 Cohesion: 0.17
@@ -97,15 +98,19 @@ Cohesion: 0.22
 Nodes (11): getJammingStaticBuffer(), getTuningStaticBuffer(), initAudioContext(), playJammingStatic(), playTuningStatic(), renderStationMedia(), resolveAudiusTrackId(), resolveTuneCampMetadata() (+3 more)
 
 ### Community 9 - "ProviderRegistry"
-Cohesion: 0.15
-Nodes (4): BaseProvider, fetchLiveTuneCampTracks(), ProviderRegistry, SomaFMProvider
+Cohesion: 0.17
+Nodes (4): BandcampProvider, BaseProvider, fetchLiveTuneCampTracks(), SomaFMProvider
 
 ### Community 10 - "setupAuthUI"
-Cohesion: 0.40
-Nodes (4): derivePair(), setupAuthUI(), zen, deriveBotPair()
+Cohesion: 0.67
+Nodes (3): derivePair(), setupAuthUI(), zen
+
+### Community 11 - "hasSentNod"
+Cohesion: 0.67
+Nodes (4): getSentNods(), hasSentNod(), recordSentNod(), sendSilentNod()
 
 ## Knowledge Gaps
-- **174 isolated node(s):** `stationsMap`, `mutedStations`, `stationReportsMap`, `jammedOverrides`, `powerToggleBtn` (+169 more)
+- **175 isolated node(s):** `stationsMap`, `mutedStations`, `stationReportsMap`, `jammedOverrides`, `powerToggleBtn` (+170 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -113,10 +118,10 @@ Nodes (4): derivePair(), setupAuthUI(), zen, deriveBotPair()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `r()` connect `zen.min.js` to `app.js`, `bot.js`?**
-  _High betweenness centrality (0.081) - this node is a cross-community bridge._
+  _High betweenness centrality (0.080) - this node is a cross-community bridge._
 - **Why does `t` connect `zen.min.js` to `setupAuthUI`?**
-  _High betweenness centrality (0.071) - this node is a cross-community bridge._
-- **Why does `ProviderRegistry` connect `ProviderRegistry` to `setupAuthUI`, `bot.js`, `seeder.js`?**
+  _High betweenness centrality (0.070) - this node is a cross-community bridge._
+- **Why does `ProviderRegistry` connect `BaseProvider` to `bot.js`, `seeder.js`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
 - **Are the 8 inferred relationships involving `t` (e.g. with `f()` and `g()`) actually correct?**
   _`t` has 8 INFERRED edges - model-reasoned connections that need verification._

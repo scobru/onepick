@@ -64,7 +64,7 @@ Per garantire che la radio non sia mai silenziosa ("cold start" al lancio), è i
 * **`@void-pulse`** (FM 94.66 MHz) — DJ set ipnotici, cloudcast long-form e soundscape ambient (`#sound` • Provider: Mixcloud Live Cloudcasts).
 
 #### Provider Dinamici Supportati
-1. **TuneCamp Federation**: Interroga in tempo reale le release dell'istanza federata (`/api/releases`) con fallback locale.
+1. **TuneCamp Federation**: Interroga in tempo reale tutte le istanze del network federato TuneCamp (SudoRecords, SubTerra Label, FDA Labs e nodi scoperti dinamicamente via gossip `/api/community/peers` e `/api/community/sites`) aggregando ed alternando a rotazione le release indipendenti con fallback resiliente.
 2. **Internet Archive Search API**: Ricerca e seleziona tracce audio, nastri storici e demoscene tracker in base al tag (`#read`, `#sound`, `#obscureweb`, `#code`).
 3. **Audius Web3**: Recupera i flussi musicali trending ed elettronici direttamente dai nodi aperti Audius Discovery.
 4. **YouTube Live Feeds**: Interroga i feed RSS XML aperti di canali iconici (State Azure per sintesi modulare, Lofi Girl, Cercle per live set panoramici, KEXP) senza alcuna API key.
