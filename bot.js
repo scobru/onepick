@@ -4,10 +4,10 @@
  * onepick — Background Autopopulate Bot Service
  *
  * Runs autonomously to keep the onepick Zen P2P radio alive with 3 bot accounts
- * rotating and publishing curated YouTube, SoundCloud, Bandcamp, Internet Archive, Audius, Mixcloud, and TuneCamp tracks every 15 minutes.
+ * rotating and publishing curated YouTube, SoundCloud, Bandcamp, Internet Archive, Audius, Mixcloud, and TuneCamp tracks every 5 minutes.
  *
  * Usage:
- *   node bot.js                 # Runs 24/7 with 15 min timer
+ *   node bot.js                 # Runs 24/7 with 5 min timer
  *   node bot.js --once          # Seeds the 3 accounts once and exits
  *   node bot.js --interval 5    # Custom interval in minutes (e.g. 5 minutes)
  */
@@ -33,7 +33,7 @@ const isSeedAll = args.includes('--seed-all');
 const intervalArgIndex = args.indexOf('--interval');
 const intervalMinutes = intervalArgIndex !== -1 && args[intervalArgIndex + 1]
   ? parseFloat(args[intervalArgIndex + 1])
-  : 15;
+  : 5;
 const INTERVAL_MS = Math.max(1, intervalMinutes) * 60 * 1000;
 
 console.log('='.repeat(64));

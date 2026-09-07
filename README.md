@@ -50,7 +50,7 @@ Riconoscimento e streaming diretto in-page per:
   * Barra flottante fissa `[ ✕ esci dal canvas (Esc) ]`.
   * Scorciatoie da tastiera: <kbd>Esc</kbd> per uscire, <kbd>C</kbd> per alternare la vista.
 
-### 🤖 Autopopolamento Autonomo & Background Bot (Timer 15 min)
+### 🤖 Autopopolamento Autonomo & Background Bot (Timer 5 min)
 Per garantire che la radio non sia mai silenziosa ("cold start" al lancio), è integrato un motore di seeding con **10 trasmettitori deterministici** alimentati da un'architettura modulare a **Provider Dinamici** (`ProviderRegistry`):
 * **`@radio-obscura`** (FM 105.04 MHz) — Frequenze dimenticate e registrazioni d'archivio (`#obscureweb` • Provider: Internet Archive).
 * **`@sound-transit`** (FM 95.17 MHz) — Flussi radio continui, drone, downtempo e ambient (`#sound` • Provider: SomaFM Internet Radio).
@@ -75,13 +75,13 @@ Per garantire che la radio non sia mai silenziosa ("cold start" al lancio), è i
 
 Il meccanismo opera in due modalità:
 1. **Nel Browser (Serverless Zero-Config)**:
-   * All'apertura della pagina, controlla se l'etere è vuoto o se l'ultima stazione ha più di 15 minuti.
+   * All'apertura della pagina, controlla se l'etere è vuoto o se l'ultima stazione ha più di 5 minuti.
    * In caso positivo, irradia automaticamente un nuovo brano interrogando il provider della stazione.
-   * Un timer a 15 minuti mantiene viva la rotazione durante la sessione (con lock `localStorage` contro duplicati tra tab).
+   * Un timer a 5 minuti mantiene viva la rotazione durante la sessione (con lock `localStorage` contro duplicati tra tab).
 2. **Script CLI Standalone (`bot.js`)**:
    * Eseguibile 24/7 su VPS o terminale locale:
      ```bash
-     npm run bot         # Rotazione continua ogni 15 minuti
+     npm run bot         # Rotazione continua ogni 5 minuti
      npm run bot:once    # Singola trasmissione ed uscita
      npm run bot:seed    # Popola immediatamente tutte e 10 le stazioni
      ```
@@ -104,7 +104,7 @@ onepick/
 ├── style.css        # Design system terminal-zen, canvas mode e temi light/dark
 ├── app.js           # Core engine, logica di sintesi audio, i18n e routing Zen P2P
 ├── seeder.js        # Modulo autonomo di seeding e catalogo tracce (YouTube, SC, BC)
-├── bot.js           # CLI daemon headless per rotazione continua 15 min
+├── bot.js           # CLI daemon headless per rotazione continua 5 min
 ├── zen.min.js       # Runtime client decentralizzato Zen / GunDB P2P
 ├── crypto.wasm      # Primitiva crittografica ad alte prestazioni
 ├── pen.wasm         # Firma e verifica crittografica WASM

@@ -1157,10 +1157,10 @@ export async function broadcastSeedSlot(zen, bot, track, ZEN) {
 
 /**
  * Initializes autonomous seeding logic in browser or node
- * Interval: 15 minutes (900,000 ms) by default
+ * Interval: 5 minutes (300,000 ms) by default
  */
 export function startAutonomousSeeder(zen, ZEN, options = {}) {
-  const intervalMs = options.intervalMs || 15 * 60 * 1000; // 15 min default
+  const intervalMs = options.intervalMs || 5 * 60 * 1000; // 5 min default
   let rotationIndex = 0;
   let isRunning = true;
   let intervalHandle = null;
@@ -1200,7 +1200,7 @@ export function startAutonomousSeeder(zen, ZEN, options = {}) {
   /**
    * Called on page load:
    * 1. Seeds any missing bot stations immediately.
-   * 2. If all bots exist but the oldest is >= 15 minutes old, rotates it to a fresh track!
+   * 2. If all bots exist but the oldest is >= 5 minutes old, rotates it to a fresh track!
    */
   async function checkAndSeedOnPageEntry(stationsMap) {
     if (!zen) return;
@@ -1256,7 +1256,7 @@ export function startAutonomousSeeder(zen, ZEN, options = {}) {
       return;
     }
 
-    // 2. If all exist, check if the oldest is >= 15 minutes old
+    // 2. If all exist, check if the oldest is >= 5 minutes old
     const botList = Array.from(existingBots.values());
     botList.sort((a, b) => a.ts - b.ts);
     const oldest = botList[0];
@@ -1272,7 +1272,7 @@ export function startAutonomousSeeder(zen, ZEN, options = {}) {
       }
 
       const newTrack = await getTrackForBot(oldest.bot, oldest.station?.url);
-      console.log(`[onepick auto-seeder] Rotating 15-min stale station: @${oldest.bot.username} -> ${newTrack.title}`);
+      console.log(`[onepick auto-seeder] Rotating 5-min stale station: @${oldest.bot.username} -> ${newTrack.title}`);
       try {
         const res = await broadcastSeedSlot(zen, oldest.bot, newTrack, ZEN);
         if (options.onBroadcast) options.onBroadcast(res);
@@ -1282,7 +1282,7 @@ export function startAutonomousSeeder(zen, ZEN, options = {}) {
     }
   }
 
-  // Start 15-minute background interval while user stays on page
+  // Start 5-minute background interval while user stays on page
   intervalHandle = setInterval(() => {
     performRotation();
   }, intervalMs);

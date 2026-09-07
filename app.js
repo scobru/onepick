@@ -3510,7 +3510,7 @@ function initZen() {
     setTimeout(() => {
       try {
         const seeder = startAutonomousSeeder(zen, ZEN, {
-          intervalMs: 15 * 60 * 1000,
+          intervalMs: 5 * 60 * 1000,
           onBroadcast: (res) => {
             if (res) {
               console.log(`[onepick seeder] Rotated @${res.bot} on FM ${res.freq.toFixed(2)}: ${res.track.title}`);
@@ -3519,7 +3519,7 @@ function initZen() {
         });
         window.onepickSeeder = seeder;
 
-        // Check network on page entry: auto-seed missing bots or rotate stale stations (>15 min)
+        // Check network on page entry: auto-seed missing bots or rotate stale stations (>5 min)
         setTimeout(() => {
           seeder.checkAndSeedOnPageEntry(stationsMap);
         }, 3000);

@@ -3894,14 +3894,14 @@
       "norm_label": "\u26f6 modalita canvas (focus view)"
     },
     {
-      "label": "\ud83e\udd16 Autopopolamento Autonomo & Background Bot (Timer 15 min)",
+      "label": "\ud83e\udd16 Autopopolamento Autonomo & Background Bot (Timer 5 min)",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "L53",
       "_origin": "ast",
-      "id": "readme_autopopolamento_autonomo_background_bot_timer_15_min",
+      "id": "readme_autopopolamento_autonomo_background_bot_timer_5_min",
       "community": 4,
-      "norm_label": "\ud83e\udd16 autopopolamento autonomo & background bot (timer 15 min)"
+      "norm_label": "\ud83e\udd16 autopopolamento autonomo & background bot (timer 5 min)"
     },
     {
       "label": "Provider Dinamici Supportati",
@@ -13589,7 +13589,7 @@
       "source_location": "L53",
       "weight": 1.0,
       "source": "readme_caratteristiche_principali",
-      "target": "readme_autopopolamento_autonomo_background_bot_timer_15_min",
+      "target": "readme_autopopolamento_autonomo_background_bot_timer_5_min",
       "confidence_score": 1.0
     },
     {
@@ -13648,7 +13648,7 @@
       "source_file": "README.md",
       "source_location": "L66",
       "weight": 1.0,
-      "source": "readme_autopopolamento_autonomo_background_bot_timer_15_min",
+      "source": "readme_autopopolamento_autonomo_background_bot_timer_5_min",
       "target": "readme_provider_dinamici_supportati",
       "confidence_score": 1.0
     },
@@ -13664,5 +13664,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "8812c3087ebc8ec2277455c7c686dbfdec34d1e5"
+  "built_at_commit": "225953bb1a7875e4ab779ab69829f1459066c11a"
 }
