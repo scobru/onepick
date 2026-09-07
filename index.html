@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="onepick — Uno stato, non un archivio. Sostituisce la cronologia infinita con una singola frequenza culturale attiva. Protocollo P2P decentralizzato su Zen."
+      content="onepick — Uno stato, non un archivio. Una radio P2P decentralizzata: ogni nodo trasmette una singola frequenza musicale attiva. Protocollo P2P decentralizzato su Zen."
     />
     <title>onepick / frequenza attiva</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
@@ -206,11 +206,13 @@
 
               <div class="tag-chips" id="tag-filter-container">
                 <button class="tag-chip active" data-tag="all"><span data-i18n="tag_all">tutti</span></button>
-                <button class="tag-chip" data-tag="sound">#sound</button>
-                <button class="tag-chip" data-tag="read">#read</button>
-                <button class="tag-chip" data-tag="obscureweb">#obscureweb</button>
-                <button class="tag-chip" data-tag="art">#art</button>
-                <button class="tag-chip" data-tag="code">#code</button>
+                <button class="tag-chip" data-tag="ambient">#ambient</button>
+                <button class="tag-chip" data-tag="electronic">#electronic</button>
+                <button class="tag-chip" data-tag="dj">#dj</button>
+                <button class="tag-chip" data-tag="live">#live</button>
+                <button class="tag-chip" data-tag="lofi">#lofi</button>
+                <button class="tag-chip" data-tag="radio">#radio</button>
+                <button class="tag-chip" data-tag="experimental">#experimental</button>
               </div>
             </div>
 
@@ -222,7 +224,7 @@
                     <span id="pick-sigil-display" class="station-sigil-icon" title="Sigillo crittografico del nodo" data-i18n-title="sigil_node_title"></span>
                     <span id="pick-origin-badge" class="clickable-badge" title="Clicca per visualizzare la scheda tecnica della stazione" data-i18n-title="pick_origin_badge_title">TRASMETTITORE AUTENTICATO</span>
                   </div>
-                  <span class="peer-tag-badge" id="pick-tag-badge">#obscureweb</span>
+                  <span class="peer-tag-badge" id="pick-tag-badge">#ambient</span>
                   <span id="pick-time-badge">in onda da --</span>
                 </div>
 
@@ -364,7 +366,7 @@
                 <!-- Panel Provider Compatibili -->
                 <div class="compatible-providers-panel" id="compatible-providers-panel">
                   <div class="compatible-header">
-                    <span class="compatible-title" id="compatible-title" data-i18n="compatible_audio_title">🎵 Provider audio per #sound:</span>
+                    <span class="compatible-title" id="compatible-title" data-i18n="compatible_audio_title">🎵 Provider audio supportati:</span>
                     <span class="url-validation-status" id="url-validation-status"></span>
                   </div>
                   <div class="provider-badges-list" id="provider-badges-list">
@@ -378,8 +380,8 @@
                     <span class="provider-badge" data-provider="spotify">Spotify</span>
                     <span class="provider-badge" data-provider="audio">Stream / SomaFM</span>
                   </div>
-                  <div class="non-sound-hint hidden" id="non-sound-hint" data-i18n="non_sound_hint">
-                    ✦ Per i tag non-audio (#read, #obscureweb, #thought, #art, #code) puoi inserire qualsiasi link web valido.
+                  <div class="non-sound-hint" id="non-sound-hint" data-i18n="audio_only_hint">
+                    ✦ onepick è una radio: ogni trasmissione deve essere una traccia riproducibile. I tag sono generi musicali.
                   </div>
                 </div>
               </div>
@@ -402,14 +404,15 @@
               <div class="form-group">
                 <label data-i18n="label_pick_affinity">Affinità minima (Tag):</label>
                 <div class="radio-preset-tags">
-                  <button type="button" class="tag-chip active" data-pick-tag="sound">#sound</button>
-                  <button type="button" class="tag-chip" data-pick-tag="read">#read</button>
-                  <button type="button" class="tag-chip" data-pick-tag="obscureweb">#obscureweb</button>
-                  <button type="button" class="tag-chip" data-pick-tag="thought">#thought</button>
-                  <button type="button" class="tag-chip" data-pick-tag="art">#art</button>
-                  <button type="button" class="tag-chip" data-pick-tag="code">#code</button>
+                  <button type="button" class="tag-chip active" data-pick-tag="ambient">#ambient</button>
+                  <button type="button" class="tag-chip" data-pick-tag="electronic">#electronic</button>
+                  <button type="button" class="tag-chip" data-pick-tag="dj">#dj</button>
+                  <button type="button" class="tag-chip" data-pick-tag="live">#live</button>
+                  <button type="button" class="tag-chip" data-pick-tag="lofi">#lofi</button>
+                  <button type="button" class="tag-chip" data-pick-tag="radio">#radio</button>
+                  <button type="button" class="tag-chip" data-pick-tag="experimental">#experimental</button>
                 </div>
-                <input type="hidden" id="selected-pick-tag" value="sound" />
+                <input type="hidden" id="selected-pick-tag" value="ambient" />
               </div>
 
               <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 20px;">

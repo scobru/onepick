@@ -117,7 +117,6 @@ const compatibleProvidersPanel = document.getElementById('compatible-providers-p
 const compatibleTitle = document.getElementById('compatible-title');
 const urlValidationStatus = document.getElementById('url-validation-status');
 const providerBadges = document.querySelectorAll('.provider-badge');
-const nonSoundHint = document.getElementById('non-sound-hint');
 
 // Auth
 const loginTriggerBtn = document.getElementById('login-trigger');
@@ -189,7 +188,7 @@ const TRANSLATIONS = {
   it: {
     // Meta
     meta_title: 'onepick / frequenza attiva',
-    meta_desc: 'onepick — Uno stato, non un archivio. Sostituisce la cronologia infinita con una singola frequenza culturale attiva. Protocollo P2P decentralizzato su Zen.',
+    meta_desc: 'onepick — Uno stato, non un archivio. Una radio P2P decentralizzata: ogni nodo trasmette una singola frequenza musicale attiva. Protocollo P2P decentralizzato su Zen.',
 
     // Header & Brand
     power_btn_on: 'ACCENDI RADIO',
@@ -271,12 +270,10 @@ const TRANSLATIONS = {
     transmitter_prompt: 'Autenticati con <strong>login</strong> per attivare la tua frequenza. Ogni trasmissione sovrascrive istantaneamente la precedente: chi visita il tuo nodo vede solo ciò che ti ossessiona ora.',
     label_pick_url: 'Un Link (URL web o musica: YouTube, SoundCloud, Bandcamp, TuneCamp, Archive.org, MP3):',
     placeholder_pick_url: 'https://... (es. YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, MP3 o URL web)',
-    compatible_audio_title: '🎵 Provider audio per #sound:',
-    compatible_audio_title_all: '🌐 Destinazione URL:',
-    non_sound_hint: '✦ Per i tag non-audio (#read, #obscureweb, #thought, #art, #code) puoi inserire qualsiasi link web valido.',
+    compatible_audio_title: '🎵 Provider audio supportati:',
+    audio_only_hint: '✦ onepick è una radio: ogni trasmissione deve essere una traccia riproducibile. I tag sono generi musicali.',
     status_detected_prefix: '✓ Rilevato: ',
-    status_sound_invalid: '⚠ Provider audio non supportato per #sound',
-    status_valid_web: '✓ Link web valido',
+    status_audio_required: '⚠ Serve un link audio riproducibile (onepick trasmette solo musica)',
     label_pick_caption: 'Una Riga (Cosa ti sta ossessionando adesso?):',
     placeholder_pick_caption: 'Una sola riflessione, sensazione o motivazione (rigidamente max 140 caratteri)...',
     char_counter_hint: 'Nessun commento nidificato, nessun thread infinito.',
@@ -403,7 +400,7 @@ const TRANSLATIONS = {
     toast_login_required: 'Autenticati prima con login per trasmettere.',
     toast_friction_required: 'Attrito Positivo attivo: salva prima un pick o invia un cenno per sbloccare.',
     toast_invalid_url: 'Inserisci un URL valido.',
-    toast_sound_provider_required: 'Per il tag #sound devi inserire un link audio valido e riproducibile (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Audius, Mixcloud, Spotify, SomaFM o stream .mp3).',
+    toast_audio_required: 'onepick trasmette solo musica: inserisci un link audio riproducibile (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Audius, Mixcloud, Spotify, SomaFM o stream .mp3).',
     toast_char_limit: 'Il testo supera rigidamente i 140 caratteri!',
     toast_no_signal_band: 'Nessun segnale attivo su questa banda.',
     toast_no_signal_mesh: 'Nessun segnale attivo sulla rete.',
@@ -442,7 +439,7 @@ const TRANSLATIONS = {
   en: {
     // Meta
     meta_title: 'onepick / active frequency',
-    meta_desc: 'onepick — A state, not an archive. Replaces infinite feeds with a single active cultural frequency. Decentralized P2P protocol on Zen.',
+    meta_desc: 'onepick — A state, not an archive. A decentralized P2P radio: every node broadcasts a single active music frequency. Decentralized P2P protocol on Zen.',
 
     // Header & Brand
     power_btn_on: 'TURN ON RADIO',
@@ -524,12 +521,10 @@ const TRANSLATIONS = {
     transmitter_prompt: 'Authenticate via <strong>login</strong> to activate your frequency. Every transmission instantly overwrites the previous one: visitors see only what obsesses you now.',
     label_pick_url: 'A Link (Web URL or music: YouTube, SoundCloud, Bandcamp, TuneCamp, Archive.org, MP3):',
     placeholder_pick_url: 'https://... (e.g. YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, MP3 or web URL)',
-    compatible_audio_title: '🎵 Audio providers for #sound:',
-    compatible_audio_title_all: '🌐 URL Destination:',
-    non_sound_hint: '✦ For non-audio tags (#read, #obscureweb, #thought, #art, #code) you can enter any valid web link.',
+    compatible_audio_title: '🎵 Supported audio providers:',
+    audio_only_hint: '✦ onepick is a radio: every transmission must be a playable track. Tags are music genres.',
     status_detected_prefix: '✓ Detected: ',
-    status_sound_invalid: '⚠ Unsupported audio provider for #sound',
-    status_valid_web: '✓ Valid web link',
+    status_audio_required: '⚠ A playable audio link is required (onepick only broadcasts music)',
     label_pick_caption: 'One Line (What is obsessing you right now?):',
     placeholder_pick_caption: 'A single reflection, sensation or motivation (strictly max 140 characters)...',
     char_counter_hint: 'No nested comments, no endless threads.',
@@ -656,7 +651,7 @@ const TRANSLATIONS = {
     toast_login_required: 'Authenticate first via login to broadcast.',
     toast_friction_required: 'Positive Friction active: save a pick or send a nod to unlock first.',
     toast_invalid_url: 'Please enter a valid URL.',
-    toast_sound_provider_required: 'For the #sound tag, please provide a playable audio link from a supported provider (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Audius, Mixcloud, Spotify, SomaFM or .mp3 stream).',
+    toast_audio_required: 'onepick only broadcasts music: provide a playable audio link (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Audius, Mixcloud, Spotify, SomaFM or .mp3 stream).',
     toast_char_limit: 'Text strictly exceeds 140 characters!',
     toast_no_signal_band: 'No active signal on this band.',
     toast_no_signal_mesh: 'No active signal on the network.',
@@ -700,13 +695,13 @@ const TUTORIAL_STEPS = [
     it: {
       badge: 'STEP 01 / 05',
       title: "Cos'è onepick: State over History",
-      desc: "onepick è un ricevitore radio culturale decentralizzato. Sostituisce la cronologia infinita e i profili-museo dei social tradizionali con un'unica frequenza culturale attiva per ciascun nodo. Non c'è archivio pubblico né feed infinito: chi si sintonizza vede solo ciò che ti ossessiona ORA.",
+      desc: "onepick è una radio musicale decentralizzata. Sostituisce la cronologia infinita e i profili-museo dei social tradizionali con un'unica frequenza musicale attiva per ciascun nodo. Non c'è archivio pubblico né feed infinito: chi si sintonizza ascolta solo ciò che ti ossessiona ORA.",
       callout: "// Filosofia: Uno stato presente, non un archivio del passato."
     },
     en: {
       badge: 'STEP 01 / 05',
       title: "What is onepick: State over History",
-      desc: "onepick is a decentralized cultural radio receiver. It replaces endless feeds and museum-like profiles with a single active frequency per node. Anyone tuning in sees only what obsesses and inspires you RIGHT NOW.",
+      desc: "onepick is a decentralized music radio. It replaces endless feeds and museum-like profiles with a single active frequency per node. Anyone tuning in hears only what obsesses and inspires you RIGHT NOW.",
       callout: "// Philosophy: Present state, not past history."
     }
   },
@@ -730,7 +725,7 @@ const TUTORIAL_STEPS = [
     it: {
       badge: 'STEP 03 / 05',
       title: "Attrito Positivo & Cassetto Privato",
-      desc: "Per poter trasmettere devi prima ascoltare la rete: il trasmettitore si sblocca salvando un pick o una stazione nel tuo Cassetto Privato, oppure inviando un Cenno Silenzioso (~). Nel Cassetto puoi custodire sia singoli pick culturali sia intere stazioni radio preferite da risintonizzare in qualsiasi momento.",
+      desc: "Per poter trasmettere devi prima ascoltare la rete: il trasmettitore si sblocca salvando un pick o una stazione nel tuo Cassetto Privato, oppure inviando un Cenno Silenzioso (~). Nel Cassetto puoi custodire sia singole tracce sia intere stazioni radio preferite da risintonizzare in qualsiasi momento.",
       callout: "// Regola d'oro: Ascolta e rifletti prima di trasmettere · zero vanità, 100% rispetto."
     },
     en: {
@@ -745,13 +740,13 @@ const TUTORIAL_STEPS = [
     it: {
       badge: 'STEP 04 / 05',
       title: "Il Tuo Slot Unico (1 Link, 1 Riga)",
-      desc: "Accedi con [ login ] creando la tua identità locale. Hai un solo slot: un link e max 140 caratteri. Se scegli il tag #sound, inserisci esclusivamente tracce audio da provider supportati (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Spotify o stream .mp3). Con gli altri tag (#read, #obscureweb, #art, #code) puoi condividere qualsiasi URL web.",
+      desc: "Accedi con [ login ] creando la tua identità locale. Hai un solo slot: un link e max 140 caratteri. onepick trasmette solo musica: il link dev'essere una traccia riproducibile da un provider supportato (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Audius, Mixcloud, Spotify o stream .mp3). Il tag è il genere della tua frequenza: #ambient, #electronic, #dj, #live, #lofi, #radio, #experimental.",
       callout: "// Trasparenza crittografica: Chiavi derivate localmente nel tuo browser con PBKDF2."
     },
     en: {
       badge: 'STEP 04 / 05',
       title: "Your Single Slot (1 Link, 1 Line)",
-      desc: "Log in via [ login ] to create your local identity. You hold one slot: a link and max 140 characters. For the #sound tag, only playable audio providers are accepted (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Spotify, or .mp3 stream). For other tags (#read, #obscureweb, #art, #code), any valid web URL is allowed.",
+      desc: "Log in via [ login ] to create your local identity. You hold one slot: a link and max 140 characters. onepick only broadcasts music: the link must be a playable track from a supported provider (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Audius, Mixcloud, Spotify, or .mp3 stream). The tag is your frequency's genre: #ambient, #electronic, #dj, #live, #lofi, #radio, #experimental.",
       callout: "// Cryptographic transparency: Deterministic local PBKDF2 key generation."
     }
   },
@@ -3168,17 +3163,12 @@ function updateUrlValidationUI() {
   if (!pickUrlInput) return;
   const rawInput = pickUrlInput.value.trim();
   const cleanUrl = extractCleanMediaUrl(rawInput);
-  const currentTag = (selectedPickTagInput && selectedPickTagInput.value.trim()) || 'sound';
-  const isSound = currentTag === 'sound';
 
   // Clear previous badge active states
   providerBadges?.forEach(b => b.classList.remove('detected'));
 
-  if (nonSoundHint) {
-    nonSoundHint.classList.toggle('hidden', isSound);
-  }
   if (compatibleTitle) {
-    compatibleTitle.textContent = isSound ? t('compatible_audio_title') : t('compatible_audio_title_all');
+    compatibleTitle.textContent = t('compatible_audio_title');
   }
 
   if (!cleanUrl) {
@@ -3214,37 +3204,13 @@ function updateUrlValidationUI() {
       audio: 'Stream Audio / SomaFM'
     };
 
-    if (isSound) {
-      if (isAudio) {
-        const displayName = providerNames[media.type] || media.type.toUpperCase();
-        urlValidationStatus.textContent = `${t('status_detected_prefix')}${displayName}`;
-        urlValidationStatus.className = 'url-validation-status valid';
-      } else {
-        urlValidationStatus.textContent = t('status_sound_invalid');
-        urlValidationStatus.className = 'url-validation-status invalid';
-      }
+    if (isAudio) {
+      const displayName = providerNames[media.type] || media.type.toUpperCase();
+      urlValidationStatus.textContent = `${t('status_detected_prefix')}${displayName}`;
+      urlValidationStatus.className = 'url-validation-status valid';
     } else {
-      let isValidUrl = false;
-      try {
-        const u = new URL(cleanUrl);
-        isValidUrl = u.protocol === 'http:' || u.protocol === 'https:';
-      } catch (e) {
-        isValidUrl = false;
-      }
-
-      if (isValidUrl) {
-        if (isAudio) {
-          const displayName = providerNames[media.type] || media.type.toUpperCase();
-          urlValidationStatus.textContent = `${t('status_detected_prefix')}${displayName}`;
-          urlValidationStatus.className = 'url-validation-status valid';
-        } else {
-          urlValidationStatus.textContent = t('status_valid_web');
-          urlValidationStatus.className = 'url-validation-status valid';
-        }
-      } else {
-        urlValidationStatus.textContent = t('toast_invalid_url');
-        urlValidationStatus.className = 'url-validation-status invalid';
-      }
+      urlValidationStatus.textContent = t('status_audio_required');
+      urlValidationStatus.className = 'url-validation-status invalid';
     }
   }
 }
@@ -3299,7 +3265,7 @@ function initTransmitterForm() {
     const rawInput = pickUrlInput.value.trim();
     const url = extractCleanMediaUrl(rawInput);
     const caption = pickCaptionInput.value.trim();
-    const tag = selectedPickTagInput.value.trim() || 'sound';
+    const tag = selectedPickTagInput.value.trim() || 'ambient';
 
     if (!url) {
       showToast(t('toast_invalid_url'));
@@ -3321,15 +3287,12 @@ function initTransmitterForm() {
       return;
     }
 
-    // RESTRICTION LOGIC:
-    // If tag is 'sound', ONLY accept wrapped playable audio providers!
-    if (tag === 'sound') {
-      const media = detectMedia(url);
-      if (!isPlayableAudioMedia(media)) {
-        showToast(t('toast_sound_provider_required'));
-        pickUrlInput?.focus();
-        return;
-      }
+    // onepick is a radio: only playable audio providers go on air, whatever the genre.
+    const media = detectMedia(url);
+    if (!isPlayableAudioMedia(media)) {
+      showToast(t('toast_audio_required'));
+      pickUrlInput?.focus();
+      return;
     }
 
     if (caption.length > 140) {
