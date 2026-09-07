@@ -178,16 +178,16 @@ const TRANSLATIONS = {
     power_btn_on: 'ACCENDI RADIO',
     power_btn_off: 'SPEGNI RADIO',
     power_btn_title: 'Accendi / Spegni ricevitore sonoro (sblocca audio e fruscio)',
-    lang_btn_label: '[ EN ]',
+    lang_btn_label: 'EN',
     lang_btn_title: 'Passa a Inglese / Switch to English',
     theme_toggle_title: 'Alterna tema chiaro / scuro',
     tutorial_trigger_title: 'Guida e tutorial / Guide & tutorial',
-    nav_guide: '[ guida ? ]',
-    nav_cassetto: '[ cassetto ',
+    nav_guide: 'guida ?',
+    nav_cassetto: 'cassetto ',
     cassetto_trigger_title: 'Apri il tuo cassetto privato di bookmark locali',
-    nav_login: '[ login ]',
+    nav_login: 'login',
     login_trigger_title: 'Accedi al tuo nodo trasmettitore',
-    nav_logout: '[ logout ]',
+    nav_logout: 'logout',
     logout_btn_title: 'Disconnetti nodo',
     bio_text: 'Uno stato, non un archivio · singola frequenza attiva · attrito positivo · P2P su Zen',
     relay_connecting: 'in connessione',
@@ -195,7 +195,7 @@ const TRANSLATIONS = {
     online_stations_prefix: 'frequenze in onda: ',
 
     // Radio Tuner
-    radio_section_title: '[ Sintonizzatore Radio ]',
+    radio_section_title: 'Sintonizzatore Radio',
     badge_tuned: 'sintonizzato',
     badge_own_frequency: 'la tua frequenza',
     badge_node_prefix: 'NODO',
@@ -203,43 +203,43 @@ const TRANSLATIONS = {
     peer_scanning: 'nodo: in scansione...',
     peer_label: 'nodo: ',
     scale_title: 'Clicca o trascina per sintonizzare manualmente',
-    tune_prev: '[ ◂ prec ]',
+    tune_prev: '◂ prec',
     tune_prev_title: 'Frequenza precedente',
-    tune_random: '[ a caso ⚄ ]',
+    tune_random: '⚄ a caso',
     tune_random_title: 'Sintonizza frequenza a caso',
-    tune_next: '[ succ ▸ ]',
+    tune_next: 'succ ▸',
     tune_next_title: 'Frequenza successiva',
-    tag_all: '[ tutti ]',
+    tag_all: 'tutti',
     pick_origin_default: 'TRASMETTITORE AUTENTICATO',
     pick_origin_own: 'LA TUA FREQUENZA',
     pick_origin_badge_title: 'Clicca per visualizzare la scheda tecnica della stazione',
     jammed_banner_text: '<strong>Segnale Disturbato:</strong> Questo nodo è stato segnalato dai peer della rete Zen come sospetto o fraudolento.',
-    jammed_override_btn: '[ Sintonizza comunque ]',
+    jammed_override_btn: 'Sintonizza comunque',
     pick_loading: 'Caricamento frequenza...',
     pick_no_signal: '// Nessun segnale agganciato. Muovi la manopola della radio per sintonizzare una frequenza.',
     pick_no_reflection: '// Nessuna riflessione allegata.',
-    action_save_cassetto: '[ Salva nel Cassetto ]',
-    action_saved_cassetto: '[ Salvato nel Cassetto ✓ ]',
+    action_save_cassetto: '★ Salva',
+    action_saved_cassetto: '✓ Salvato',
     tooltip_save_cassetto: 'Salva questo pick solo per te nel tuo cassetto privato locale',
-    action_silent_nod: '[ Cenno Silenzioso ~ ]',
-    action_nod_sent: '[ Cenno Inviato ~ ]',
-    action_own_station: '[ La Tua Stazione ]',
+    action_silent_nod: '~ Cenno',
+    action_nod_sent: '~ Inviato',
+    action_own_station: 'Tua Stazione',
     tooltip_silent_nod: 'Invia un cenno discreto e invisibile al trasmettitore',
-    action_station_profile: '[ Scheda Stazione ☵ ]',
+    action_station_profile: 'ℹ Info',
     station_profile_title: 'Visualizza scheda tecnica, permalink e dettagli del nodo',
-    action_copy_link: '[ Copia ]',
+    action_copy_link: '⎘ Copia',
     copy_link_title: 'Copia link diretto a questa frequenza',
     report_btn_title: 'Segnala link sospetto/fraudolento o silenzia frequenza',
 
     // Transmitter
-    transmitter_title: '[ Il Tuo Slot Unico ]',
+    transmitter_title: 'Il Tuo Slot Unico',
     slot_inactive: 'inattivo',
     slot_active: 'in onda',
     friction_locked_text: '<strong>Attrito Positivo attivo:</strong> Per poter aggiornare il tuo pick della giornata, devi prima ascoltare la rete. Salva almeno un pick nel tuo cassetto o invia un cenno silenzioso a una frequenza.',
     friction_unlocked_text: '<strong>Attrito Positivo completato:</strong> Hai ascoltato la rete. Il tuo trasmettitore è sbloccato: irradia la tua frequenza.',
     friction_free_text: '<strong>Rete libera:</strong> Nessun altro nodo è attualmente in onda sulla rete Zen. Sei la prima frequenza attiva! Lo slot è sbloccato per avviare la trasmissione.',
     friction_free_btn_title: 'Pubblica il primo pick sulla rete',
-    transmitter_prompt: 'Autenticati con <strong>[ login ]</strong> per attivare la tua frequenza. Ogni trasmissione sovrascrive istantaneamente la precedente: chi visita il tuo nodo vede solo ciò che ti ossessiona ora.',
+    transmitter_prompt: 'Autenticati con <strong>login</strong> per attivare la tua frequenza. Ogni trasmissione sovrascrive istantaneamente la precedente: chi visita il tuo nodo vede solo ciò che ti ossessiona ora.',
     label_pick_url: 'Un Link (URL web o musica: YouTube, SoundCloud, Bandcamp, TuneCamp, Archive.org, MP3):',
     placeholder_pick_url: 'https://... (es. YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, MP3 o URL web)',
     compatible_audio_title: '🎵 Provider audio per #sound:',
@@ -252,42 +252,42 @@ const TRANSLATIONS = {
     placeholder_pick_caption: 'Una sola riflessione, sensazione o motivazione (rigidamente max 140 caratteri)...',
     char_counter_hint: 'Nessun commento nidificato, nessun thread infinito.',
     label_pick_affinity: 'Affinità minima (Tag):',
-    transmit_btn_locked: '[ 🔒 Sblocca prima di trasmettere ]',
-    transmit_btn_unlocked: '[ 🔓 Irradia Frequenza ]',
-    transmit_btn_sending: '[ Irradiazione in corso... ]',
+    transmit_btn_locked: '🔒 Sblocca prima di trasmettere',
+    transmit_btn_unlocked: '🔓 Irradia Frequenza',
+    transmit_btn_sending: 'Irradiazione in corso...',
     transmit_btn_locked_title: 'Soddisfa l\'attrito positivo per sbloccare la trasmissione',
     transmit_btn_unlocked_title: 'Pubblica o sovrascrivi il tuo slot attivo',
-    btn_broadcast_slot: '[ Trasmetti sul tuo Slot ]',
+    btn_broadcast_slot: 'Trasmetti sul tuo Slot',
     nods_received_title: 'Cenni silenziosi ricevuti dai tuoi ascoltatori',
     state_warning_callout: '// <strong>State over History:</strong> questo invio cancellerà e sovrascriverà per sempre il tuo pick precedente. Nessun archivio pubblico verrà conservato.',
 
     // Cassetto Modal
-    cassetto_title: '[ Il Tuo Cassetto Privato ]',
+    cassetto_title: 'Il Tuo Cassetto Privato',
     cassetto_desc: 'Questo è il tuo archivio locale personale. I pick salvati rimangono solo in questo browser: nessun like pubblico, nessun contatore visibile agli altri.',
-    btn_close: '[ chiudi ✕ ]',
-    btn_export_json: '[ esporta JSON ]',
-    btn_export_md: '[ esporta Markdown ]',
-    btn_clear: '[ svuota ]',
-    btn_delete: '[ elimina ]',
+    btn_close: 'chiudi ✕',
+    btn_export_json: 'esporta JSON',
+    btn_export_md: 'esporta Markdown',
+    btn_clear: 'svuota',
+    btn_delete: 'elimina',
     cassetto_empty: '// Il cassetto è vuoto.<br />Salva un pick ascoltato dalla radio per riporlo qui.',
     muted_desc: 'Frequenze che hai silenziato dal tuo ricevitore radio:',
     muted_empty: '// Nessuna stazione attualmente silenziata.',
     muted_station_desc: '// Frequenza silenziata.',
-    btn_restore: '[ ripristina ]',
+    btn_restore: 'ripristina',
 
     // Auth Modal
-    auth_title: '[ Nodo Trasmettitore / Login ]',
+    auth_title: 'Nodo Trasmettitore / Login',
     auth_desc: 'Le chiavi crittografiche del tuo nodo sono derivate deterministicamente (PBKDF2 SHA-256) sul tuo dispositivo. Nessun dato personale è inviato a server centrali.',
     auth_user_label: 'Nome Nodo / Alias:',
     auth_user_placeholder: 'es. scobru, radio-zero...',
     auth_pass_label: 'Passphrase Crittografica:',
     auth_pass_placeholder: 'Passphrase segreta...',
-    btn_quick_guest: '[ genera chiave casuale ]',
+    btn_quick_guest: 'genera chiave casuale',
     btn_quick_guest_title: 'Crea un\'identità temporanea generata sul momento',
-    btn_generating: '[ Generazione... ]',
-    btn_deriving: '[ Derivazione chiavi... ]',
-    btn_cancel: '[ annulla ]',
-    btn_activate_node: '[ attiva nodo ]',
+    btn_generating: 'Generazione...',
+    btn_deriving: 'Derivazione chiavi...',
+    btn_cancel: 'annulla',
+    btn_activate_node: 'attiva nodo',
     auth_alert_required: 'Inserisci nome nodo e passphrase.',
     auth_alert_crypto_err: 'Errore crittografico: ',
 
@@ -298,29 +298,29 @@ const TRANSLATIONS = {
     sigil_unique_title: 'Sigillo crittografico univoco della stazione',
 
     // Station Profile Modal
-    profile_title: '[ Scheda Stazione · Live Frequency ]',
+    profile_title: 'Scheda Stazione · Live Frequency',
     profile_desc: 'Identità crittografica del nodo e frequenza attiva. <em>State over History:</em> non esiste archivio pubblico o profilo-museo, visualizzi solo l\'ossessione del momento.',
     profile_fm_freq: 'Frequenza FM:',
     profile_node_id: 'Identità Nodo:',
     profile_crypto_key: 'Chiave Crittografica:',
     profile_on_air_since: 'In onda da:',
     profile_permalink: 'Permalink Stazione:',
-    btn_copy_pub: '[ copia chiave ]',
+    btn_copy_pub: 'copia chiave',
     btn_copy_pub_title: 'Copia chiave pubblica completa',
-    btn_copy_link: '[ copia link ]',
+    btn_copy_link: 'copia link',
     btn_copy_link_title: 'Copia permalink',
-    profile_btn_mute: '[ Silenzia questa Stazione ]',
-    profile_btn_unmute: '[ Ripristina Stazione ]',
-    profile_btn_report: '[ Segnala Link ⚠ ]',
+    profile_btn_mute: 'Silenzia questa Stazione',
+    profile_btn_unmute: 'Ripristina Stazione',
+    profile_btn_report: 'Segnala Link ⚠',
     prompt_copy_pubkey: 'Copia chiave pubblica:',
     prompt_copy_link: 'Copia permalink:',
 
     // Report Modal
-    report_modal_title: '[ Segnala o Silenzia Frequenza ]',
+    report_modal_title: 'Segnala o Silenzia Frequenza',
     report_modal_desc: 'onepick è una rete P2P decentralizzata. La moderazione si basa su <strong>autonomia personale</strong> (silenziamento locale) e <strong>Community Jamming</strong> (segnalazione mesh condivisa).',
     report_local_title: '1. Silenziamento Locale (Solo per te)',
     report_local_desc: 'Il tuo ricevitore radio salterà automaticamente questa frequenza durante la rotazione. Puoi ripristinarla quando vuoi dal tuo Cassetto.',
-    btn_execute_local_mute: '[ 🔇 Silenzia questa stazione sul mio browser ]',
+    btn_execute_local_mute: '🔇 Silenzia questa stazione sul mio browser',
     report_community_title: '2. Segnalazione alla Rete P2P (Community Jamming)',
     report_community_desc: 'Invia una segnalazione crittografica sulla rete Zen. Se una frequenza riceve segnalazioni concordanti, l\'etere simulerà un disturbo radio oscurando il contenuto preventivamente.',
     report_reason_label: 'Motivo della segnalazione:',
@@ -328,14 +328,14 @@ const TRANSLATIONS = {
     opt_malware: 'Malware / Download pericoloso o ingannevole',
     opt_spam: 'Spam / Bot o aggregatore automatico non umano',
     opt_abusive: 'Contenuto illegale o lesivo',
-    btn_execute_community_report: '[ ⚠️ Irradia segnalazione sulla rete Zen ]',
+    btn_execute_community_report: '⚠️ Irradia segnalazione sulla rete Zen',
 
     // Tutorial Modal
-    tutorial_modal_title: '[ Guida Introduttiva · Come Funziona onepick ]',
+    tutorial_modal_title: 'Guida Introduttiva · Come Funziona onepick',
     tutorial_dont_show: 'Non mostrare più all\'avvio',
-    tutorial_btn_prev: '[ ◂ Precedente ]',
-    tutorial_btn_next: '[ Successivo ▸ ]',
-    tutorial_btn_finish: '[ Inizia ad ascoltare 🚀 ]',
+    tutorial_btn_prev: '◂ Precedente',
+    tutorial_btn_next: 'Successivo ▸',
+    tutorial_btn_finish: 'Inizia ad ascoltare 🚀',
 
     // Toasts & Messages
     toast_link_copied: 'Permalink stazione copiato negli appunti!',
@@ -359,10 +359,10 @@ const TRANSLATIONS = {
     toast_radio_powered_off: 'Autoplay radio disattivato (player in-page ancora utilizzabili).',
     toast_friction_cleared_save: '✓ Pick salvato nel cassetto. Attrito positivo superato: trasmettitore sbloccato!',
     toast_friction_cleared_nod: '✓ Cenno silenzioso inviato. Attrito positivo superato: trasmettitore sbloccato!',
-    toast_login_required: 'Autenticati prima con [ login ] per trasmettere.',
+    toast_login_required: 'Autenticati prima con login per trasmettere.',
     toast_friction_required: 'Attrito Positivo attivo: salva prima un pick o invia un cenno per sbloccare.',
     toast_invalid_url: 'Inserisci un URL valido.',
-    toast_sound_provider_required: 'Per il tag #sound devi inserire un link audio valido e riproducibile (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Audius, Mixcloud, Spotify o stream .mp3).',
+    toast_sound_provider_required: 'Per il tag #sound devi inserire un link audio valido e riproducibile (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Audius, Mixcloud, Spotify, SomaFM o stream .mp3).',
     toast_char_limit: 'Il testo supera rigidamente i 140 caratteri!',
     toast_no_signal_band: 'Nessun segnale attivo su questa banda.',
     toast_no_signal_mesh: 'Nessun segnale attivo sulla rete.',
@@ -374,8 +374,8 @@ const TRANSLATIONS = {
     nods_received_plural: 'cenni ricevuti',
     nods_short_singular: 'cenno',
     nods_short_plural: 'cenni',
-    btn_view_picks: '[ vedi pick ({n}) ]',
-    btn_muted_stations: '[ silenziate ({n}) ]',
+    btn_view_picks: 'vedi pick ({n})',
+    btn_muted_stations: 'silenziate ({n})',
     profile_node_active: 'nodo attivo',
     profile_node_transmitter: 'nodo trasmettitore',
     cassetto_node_label: 'nodo',
@@ -384,10 +384,10 @@ const TRANSLATIONS = {
     auth_badge_pubkey_title: 'Chiave pubblica: ',
 
     // Canvas Mode
-    canvas_btn: '[ ⛶ canvas ]',
-    canvas_btn_exit: '[ ✕ esci ]',
+    canvas_btn: '⛶ canvas',
+    canvas_btn_exit: '✕ esci',
     canvas_btn_title: 'Modalità Canvas: centra solo il box radio e nasconde il resto',
-    canvas_exit: '[ ✕ esci dal canvas (Esc) ]',
+    canvas_exit: '✕ esci dal canvas (Esc)',
     canvas_exit_title: 'Esci dalla modalità canvas (Esc)',
     canvas_label: 'canvas',
     toast_canvas_on: 'Modalità Canvas attiva (premi Esc per uscire)',
@@ -407,16 +407,16 @@ const TRANSLATIONS = {
     power_btn_on: 'TURN ON RADIO',
     power_btn_off: 'TURN OFF RADIO',
     power_btn_title: 'Turn on / off sound receiver (unlocks audio and analog static)',
-    lang_btn_label: '[ IT ]',
+    lang_btn_label: 'IT',
     lang_btn_title: 'Switch to Italian / Passa a Italiano',
     theme_toggle_title: 'Toggle light / dark theme',
     tutorial_trigger_title: 'Guide & tutorial / Guida e tutorial',
-    nav_guide: '[ guide ? ]',
-    nav_cassetto: '[ drawer ',
+    nav_guide: 'guide ?',
+    nav_cassetto: 'drawer ',
     cassetto_trigger_title: 'Open your private local drawer',
-    nav_login: '[ login ]',
+    nav_login: 'login',
     login_trigger_title: 'Login to your transmitter node',
-    nav_logout: '[ logout ]',
+    nav_logout: 'logout',
     logout_btn_title: 'Disconnect node',
     bio_text: 'A state, not an archive · single active frequency · positive friction · P2P on Zen',
     relay_connecting: 'connecting',
@@ -424,7 +424,7 @@ const TRANSLATIONS = {
     online_stations_prefix: 'stations on air: ',
 
     // Radio Tuner
-    radio_section_title: '[ Radio Tuner ]',
+    radio_section_title: 'Radio Tuner',
     badge_tuned: 'tuned',
     badge_own_frequency: 'your frequency',
     badge_node_prefix: 'NODE',
@@ -432,43 +432,43 @@ const TRANSLATIONS = {
     peer_scanning: 'node: scanning...',
     peer_label: 'node: ',
     scale_title: 'Click or drag to tune manually',
-    tune_prev: '[ ◂ prev ]',
+    tune_prev: '◂ prev',
     tune_prev_title: 'Previous frequency',
-    tune_random: '[ random ⚄ ]',
+    tune_random: '⚄ random',
     tune_random_title: 'Tune random frequency',
-    tune_next: '[ next ▸ ]',
+    tune_next: 'next ▸',
     tune_next_title: 'Next frequency',
-    tag_all: '[ all ]',
+    tag_all: 'all',
     pick_origin_default: 'AUTHENTICATED TRANSMITTER',
     pick_origin_own: 'YOUR FREQUENCY',
     pick_origin_badge_title: 'Click to view station specs',
     jammed_banner_text: '<strong>Jammed Signal:</strong> This node was reported by Zen network peers as suspicious or fraudulent.',
-    jammed_override_btn: '[ Tune anyway ]',
+    jammed_override_btn: 'Tune anyway',
     pick_loading: 'Loading frequency...',
     pick_no_signal: '// No signal locked. Adjust the radio tuner to pick up a frequency.',
     pick_no_reflection: '// No reflection attached.',
-    action_save_cassetto: '[ Save to Drawer ]',
-    action_saved_cassetto: '[ Saved to Drawer ✓ ]',
+    action_save_cassetto: '★ Save',
+    action_saved_cassetto: '✓ Saved',
     tooltip_save_cassetto: 'Save this pick for yourself in your private local drawer',
-    action_silent_nod: '[ Silent Nod ~ ]',
-    action_nod_sent: '[ Nod Sent ~ ]',
-    action_own_station: '[ Your Station ]',
+    action_silent_nod: '~ Nod',
+    action_nod_sent: '~ Sent',
+    action_own_station: 'Your Station',
     tooltip_silent_nod: 'Send a quiet, invisible nod to the transmitter',
-    action_station_profile: '[ Station Specs ☵ ]',
+    action_station_profile: 'ℹ Specs',
     station_profile_title: 'View station specs, permalink and node details',
-    action_copy_link: '[ Copy ]',
+    action_copy_link: '⎘ Copy',
     copy_link_title: 'Copy direct link to this frequency',
     report_btn_title: 'Report suspicious/fraudulent link or mute frequency',
 
     // Transmitter
-    transmitter_title: '[ Your Single Slot ]',
+    transmitter_title: 'Your Single Slot',
     slot_inactive: 'inactive',
     slot_active: 'on air',
     friction_locked_text: '<strong>Positive Friction active:</strong> To update your pick of the day, you must first listen to the network. Save at least one pick to your drawer or send a silent nod to a station.',
     friction_unlocked_text: '<strong>Positive Friction completed:</strong> You listened to the network. Your transmitter is unlocked: broadcast your frequency.',
     friction_free_text: '<strong>Open network:</strong> No other node is currently on air on the Zen mesh. You are the first active frequency! Your slot is unlocked to start broadcasting.',
     friction_free_btn_title: 'Publish the first pick to the network',
-    transmitter_prompt: 'Authenticate via <strong>[ login ]</strong> to activate your frequency. Every transmission instantly overwrites the previous one: visitors see only what obsesses you now.',
+    transmitter_prompt: 'Authenticate via <strong>login</strong> to activate your frequency. Every transmission instantly overwrites the previous one: visitors see only what obsesses you now.',
     label_pick_url: 'A Link (Web URL or music: YouTube, SoundCloud, Bandcamp, TuneCamp, Archive.org, MP3):',
     placeholder_pick_url: 'https://... (e.g. YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, MP3 or web URL)',
     compatible_audio_title: '🎵 Audio providers for #sound:',
@@ -481,42 +481,42 @@ const TRANSLATIONS = {
     placeholder_pick_caption: 'A single reflection, sensation or motivation (strictly max 140 characters)...',
     char_counter_hint: 'No nested comments, no endless threads.',
     label_pick_affinity: 'Minimal affinity (Tag):',
-    transmit_btn_locked: '[ 🔒 Unlock before broadcasting ]',
-    transmit_btn_unlocked: '[ 🔓 Broadcast Frequency ]',
-    transmit_btn_sending: '[ Broadcasting... ]',
+    transmit_btn_locked: '🔒 Unlock before broadcasting',
+    transmit_btn_unlocked: '🔓 Broadcast Frequency',
+    transmit_btn_sending: 'Broadcasting...',
     transmit_btn_locked_title: 'Complete positive friction to unlock broadcasting',
     transmit_btn_unlocked_title: 'Publish or overwrite your active slot',
-    btn_broadcast_slot: '[ Broadcast to your Slot ]',
+    btn_broadcast_slot: 'Broadcast to your Slot',
     nods_received_title: 'Silent nods received from your listeners',
     state_warning_callout: '// <strong>State over History:</strong> this submission will permanently erase and overwrite your previous pick. No public archive will be kept.',
 
     // Cassetto Modal
-    cassetto_title: '[ Your Private Drawer ]',
+    cassetto_title: 'Your Private Drawer',
     cassetto_desc: 'This is your personal local archive. Saved picks stay only in this browser: no public likes, no vanity counters visible to others.',
-    btn_close: '[ close ✕ ]',
-    btn_export_json: '[ export JSON ]',
-    btn_export_md: '[ export Markdown ]',
-    btn_clear: '[ clear ]',
-    btn_delete: '[ delete ]',
+    btn_close: 'close ✕',
+    btn_export_json: 'export JSON',
+    btn_export_md: 'export Markdown',
+    btn_clear: 'clear',
+    btn_delete: 'delete',
     cassetto_empty: '// Your drawer is empty.<br />Save a pick heard on the radio to store it here.',
     muted_desc: 'Frequencies you have muted from your radio receiver:',
     muted_empty: '// No stations currently muted.',
     muted_station_desc: '// Muted frequency.',
-    btn_restore: '[ restore ]',
+    btn_restore: 'restore',
 
     // Auth Modal
-    auth_title: '[ Transmitter Node / Login ]',
+    auth_title: 'Transmitter Node / Login',
     auth_desc: 'Cryptographic keys for your node are deterministically derived (PBKDF2 SHA-256) locally on your device. No personal data is sent to central servers.',
     auth_user_label: 'Node Name / Alias:',
     auth_user_placeholder: 'e.g. scobru, radio-zero...',
     auth_pass_label: 'Cryptographic Passphrase:',
     auth_pass_placeholder: 'Secret passphrase...',
-    btn_quick_guest: '[ generate random key ]',
+    btn_quick_guest: 'generate random key',
     btn_quick_guest_title: 'Generate a temporary random identity',
-    btn_generating: '[ Generating... ]',
-    btn_deriving: '[ Deriving keys... ]',
-    btn_cancel: '[ cancel ]',
-    btn_activate_node: '[ activate node ]',
+    btn_generating: 'Generating...',
+    btn_deriving: 'Deriving keys...',
+    btn_cancel: 'cancel',
+    btn_activate_node: 'activate node',
     auth_alert_required: 'Please enter node alias and passphrase.',
     auth_alert_crypto_err: 'Cryptographic error: ',
 
@@ -527,29 +527,29 @@ const TRANSLATIONS = {
     sigil_unique_title: 'Unique cryptographic sigil of the station',
 
     // Station Profile Modal
-    profile_title: '[ Station Specs · Live Frequency ]',
+    profile_title: 'Station Specs · Live Frequency',
     profile_desc: 'Node cryptographic identity and active frequency. <em>State over History:</em> there is no public archive or museum profile, you see only the current obsession.',
     profile_fm_freq: 'FM Frequency:',
     profile_node_id: 'Node Identity:',
     profile_crypto_key: 'Cryptographic Key:',
     profile_on_air_since: 'On air since:',
     profile_permalink: 'Station Permalink:',
-    btn_copy_pub: '[ copy key ]',
+    btn_copy_pub: 'copy key',
     btn_copy_pub_title: 'Copy full public key',
-    btn_copy_link: '[ copy link ]',
+    btn_copy_link: 'copy link',
     btn_copy_link_title: 'Copy permalink',
-    profile_btn_mute: '[ Mute this Station ]',
-    profile_btn_unmute: '[ Restore Station ]',
-    profile_btn_report: '[ Report Link ⚠ ]',
+    profile_btn_mute: 'Mute this Station',
+    profile_btn_unmute: 'Restore Station',
+    profile_btn_report: 'Report Link ⚠',
     prompt_copy_pubkey: 'Copy public key:',
     prompt_copy_link: 'Copy permalink:',
 
     // Report Modal
-    report_modal_title: '[ Report or Mute Frequency ]',
+    report_modal_title: 'Report or Mute Frequency',
     report_modal_desc: 'onepick is a decentralized P2P network. Moderation is powered by <strong>personal autonomy</strong> (local mute) and <strong>Community Jamming</strong> (shared mesh report).',
     report_local_title: '1. Local Mute (Only for you)',
     report_local_desc: 'Your radio receiver will automatically skip this frequency during tuning. You can restore it anytime from your Drawer.',
-    btn_execute_local_mute: '[ 🔇 Mute this station on my browser ]',
+    btn_execute_local_mute: '🔇 Mute this station on my browser',
     report_community_title: '2. Mesh Network Report (Community Jamming)',
     report_community_desc: 'Radiate a cryptographic report on the Zen network. If a station accumulates concordant reports, the ether will simulate radio static and shield the content.',
     report_reason_label: 'Reason for report:',
@@ -557,14 +557,14 @@ const TRANSLATIONS = {
     opt_malware: 'Malware / Dangerous or misleading download',
     opt_spam: 'Spam / Bot or automated non-human feed',
     opt_abusive: 'Illegal or abusive content',
-    btn_execute_community_report: '[ ⚠️ Radiate report on Zen network ]',
+    btn_execute_community_report: '⚠️ Radiate report on Zen network',
 
     // Tutorial Modal
-    tutorial_modal_title: '[ Introductory Guide · How onepick Works ]',
+    tutorial_modal_title: 'Introductory Guide · How onepick Works',
     tutorial_dont_show: 'Don\'t show again on startup',
-    tutorial_btn_prev: '[ ◂ Previous ]',
-    tutorial_btn_next: '[ Next ▸ ]',
-    tutorial_btn_finish: '[ Start Tuning 🚀 ]',
+    tutorial_btn_prev: '◂ Previous',
+    tutorial_btn_next: 'Next ▸',
+    tutorial_btn_finish: 'Start Tuning 🚀',
 
     // Toasts & Messages
     toast_link_copied: 'Station frequency permalink copied to clipboard!',
@@ -588,10 +588,10 @@ const TRANSLATIONS = {
     toast_radio_powered_off: 'Radio autoplay disabled (in-page players still usable).',
     toast_friction_cleared_save: '✓ Pick saved to drawer. Positive friction passed: transmitter unlocked!',
     toast_friction_cleared_nod: '✓ Silent nod sent. Positive friction passed: transmitter unlocked!',
-    toast_login_required: 'Authenticate first via [ login ] to broadcast.',
+    toast_login_required: 'Authenticate first via login to broadcast.',
     toast_friction_required: 'Positive Friction active: save a pick or send a nod to unlock first.',
     toast_invalid_url: 'Please enter a valid URL.',
-    toast_sound_provider_required: 'For the #sound tag, please provide a playable audio link from a supported provider (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Audius, Mixcloud, Spotify or .mp3 stream).',
+    toast_sound_provider_required: 'For the #sound tag, please provide a playable audio link from a supported provider (YouTube, SoundCloud, Bandcamp, TuneCamp, Internet Archive, Audius, Mixcloud, Spotify, SomaFM or .mp3 stream).',
     toast_char_limit: 'Text strictly exceeds 140 characters!',
     toast_no_signal_band: 'No active signal on this band.',
     toast_no_signal_mesh: 'No active signal on the network.',
@@ -603,8 +603,8 @@ const TRANSLATIONS = {
     nods_received_plural: 'nods received',
     nods_short_singular: 'nod',
     nods_short_plural: 'nods',
-    btn_view_picks: '[ view picks ({n}) ]',
-    btn_muted_stations: '[ muted ({n}) ]',
+    btn_view_picks: 'view picks ({n})',
+    btn_muted_stations: 'muted ({n})',
     profile_node_active: 'active node',
     profile_node_transmitter: 'transmitter node',
     cassetto_node_label: 'node',
@@ -613,10 +613,10 @@ const TRANSLATIONS = {
     auth_badge_pubkey_title: 'Public key: ',
 
     // Canvas Mode
-    canvas_btn: '[ ⛶ canvas ]',
-    canvas_btn_exit: '[ ✕ exit ]',
+    canvas_btn: '⛶ canvas',
+    canvas_btn_exit: '✕ exit',
     canvas_btn_title: 'Canvas Mode: center radio box only and hide everything else',
-    canvas_exit: '[ ✕ exit canvas (Esc) ]',
+    canvas_exit: '✕ exit canvas (Esc)',
     canvas_exit_title: 'Exit canvas mode (Esc)',
     canvas_label: 'canvas',
     toast_canvas_on: 'Canvas mode active (press Esc to exit)',
@@ -719,7 +719,7 @@ function setLanguage(lang) {
   document.documentElement.lang = lang;
 
   if (langText) {
-    langText.textContent = lang === 'it' ? '[ EN ]' : '[ IT ]';
+    langText.textContent = lang === 'it' ? 'EN' : 'IT';
   }
   if (langToggleBtn) {
     langToggleBtn.title = t('lang_btn_title');
@@ -1052,7 +1052,7 @@ function applyTheme(theme, save = true) {
     localStorage.setItem('theme', theme);
   }
   if (themeText) {
-    themeText.textContent = theme === 'dark' ? '[ light ]' : '[ dark ]';
+    themeText.textContent = theme === 'dark' ? 'light' : 'dark';
   }
 }
 
@@ -1220,13 +1220,15 @@ function initAudioContext() {
   }
 }
 
-function playTuningStatic(duration = 0.22) {
-  if (!isRadioOn) return;
-  initAudioContext();
-  if (!audioCtx) return;
+let cachedTuningStaticBuffer = null;
+let cachedJammingStaticBuffer = null;
 
+function getTuningStaticBuffer() {
+  if (!audioCtx) return null;
+  if (cachedTuningStaticBuffer) return cachedTuningStaticBuffer;
   try {
     const sampleRate = audioCtx.sampleRate;
+    const duration = 0.22;
     const bufferSize = Math.floor(sampleRate * duration);
     const buffer = audioCtx.createBuffer(1, bufferSize, sampleRate);
     const data = buffer.getChannelData(0);
@@ -1236,6 +1238,43 @@ function playTuningStatic(duration = 0.22) {
       const crackle = Math.random() > 0.96 ? (Math.random() * 2 - 1) * 1.5 : (Math.random() * 2 - 1) * 0.6;
       data[i] = crackle * decay;
     }
+    cachedTuningStaticBuffer = buffer;
+    return buffer;
+  } catch (e) {
+    return null;
+  }
+}
+
+function getJammingStaticBuffer() {
+  if (!audioCtx) return null;
+  if (cachedJammingStaticBuffer) return cachedJammingStaticBuffer;
+  try {
+    const sampleRate = audioCtx.sampleRate;
+    const duration = 0.38;
+    const bufferSize = Math.floor(sampleRate * duration);
+    const buffer = audioCtx.createBuffer(1, bufferSize, sampleRate);
+    const data = buffer.getChannelData(0);
+
+    for (let i = 0; i < bufferSize; i++) {
+      const white = Math.random() * 2 - 1;
+      const buzz = Math.sin(2 * Math.PI * 130 * (i / sampleRate));
+      data[i] = (white * 0.65 + buzz * 0.35) * 0.3;
+    }
+    cachedJammingStaticBuffer = buffer;
+    return buffer;
+  } catch (e) {
+    return null;
+  }
+}
+
+function playTuningStatic(duration = 0.22) {
+  if (!isRadioOn) return;
+  initAudioContext();
+  if (!audioCtx) return;
+
+  try {
+    const buffer = getTuningStaticBuffer();
+    if (!buffer) return;
 
     const noiseSource = audioCtx.createBufferSource();
     noiseSource.buffer = buffer;
@@ -1265,16 +1304,8 @@ function playJammingStatic(duration = 0.38) {
   if (!audioCtx) return;
 
   try {
-    const sampleRate = audioCtx.sampleRate;
-    const bufferSize = Math.floor(sampleRate * duration);
-    const buffer = audioCtx.createBuffer(1, bufferSize, sampleRate);
-    const data = buffer.getChannelData(0);
-
-    for (let i = 0; i < bufferSize; i++) {
-      const white = Math.random() * 2 - 1;
-      const buzz = Math.sin(2 * Math.PI * 130 * (i / sampleRate));
-      data[i] = (white * 0.65 + buzz * 0.35) * 0.3;
-    }
+    const buffer = getJammingStaticBuffer();
+    if (!buffer) return;
 
     const source = audioCtx.createBufferSource();
     source.buffer = buffer;
@@ -1436,10 +1467,21 @@ function detectMedia(rawUrl) {
     };
   }
 
-  // Direct Audio files / streams
-  if (/\.(mp3|ogg|wav|m4a|aac|flac)(\?.*)?$/i.test(url) || url.includes('/stream') || url.includes('/live')) {
+  // SomaFM & Direct Audio streams / files
+  const isSomaFm = /(?:https?:\/\/)?(?:[a-z0-9\-_]+\.)?somafm\.com/i.test(url);
+  const isAudioFileOrStream = isSomaFm
+    || /\.(mp3|ogg|wav|m4a|aac|flac)(\?.*)?$/i.test(url)
+    || /-(?:128|64|32|256|320)?-?(?:mp3|aac|ogg)(\?.*)?$/i.test(url)
+    || url.includes('/stream')
+    || url.includes('/live')
+    || url.includes('/icecast')
+    || url.includes('/shoutcast')
+    || /(?::(?:8000|8443|8080)\/)/.test(url);
+
+  if (isAudioFileOrStream) {
     return {
       type: 'audio',
+      isSomaFm: isSomaFm,
       url: url
     };
   }
@@ -1715,12 +1757,19 @@ function renderStationMedia(station) {
     `;
   } else if (media.type === 'bandcamp') {
     mediaPlayerContainer.innerHTML = `
-      <iframe
-        style="border: 0; width: 100%; height: 120px;"
-        src="${media.embedUrl}"
-        seamless
-        allow="autoplay"
-      ></iframe>
+      <div style="width: 100%;">
+        <iframe
+          style="border: 0; width: 100%; height: 120px; border-radius: 4px;"
+          src="${media.embedUrl}"
+          seamless
+          allow="autoplay; encrypted-media"
+          title="onepick Bandcamp player"
+        ></iframe>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--bio-color); opacity: 0.8; margin-top: 5px; padding: 0 4px; font-family: ui-monospace, SFMono-Regular, monospace;">
+          <span title="Bandcamp requires 3rd-party cookies. If blocked by browser, click open.">🍪 <em>Cookie error? Allow 3rd-party cookies</em></span>
+          <a href="${media.rawUrl || '#'}" target="_blank" rel="noopener noreferrer" style="color: var(--accent-color, #4ade80); text-decoration: underline; font-weight: 500;">[ Open on Bandcamp ↗ ]</a>
+        </div>
+      </div>
     `;
   } else if (media.type === 'archiveorg') {
     const autoplayParam = isRadioOn ? '?autoplay=1' : '';
@@ -1785,21 +1834,44 @@ function renderStationMedia(station) {
     }
   } else if (media.type === 'mixcloud') {
     const autoplayParam = isRadioOn ? '&autoplay=1' : '';
+    const openMixcloudText = currentLang === 'it' ? '[ Apri su Mixcloud ↗ ]' : '[ Open on Mixcloud ↗ ]';
+    const mixcloudHint = currentLang === 'it'
+      ? '🛡️ <em>Non carica? Mixcloud o il tuo browser/AdBlock richiede autorizzazione.</em>'
+      : '🛡️ <em>Not loading? Mixcloud or browser/AdBlock requires authorization.</em>';
+
     mediaPlayerContainer.innerHTML = `
-      <iframe
-        width="100%"
-        height="120"
-        src="${media.embedUrl}${autoplayParam}"
-        frameborder="0"
-        allow="autoplay; encrypted-media; fullscreen"
-        title="onepick Mixcloud player"
-        style="border: 0; width: 100%; border-radius: 4px;"
-      ></iframe>
+      <div class="mixcloud-player-wrapper" style="width: 100%;">
+        <iframe
+          width="100%"
+          height="120"
+          src="${media.embedUrl}${autoplayParam}"
+          frameborder="0"
+          allow="autoplay; encrypted-media; fullscreen; idle-detection; speaker-selection; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          title="onepick Mixcloud player"
+          style="border: 0; width: 100%; border-radius: 4px; display: block;"
+        ></iframe>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--bio-color); opacity: 0.8; margin-top: 5px; padding: 0 4px; font-family: ui-monospace, SFMono-Regular, monospace;">
+          <span title="Mixcloud embeds might be blocked by Cloudflare verification or ad-blockers">${mixcloudHint}</span>
+          <a href="${media.rawUrl || '#'}" target="_blank" rel="noopener noreferrer" style="color: var(--accent-color, #4ade80); text-decoration: underline; font-weight: 500;">${openMixcloudText}</a>
+        </div>
+      </div>
     `;
   } else if (media.type === 'audio') {
     const autoplayAttr = isRadioOn ? 'autoplay' : '';
+    const streamTitle = media.isSomaFm
+      ? (currentLang === 'it' ? 'SomaFM Radio Live (.mp3 stream)' : 'SomaFM Live Radio (.mp3 stream)')
+      : (currentLang === 'it' ? 'Flusso Audio Live (.mp3 stream)' : 'Live Audio Stream (.mp3 stream)');
+    const streamLinkText = currentLang === 'it' ? '[ Stream Diretto ↗ ]' : '[ Direct Stream ↗ ]';
+
     mediaPlayerContainer.innerHTML = `
-      <audio controls ${autoplayAttr} src="${media.url}" style="width: 100%; margin-top: 4px;"></audio>
+      <div class="audio-stream-player" style="width: 100%;">
+        <audio controls ${autoplayAttr} preload="auto" src="${media.url}" style="width: 100%; margin-top: 4px; border-radius: 4px;"></audio>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--bio-color); opacity: 0.8; margin-top: 5px; padding: 0 4px; font-family: ui-monospace, SFMono-Regular, monospace;">
+          <span>📡 <em>${streamTitle}</em></span>
+          <a href="${media.url}" target="_blank" rel="noopener noreferrer" style="color: var(--accent-color, #4ade80); text-decoration: underline; font-weight: 500;">${streamLinkText}</a>
+        </div>
+      </div>
     `;
   }
 
@@ -1880,7 +1952,7 @@ function renderEmptyRadioState() {
   if (pickUrlLink) {
     pickUrlLink.href = '#';
   }
-  if (pickDomainPill) pickDomainPill.textContent = currentLang === 'it' ? '[ etere ]' : '[ ether ]';
+  if (pickDomainPill) pickDomainPill.textContent = currentLang === 'it' ? 'etere ↗' : 'ether ↗';
   if (pickUrlText) pickUrlText.textContent = currentLang === 'it' ? 'Nessun pick attivo rilevato sulla rete Zen' : 'No active pick detected on Zen mesh';
   if (pickCaptionText) {
     pickCaptionText.textContent = t('pick_no_signal');
@@ -1932,7 +2004,7 @@ function refreshStationCardUI(station) {
     pickUrlLink.href = station.url;
   }
   if (pickDomainPill) {
-    pickDomainPill.textContent = `[ ${extractDomain(station.url)} ↗ ]`;
+    pickDomainPill.textContent = `${extractDomain(station.url)} ↗`;
   }
   if (pickUrlText) {
     pickUrlText.textContent = station.url;
@@ -2655,7 +2727,7 @@ function updateUrlValidationUI() {
       audius: 'Audius',
       mixcloud: 'Mixcloud',
       spotify: 'Spotify',
-      audio: 'Stream Audio'
+      audio: 'Stream Audio / SomaFM'
     };
 
     if (isSound) {
@@ -3144,6 +3216,11 @@ function subscribeToNetworkFrequencies() {
     // Fetch the single active slot from that peer's userspace
     zen.get('~' + pub).get('onepick').get('slot').on((slot) => {
       if (slot && slot.url && !slot.deleted) {
+        const existing = stationsMap.get(pub);
+        if (existing && existing.url === slot.url && existing.caption === slot.caption && existing.ts === slot.ts) {
+          return;
+        }
+
         const stationObj = {
           pub: pub,
           author: slot.author || freqNotice.author || truncateKey(pub),
@@ -3307,22 +3384,33 @@ function initEtherVisualizer() {
   function resizeCanvas() {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    // Cap dpr at 1.25 for buttery-smooth performance on any GPU
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-    etherCanvas.width = Math.floor(w * dpr);
-    etherCanvas.height = Math.floor(h * dpr);
+    // Set 1:1 pixel ratio for background wave canvas (eliminates high-DPI fillrate lag)
+    etherCanvas.width = w;
+    etherCanvas.height = h;
     etherCtx.setTransform(1, 0, 0, 1, 0, 0);
-    etherCtx.scale(dpr, dpr);
   }
 
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
 
-  function renderEtherFrame() {
-    if (document.hidden) {
-      etherAnimFrameId = requestAnimationFrame(renderEtherFrame);
+  let lastFrameTime = 0;
+  const TARGET_FPS = 30;
+  const FRAME_INTERVAL = 1000 / TARGET_FPS;
+
+  function renderEtherFrame(now = performance.now()) {
+    etherAnimFrameId = requestAnimationFrame(renderEtherFrame);
+
+    if (document.hidden) return;
+
+    // Check prefers-reduced-motion: freeze animation if user prefers minimal motion
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
+
+    // Throttle to 30 FPS to reduce GPU/CPU consumption by ~70%
+    const elapsed = now - lastFrameTime;
+    if (elapsed < FRAME_INTERVAL) return;
+    lastFrameTime = now - (elapsed % FRAME_INTERVAL);
 
     const w = window.innerWidth;
     const h = window.innerHeight;
@@ -3385,7 +3473,7 @@ function initEtherVisualizer() {
       etherCtx.restore();
     }
 
-    // --- 2. Draw Radio Carrier Waves (Zero ShadowBlur, Step 16, GPU Pure Stroke) ---
+    // --- 2. Draw Radio Carrier Waves (Optimized 32px step, single/double stroke) ---
     const baseCenterY = h * 0.5;
     const waveAmp1 = 22 + (isRadioOn ? 16 : 0) + etherWarpEnergy * 24;
     const waveK1 = 0.003 + normFreq * 0.005;
@@ -3393,15 +3481,14 @@ function initEtherVisualizer() {
     // Wave 1: Primary FM Carrier Wave (Amber/Slate)
     etherCtx.save();
     etherCtx.beginPath();
-    for (let x = 0; x <= w + 16; x += 16) {
+    for (let x = 0; x <= w + 32; x += 32) {
       const y = baseCenterY + Math.sin(x * waveK1 + etherPhase) * waveAmp1;
       if (x === 0) etherCtx.moveTo(x, y);
       else etherCtx.lineTo(x, y);
     }
-    // High-performance double-stroke glow for dark mode
-    if (isDark) {
+    if (isDark && etherWarpEnergy > 0.1) {
       etherCtx.strokeStyle = `rgba(245, 158, 11, ${0.1 + (isRadioOn ? 0.08 : 0)})`;
-      etherCtx.lineWidth = 4.5;
+      etherCtx.lineWidth = 4.0;
       etherCtx.stroke();
     }
     etherCtx.strokeStyle = isDark
@@ -3416,14 +3503,14 @@ function initEtherVisualizer() {
     const waveK2 = waveK1 * 1.5;
     etherCtx.save();
     etherCtx.beginPath();
-    for (let x = 0; x <= w + 16; x += 18) {
+    for (let x = 0; x <= w + 32; x += 32) {
       const y = (baseCenterY + 28) + Math.sin(x * waveK2 - etherPhase * 1.3) * waveAmp2;
       if (x === 0) etherCtx.moveTo(x, y);
       else etherCtx.lineTo(x, y);
     }
-    if (isDark) {
+    if (isDark && etherWarpEnergy > 0.1) {
       etherCtx.strokeStyle = `rgba(16, 185, 129, ${0.08 + (isRadioOn ? 0.06 : 0)})`;
-      etherCtx.lineWidth = 3.5;
+      etherCtx.lineWidth = 3.0;
       etherCtx.stroke();
     }
     etherCtx.strokeStyle = isDark

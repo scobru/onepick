@@ -1,0 +1,42 @@
+{
+  "app.js": {
+    "mtime": 1788776700.224951,
+    "ast_hash": "1ad8c4d52e24d981679e5d9df3429eea",
+    "semantic_hash": ""
+  },
+  "bot.js": {
+    "mtime": 1788765899.2643807,
+    "ast_hash": "171f10da1bd0620d56964bc9c380b7a3",
+    "semantic_hash": ""
+  },
+  "package.json": {
+    "mtime": 1788687547.7355275,
+    "ast_hash": "ed9ec77915e7081634ff8b8af3d9ec48",
+    "semantic_hash": ""
+  },
+  "seeder.js": {
+    "mtime": 1788775196.2544637,
+    "ast_hash": "8d2b21d2f242ad4a726032c6d4fd5424",
+    "semantic_hash": ""
+  },
+  "zen.min.js": {
+    "mtime": 1788471222.654513,
+    "ast_hash": "4bd2ab863741ffda36f6938299b39d1d",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1788768079.958867,
+    "ast_hash": "16e8bd092c278d9d97e8ca281fa1db9f",
+    "semantic_hash": ""
+  },
+  "index.html": {
+    "mtime": 1788776505.1823795,
+    "ast_hash": "37fd5869fe2b2699e63a689cc2f7cbb3",
+    "semantic_hash": ""
+  },
+  "favicon.svg": {
+    "mtime": 1788701732.5946915,
+    "ast_hash": "8887fe7712fbaf5e2ae2e377c73a47cb",
+    "semantic_hash": ""
+  }
+}

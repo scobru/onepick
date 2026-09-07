@@ -51,22 +51,39 @@ Riconoscimento e streaming diretto in-page per:
   * Scorciatoie da tastiera: <kbd>Esc</kbd> per uscire, <kbd>C</kbd> per alternare la vista.
 
 ### 🤖 Autopopolamento Autonomo & Background Bot (Timer 15 min)
-Per garantire che la radio non sia mai silenziosa ("cold start" al lancio), è integrato un motore di seeding con **3 trasmettitori deterministici**:
-* **`@radio-obscura`** (FM 105.04 MHz) — Lo-fi ambient tape loops e web sommerso (`#obscureweb`).
-* **`@sound-transit`** (FM 95.17 MHz) — Field recordings, drone e paesaggi sonori (`#sound`).
-* **`@ambient-zero`** (FM 96.88 MHz) — Sintesi modulare e quiete presente (`#art`).
+Per garantire che la radio non sia mai silenziosa ("cold start" al lancio), è integrato un motore di seeding con **10 trasmettitori deterministici** alimentati da un'architettura modulare a **Provider Dinamici** (`ProviderRegistry`):
+* **`@radio-obscura`** (FM 105.04 MHz) — Frequenze dimenticate e registrazioni d'archivio (`#obscureweb` • Provider: Internet Archive).
+* **`@sound-transit`** (FM 95.17 MHz) — Flussi radio continui, drone, downtempo e ambient (`#sound` • Provider: SomaFM Internet Radio).
+* **`@ambient-zero`** (FM 96.88 MHz) — Sintesi modulare generativa e quiete presente (`#art` • Provider: YouTube Live Feeds).
+* **`@tunecamp-relay`** (FM 104.74 MHz) — Musica indipendente dal network federato (`#sound` • Provider: TuneCamp Federation).
+* **`@retro-cyber`** (FM 93.42 MHz) — Demoscene MOD tracker, chiptune e keygen music (`#code` • Provider: Internet Archive).
+* **`@tape-echo`** (FM 97.87 MHz) — Approfondimenti editoriali, recensioni e guide d'ascolto (`#read` • Provider: Bandcamp Network).
+* **`@archive-echo`** (FM 107.08 MHz) — Archivi radiofonici storici e letture liriche (`#read` • Provider: Internet Archive).
+* **`@mystic-whispers`** (FM 96.98 MHz) — Album indipendenti in evidenza e perle sommerse (`#sound` • Provider: Bandcamp Network).
+* **`@neon-drift`** (FM 97.23 MHz) — Synthwave e sonorità retro-futuristiche (`#sound` • Provider: Audius Web3).
+* **`@void-pulse`** (FM 94.66 MHz) — DJ set ipnotici, cloudcast long-form e soundscape ambient (`#sound` • Provider: Mixcloud Live Cloudcasts).
+
+#### Provider Dinamici Supportati
+1. **TuneCamp Federation**: Interroga in tempo reale le release dell'istanza federata (`/api/releases`) con fallback locale.
+2. **Internet Archive Search API**: Ricerca e seleziona tracce audio, nastri storici e demoscene tracker in base al tag (`#read`, `#sound`, `#obscureweb`, `#code`).
+3. **Audius Web3**: Recupera i flussi musicali trending ed elettronici direttamente dai nodi aperti Audius Discovery.
+4. **YouTube Live Feeds**: Interroga i feed RSS XML aperti di canali iconici (State Azure per sintesi modulare, Lofi Girl, Cercle per live set panoramici, KEXP) senza alcuna API key.
+5. **Bandcamp Network**: Risolve in tempo reale gli album audio riproducibili (`https://*.bandcamp.com/album/*`) per `#sound` e le guide di ascolto/articoli per `#read`.
+6. **Mixcloud Live Cloudcasts**: Interroga in tempo reale le selezioni popolari di DJ set e cloudcast long-form (ambient, chillout, downtempo, techno) con widget player dedicato.
+7. **SomaFM Internet Radio Streams**: 46+ canali radiofonici indipendenti senza pubblicità con stream diretti 128kbps MP3 (Drone Zone, Groove Salad, Deep Space One, DEF CON Radio) e riproduzione con visualizer analogico nativo.
+8. **Curated Ether**: Pool unificato di riserva per operatività offline resiliente.
 
 Il meccanismo opera in due modalità:
 1. **Nel Browser (Serverless Zero-Config)**:
    * All'apertura della pagina, controlla se l'etere è vuoto o se l'ultima stazione ha più di 15 minuti.
-   * In caso positivo, irradia automaticamente un nuovo brano random dal catalogo curato.
+   * In caso positivo, irradia automaticamente un nuovo brano interrogando il provider della stazione.
    * Un timer a 15 minuti mantiene viva la rotazione durante la sessione (con lock `localStorage` contro duplicati tra tab).
 2. **Script CLI Standalone (`bot.js`)**:
    * Eseguibile 24/7 su VPS o terminale locale:
      ```bash
      npm run bot         # Rotazione continua ogni 15 minuti
      npm run bot:once    # Singola trasmissione ed uscita
-     npm run bot:seed    # Popola immediatamente tutte e 3 le stazioni
+     npm run bot:seed    # Popola immediatamente tutte e 10 le stazioni
      ```
 
 ### 🛡️ Moderazione Decentralizzata & Community Jamming

@@ -20,7 +20,8 @@ import {
   deriveBotPair,
   getFrequencyForPub,
   getTrackForBot,
-  verifyMediaUrlAvailable
+  verifyMediaUrlAvailable,
+  providerRegistry
 } from './seeder.js';
 
 const RELAY_URL = 'https://delay.scobrudot.dev/zen';
@@ -36,11 +37,12 @@ const intervalMinutes = intervalArgIndex !== -1 && args[intervalArgIndex + 1]
 const INTERVAL_MS = Math.max(1, intervalMinutes) * 60 * 1000;
 
 console.log('='.repeat(64));
-console.log('  onepick / Zen P2P Autonomous Radio Seeder Bot (6 Channels)');
+console.log('  onepick / Zen P2P Autonomous Radio Seeder Bot (10 Channels)');
 console.log('='.repeat(64));
-console.log(`[+] Relay:    ${RELAY_URL}`);
-console.log(`[+] Interval: ${intervalMinutes} minutes (${INTERVAL_MS / 1000}s)`);
-console.log(`[+] Mode:     ${isOnce ? 'Single Run (--once)' : 'Continuous Background Rotation'}`);
+console.log(`[+] Relay:     ${RELAY_URL}`);
+console.log(`[+] Interval:  ${intervalMinutes} minutes (${INTERVAL_MS / 1000}s)`);
+console.log(`[+] Mode:      ${isOnce ? 'Single Run (--once)' : 'Continuous Background Rotation'}`);
+console.log(`[+] Providers: ${providerRegistry.listProviders().map(p => p.id).join(', ')}`);
 
 // Initialize Zen instance in Node.js
 const zen = new ZEN({
@@ -50,37 +52,21 @@ const zen = new ZEN({
 });
 
 let rotationIdx = 0;
-let usedTrackIndices = new Set();
 
 async function getNextTrack(bot) {
-  // If bot is dedicated to TuneCamp, query TuneCamp network exclusively
-  if (bot && bot.provider === 'tunecamp') {
-    return await getTrackForBot(bot);
-  }
+  let track = await getTrackForBot(bot);
 
-  if (usedTrackIndices.size >= SEED_TRACKS.length) {
-    usedTrackIndices.clear();
-  }
-  const availableIndices = SEED_TRACKS
-    .map((_, i) => i)
-    .filter(i => !usedTrackIndices.has(i));
-
-  while (availableIndices.length > 0) {
-    const rIdx = Math.floor(Math.random() * availableIndices.length);
-    const chosenIndex = availableIndices[rIdx];
-    const track = SEED_TRACKS[chosenIndex];
-    usedTrackIndices.add(chosenIndex);
-    availableIndices.splice(rIdx, 1);
-
+  if (track && track.url) {
     const isAvailable = await verifyMediaUrlAvailable(track.url);
     if (isAvailable) {
       return track;
     } else {
-      console.warn(`[!] Skipping dead/inaccessible seed track (404): "${track.title}" (${track.url})`);
+      console.warn(`[!] Skipping dead/inaccessible track (404): "${track.title}" (${track.url})`);
+      track = await getTrackForBot(bot, track.url);
     }
   }
 
-  return await getTrackForBot(bot);
+  return track || (await getTrackForBot(bot));
 }
 
 async function logBotIdentities() {
@@ -88,8 +74,8 @@ async function logBotIdentities() {
   for (const bot of SEED_BOTS) {
     const pair = await deriveBotPair(bot.username, bot.passphrase, ZEN);
     const freq = getFrequencyForPub(pair.pub);
-    const badge = bot.provider === 'tunecamp' ? ' [TuneCamp Network]' : ` #${bot.tag}`;
-    console.log(`    📻 @${bot.username.padEnd(16)} -> FM ${freq.toFixed(2)} MHz${badge}  (pub: ${pair.pub.slice(0, 10)}...)`);
+    const providerStr = bot.provider ? ` [provider: ${bot.provider}]` : '';
+    console.log(`    📻 @${bot.username.padEnd(16)} -> FM ${freq.toFixed(2)} MHz #${bot.tag}${providerStr}  (pub: ${pair.pub.slice(0, 10)}...)`);
   }
   console.log('');
 }
