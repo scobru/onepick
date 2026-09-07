@@ -6,6 +6,7 @@ const RELAY_URL = 'https://delay.scobrudot.dev/zen';
 const SALT_PREFIX = 'onepick:zen:station:';
 const FREQ_MIN = 88.0;
 const FREQ_MAX = 108.0;
+const MAX_STATION_AGE_MS = 24 * 60 * 60 * 1000; // 24 ore: stazioni peer inattive vengono nascoste dall'etere
 
 // No mock entries: only live Zen P2P peers from the relay.
 
@@ -1223,9 +1224,9 @@ function satisfyPositiveFriction(reason = 'interaction') {
 }
 
 function hasPeerStations() {
-  const allStations = Array.from(stationsMap.keys());
-  if (allStations.length === 0) return false;
-  if (currentPair && allStations.length === 1 && allStations[0] === currentPair.pub) return false;
+  const activeStations = Array.from(stationsMap.values()).filter(s => isStationActive(s));
+  if (activeStations.length === 0) return false;
+  if (currentPair && activeStations.length === 1 && activeStations[0].pub === currentPair.pub) return false;
   return true;
 }
 
@@ -1302,7 +1303,8 @@ function updateNeedlePosition(freq) {
 
 function getFilteredStations() {
   const all = Array.from(stationsMap.values());
-  const unmuted = all.filter(s => !mutedStations.has(s.pub) || s.pub === activeStationPub);
+  const active = all.filter(s => isStationActive(s));
+  const unmuted = active.filter(s => !mutedStations.has(s.pub) || s.pub === activeStationPub);
   if (currentTagFilter === 'all') return unmuted;
   return unmuted.filter(s => s.tag === currentTagFilter);
 }
@@ -2384,6 +2386,27 @@ silentNodBtn?.addEventListener('click', () => {
 
 let isRotatingBot = false;
 
+function isBotStation(pub, author) {
+  if (author && SEED_BOTS.some(b => b.username === author)) return true;
+  if (!pub) return false;
+  const station = stationsMap.get(pub);
+  if (station && station.author && SEED_BOTS.some(b => b.username === station.author)) {
+    return true;
+  }
+  return false;
+}
+
+function isStationActive(station) {
+  if (!station) return false;
+  // I bot non scadono mai: canali radio autonomi continui della rete
+  if (isBotStation(station.pub, station.author)) return true;
+  // La propria stazione è sempre visibile al trasmettitore locale
+  if (currentPair && currentPair.pub === station.pub) return true;
+  // Nascondi se la trasmissione risale a più di 24 ore fa
+  const ts = Number(station.ts) || 0;
+  return (Date.now() - ts) <= MAX_STATION_AGE_MS;
+}
+
 function isCurrentStationBot() {
   if (!activeStationPub) return null;
   const station = stationsMap.get(activeStationPub);
@@ -2735,7 +2758,7 @@ function renderCassettoStations() {
 
   list.forEach(st => {
     const pub = st.pub;
-    const isOnline = stationsMap.has(pub);
+    const isOnline = stationsMap.has(pub) && isStationActive(stationsMap.get(pub));
     const liveStation = stationsMap.get(pub);
     const freq = st.freq || (liveStation ? liveStation.freq : getFrequencyForPub(pub));
     const author = (liveStation && liveStation.author) || st.author || truncateKey(pub);
@@ -3700,6 +3723,20 @@ function subscribeToNetworkFrequencies() {
     // Fetch the single active slot from that peer's userspace
     zen.get('~' + pub).get('onepick').get('slot').on((slot) => {
       if (slot && slot.url && !slot.deleted) {
+        const isBot = isBotStation(pub, slot.author || freqNotice.author);
+        const isOwn = currentPair && currentPair.pub === pub;
+        const slotAge = Date.now() - (slot.ts || freqNotice.ts || Date.now());
+
+        // Nascondi stazioni inattive da più di 24 ore (escludendo i bot e la propria stazione)
+        if (!isBot && !isOwn && slotAge > MAX_STATION_AGE_MS) {
+          if (stationsMap.has(pub)) {
+            stationsMap.delete(pub);
+            updateStationsCounter();
+            updateFrictionUI();
+          }
+          return;
+        }
+
         const existing = stationsMap.get(pub);
         if (existing && existing.url === slot.url && existing.caption === slot.caption && existing.ts === slot.ts) {
           return;
@@ -3729,10 +3766,34 @@ function subscribeToNetworkFrequencies() {
 
 function updateStationsCounter() {
   if (onlineStationsCount) {
-    const count = stationsMap.size;
-    onlineStationsCount.textContent = `${t('online_stations_prefix')}${count}`;
+    const activeStations = Array.from(stationsMap.values()).filter(s => isStationActive(s));
+    onlineStationsCount.textContent = `${t('online_stations_prefix')}${activeStations.length}`;
   }
 }
+
+// Pulizia periodica automatica ogni minuto per le stazioni che superano le 24h
+function cleanupExpiredStations() {
+  let changed = false;
+  for (const [pub, station] of stationsMap.entries()) {
+    if (!isStationActive(station)) {
+      stationsMap.delete(pub);
+      changed = true;
+      if (activeStationPub === pub) {
+        const activeStations = getFilteredStations();
+        if (activeStations.length > 0) {
+          tuneToStation(activeStations[0].pub);
+        } else {
+          renderEmptyRadioState();
+        }
+      }
+    }
+  }
+  if (changed) {
+    updateStationsCounter();
+    updateFrictionUI();
+  }
+}
+setInterval(cleanupExpiredStations, 60 * 1000);
 
 // Check URL param ?peer=<pub> to tune directly
 function checkInitialPeerParam() {
@@ -3749,6 +3810,13 @@ function checkInitialPeerParam() {
     // Otherwise fetch from Zen
     zen.get('~' + peerParam).get('onepick').get('slot').once((slot) => {
       if (slot && slot.url) {
+        const isBot = isBotStation(peerParam, slot.author);
+        const isOwn = currentPair && currentPair.pub === peerParam;
+        const slotAge = Date.now() - (slot.ts || Date.now());
+        if (!isBot && !isOwn && slotAge > MAX_STATION_AGE_MS) {
+          showToast(currentLang === 'it' ? 'Questa frequenza è inattiva da più di 24 ore.' : 'This frequency has been inactive for more than 24 hours.');
+          return;
+        }
         const station = {
           pub: peerParam,
           author: slot.author || truncateKey(peerParam),
