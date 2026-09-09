@@ -10,9 +10,10 @@ export const SALT_PREFIX = 'onepick:zen:station:';
  * The seven FM affinities of the dial. Everything on onepick is listenable:
  * these are musical genres, not topics.
  */
-export const FM_GENRES = ['ambient', 'electronic', 'dj', 'live', 'lofi', 'radio', 'experimental'];
+export const FM_GENRES = ['ambient', 'electronic', 'dj', 'live', 'lofi', 'radio', 'experimental', 'classical'];
 
 const GENRE_KEYWORDS = [
+  ['classical', /classical|symphon|orchestra|chamber|opera|baroque|romantic|contemporary classical|early music|sonata|concerto|piano|violin|cello|quartet|choir|choral|avant-garde classical/i],
   ['experimental', /demoscene|chiptune|tracker|keygen|8-bit|musique concr|noise|avant|shortwave|numbers station|field recording|tape loop|sound art|drone metal|industrial|glitch|78 ?rpm/i],
   ['ambient', /ambient|drone|atmospher|meditat|new age|soundscape|space music|modular|generative|slow|calm/i],
   ['lofi', /lo-?fi|chillhop|chill ?beats|study beats|jazzhop|boom bap|beat tape/i],
@@ -132,6 +133,24 @@ export const SEED_BOTS = [
     provider: 'mixcloud',
     providers: ['mixcloud', 'youtube', 'radiobrowser'],
     desc: 'Hypnotic DJ sets, club recordings, and long-form mixes.'
+  },
+  {
+    id: 'concert-hall',
+    username: 'concert-hall',
+    passphrase: 'onepick-seed-concert-2026-ether',
+    tag: 'classical',
+    provider: 'archiveorg',
+    providers: ['archiveorg', 'youtube', 'audius'],
+    desc: 'Grand symphonies, chamber music, and historic performances from concert halls worldwide.'
+  },
+  {
+    id: 'early-music',
+    username: 'early-music',
+    passphrase: 'onepick-seed-early-2026-fm',
+    tag: 'classical',
+    provider: 'youtube',
+    providers: ['youtube', 'archiveorg', 'bandcamp'],
+    desc: 'Baroque, Renaissance, and early music on period instruments — HIP and authentic performances.'
   }
 ];
 
