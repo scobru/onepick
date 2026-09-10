@@ -4,3 +4,7 @@ node_modules/
 # Pix Agent
 .pi/
 .pi-lens/
+
+# Output di tool di analisi e cache di agenti: rigenerabili, non vanno versionati
+graphify-out/
+.cache/
